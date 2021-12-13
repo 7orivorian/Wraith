@@ -131,6 +131,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public void shutdown() {
+        WrathAPI.LOGGER.warning("EventBus " + this.busID + " shutting down! Future events will not be posted.");
         shutdown = true;
     }
 }
