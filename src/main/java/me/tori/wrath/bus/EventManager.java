@@ -68,6 +68,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean post(Object event) {
+        Objects.requireNonNull(event, "Cannot post a null event");
         if (isShutdown()) {
             return false;
         } else {
@@ -84,6 +85,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean post(Object event, Class<?> type) {
+        Objects.requireNonNull(event, "Cannot post a null event");
         if (isShutdown()) {
             return false;
         }
@@ -98,6 +100,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean postInverted(Object event) {
+        Objects.requireNonNull(event, "Cannot post a null event");
         if (isShutdown()) {
             return false;
         } else {
@@ -114,6 +117,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean postInverted(Object event, Class<?> type) {
+        Objects.requireNonNull(event, "Cannot post a null event");
         if (isShutdown()) {
             return false;
         } else {
