@@ -17,11 +17,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EventManager implements IEventBus {
 
+    private static int maxID = 0;
+
     private static final ConcurrentHashMap<Class<?>, List<IListener>> LISTENERS = new ConcurrentHashMap<>();
 
     private final Set<Subscriber> subscribers = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private boolean shutdown = false;
+    private final int busID;
+
+    public EventManager() {
+        this.busID = maxID++;
+        this.subscribers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    }
 
     @Override
     public void subscribe(Subscriber subscriber) {
