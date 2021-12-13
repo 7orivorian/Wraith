@@ -14,7 +14,7 @@ public class Subscribed implements Subscriber {
     private final List<IListener<?>> listeners = new ArrayList<>();
 
     @Override
-    public IListener<?> registerListener(IListener<?> listener) {
+    public <T extends IListener<?>> T registerListener(T listener) {
         listeners.add(listener);
         return listener;
     }

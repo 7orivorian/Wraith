@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public interface Subscriber {
 
-    IListener<?> registerListener(IListener<?> listener);
+    <T extends IListener<?>> T registerListener(T listener);
 
     Collection<IListener<?>> getListeners();
 }
