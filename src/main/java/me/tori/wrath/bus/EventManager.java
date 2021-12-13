@@ -1,27 +1,28 @@
 package main.java.me.tori.wrath.bus;
 
+import main.java.me.tori.wrath.WrathAPI;
+import main.java.me.tori.wrath.listeners.ICancelable;
 import main.java.me.tori.wrath.listeners.IListener;
 import main.java.me.tori.wrath.listeners.Subscriber;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * Implementation of {@link IEventBus}
+ *
  * @author <b>7orivorian</b>
  * @version <b>Wrath v1.0.0</b>
  * @since <b>December 12, 2021</b>
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class EventManager implements IEventBus {
 
     private static int maxID = 0;
 
     private static final ConcurrentHashMap<Class<?>, List<IListener>> LISTENERS = new ConcurrentHashMap<>();
-
-    private final Set<Subscriber> subscribers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Subscriber> subscribers;
 
     private boolean shutdown = false;
     private final int busID;
@@ -69,10 +70,14 @@ public class EventManager implements IEventBus {
     public boolean post(Object event) {
         if (isShutdown()) {
             return false;
-        }
-        List<IListener> listeners = LISTENERS.get(event.getClass());
-        if (listeners != null) {
-            listeners.forEach(listener -> listener.invoke(event));
+        } else {
+            List<IListener> listeners = LISTENERS.get(event.getClass());
+            if (listeners != null) {
+                listeners.forEach(listener -> listener.invoke(event));
+            }
+            if (event instanceof ICancelable) {
+                return ((ICancelable) event).isCanceled();
+            }
         }
         return false;
     }
@@ -95,12 +100,13 @@ public class EventManager implements IEventBus {
     public boolean postInverted(Object event) {
         if (isShutdown()) {
             return false;
-        }
-        List<IListener> listeners = LISTENERS.get(event.getClass());
-        if (listeners != null) {
-            ListIterator<IListener> iterator = listeners.listIterator(listeners.size());
-            while (iterator.hasPrevious()) {
-                iterator.previous().invoke(event);
+        } else {
+            List<IListener> listeners = LISTENERS.get(event.getClass());
+            if (listeners != null) {
+                ListIterator<IListener> iterator = listeners.listIterator(listeners.size());
+                while (iterator.hasPrevious()) {
+                    iterator.previous().invoke(event);
+                }
             }
         }
         return false;
@@ -110,14 +116,15 @@ public class EventManager implements IEventBus {
     public boolean postInverted(Object event, Class<?> type) {
         if (isShutdown()) {
             return false;
-        }
-        List<IListener> listeners = LISTENERS.get(event.getClass());
-        if (listeners != null) {
-            ListIterator<IListener> iterator = listeners.listIterator(listeners.size());
-            while (iterator.hasPrevious()) {
-                IListener listener = iterator.previous();
-                if ((listener.getType() == null) || (listener.getType() == type)) {
-                    listener.invoke(event);
+        } else {
+            List<IListener> listeners = LISTENERS.get(event.getClass());
+            if (listeners != null) {
+                ListIterator<IListener> iterator = listeners.listIterator(listeners.size());
+                while (iterator.hasPrevious()) {
+                    IListener listener = iterator.previous();
+                    if ((listener.getType() == null) || (listener.getType() == type)) {
+                        listener.invoke(event);
+                    }
                 }
             }
         }
