@@ -14,8 +14,9 @@ public class Subscribed implements Subscriber {
     private final List<IListener<?>> listeners = new ArrayList<>();
 
     @Override
-    public boolean registerListener(IListener<?> listener) {
-        return listeners.add(listener);
+    public IListener<?> registerListener(IListener<?> listener) {
+        listeners.add(listener);
+        return listener;
     }
 
     @Override
