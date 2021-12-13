@@ -1,9 +1,9 @@
-package main.java.me.tori.wrath.bus;
+package me.tori.wrath.bus;
 
-import main.java.me.tori.wrath.WrathAPI;
-import main.java.me.tori.wrath.listeners.ICancelable;
-import main.java.me.tori.wrath.listeners.IListener;
-import main.java.me.tori.wrath.listeners.Subscriber;
+import me.tori.wrath.WrathAPI;
+import me.tori.wrath.listeners.ICancelable;
+import me.tori.wrath.listeners.IListener;
+import me.tori.wrath.listeners.Subscriber;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

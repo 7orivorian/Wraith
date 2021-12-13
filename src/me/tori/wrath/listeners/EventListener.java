@@ -1,6 +1,6 @@
-package main.java.me.tori.wrath.listeners;
+package me.tori.wrath.listeners;
 
-import main.java.me.tori.wrath.bus.IEventBus;
+import me.tori.wrath.bus.IEventBus;
 
 /**
  * @author <b>7orivorian</b>

@@ -1,6 +1,6 @@
-package main.java.me.tori.wrath.events;
+package me.tori.wrath.events;
 
-import main.java.me.tori.wrath.listeners.IListenable;
+import me.tori.wrath.listeners.IListenable;
 
 /**
  * @author <b>7orivorian</b>

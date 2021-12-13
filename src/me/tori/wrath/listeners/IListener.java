@@ -1,4 +1,4 @@
-package main.java.me.tori.wrath.listeners;
+package me.tori.wrath.listeners;
 
 /**
  * @author <b>7orivorian</b>

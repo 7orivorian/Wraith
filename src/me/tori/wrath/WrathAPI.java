@@ -1,4 +1,4 @@
-package main.java.me.tori.wrath;
+package me.tori.wrath;
 
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
