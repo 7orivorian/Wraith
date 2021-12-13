@@ -88,12 +88,16 @@ public class EventManager implements IEventBus {
         Objects.requireNonNull(event, "Cannot post a null event");
         if (isShutdown()) {
             return false;
-        }
-        List<IListener> listeners = LISTENERS.get(event.getClass());
-        if (listeners != null) {
-            listeners.stream()
-                    .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
-                    .forEach(listener -> listener.invoke(event));
+        } else {
+            List<IListener> listeners = LISTENERS.get(event.getClass());
+            if (listeners != null) {
+                listeners.stream()
+                        .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
+                        .forEach(listener -> listener.invoke(event));
+            }
+            if (event instanceof ICancelable) {
+                return ((ICancelable) event).isCanceled();
+            }
         }
         return false;
     }
@@ -110,6 +114,9 @@ public class EventManager implements IEventBus {
                 while (iterator.hasPrevious()) {
                     iterator.previous().invoke(event);
                 }
+            }
+            if (event instanceof ICancelable) {
+                return ((ICancelable) event).isCanceled();
             }
         }
         return false;
@@ -130,6 +137,9 @@ public class EventManager implements IEventBus {
                         listener.invoke(event);
                     }
                 }
+            }
+            if (event instanceof ICancelable) {
+                return ((ICancelable) event).isCanceled();
             }
         }
         return false;
