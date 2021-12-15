@@ -1,6 +1,7 @@
 package me.tori.wrath.listeners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,6 +18,13 @@ public class Subscribed implements Subscriber {
     public <T extends IListener<?>> T registerListener(T listener) {
         listeners.add(listener);
         return listener;
+    }
+
+    @SafeVarargs
+    @Override
+    public final <T extends IListener<?>> T[] registerListeners(T... listeners) {
+        this.listeners.addAll(Arrays.asList(listeners));
+        return listeners;
     }
 
     @Override
