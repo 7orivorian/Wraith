@@ -1,5 +1,6 @@
 package me.tori.wraith.bus;
 
+import me.tori.wraith.WraithAPI;
 import me.tori.wraith.listeners.ICancelable;
 import me.tori.wraith.listeners.IListener;
 import me.tori.wraith.listeners.Subscriber;
@@ -151,7 +152,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public void shutdown() {
-        WrathAPI.LOGGER.warning("EventBus " + this.busID + " shutting down! Future events will not be posted.");
+        WraithAPI.LOGGER.warning("EventBus " + this.busID + " shutting down! Future events will not be posted.");
         shutdown = true;
     }
 }
