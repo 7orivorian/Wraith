@@ -1,4 +1,4 @@
-package me.tori.wrath;
+package me.tori.wraith;
 
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  * @version <b>Wrath v1.0.0</b>
  * @since <b>December 12, 2021</b>
  */
-public class WrathAPI {
+public class WraithAPI {
 
     public static final Logger LOGGER = LogManager.getLogManager().getLogger("WrathAPI");
 }

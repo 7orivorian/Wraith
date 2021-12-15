@@ -1,6 +1,6 @@
-package me.tori.wrath.events;
+package me.tori.wraith.events;
 
-import me.tori.wrath.listeners.ICancelable;
+import me.tori.wraith.listeners.ICancelable;
 
 /**
  * @author <b>7orivorian</b>

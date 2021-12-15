@@ -1,7 +1,7 @@
-package me.tori.wrath.bus;
+package me.tori.wraith.bus;
 
-import me.tori.wrath.listeners.IListener;
-import me.tori.wrath.listeners.Subscriber;
+import me.tori.wraith.listeners.IListener;
+import me.tori.wraith.listeners.Subscriber;
 
 /**
  * @author <b>7orivorian</b>

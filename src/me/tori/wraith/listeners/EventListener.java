@@ -1,6 +1,6 @@
-package me.tori.wrath.listeners;
+package me.tori.wraith.listeners;
 
-import me.tori.wrath.bus.IEventBus;
+import me.tori.wraith.bus.IEventBus;
 
 /**
  * @author <b>7orivorian</b>

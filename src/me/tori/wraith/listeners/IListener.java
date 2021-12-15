@@ -1,4 +1,4 @@
-package me.tori.wrath.listeners;
+package me.tori.wraith.listeners;
 
 /**
  * @author <b>7orivorian</b>

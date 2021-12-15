@@ -1,6 +1,6 @@
-package me.tori.wrath.events;
+package me.tori.wraith.events;
 
-import me.tori.wrath.listeners.IListenable;
+import me.tori.wraith.listeners.IListenable;
 
 /**
  * @author <b>7orivorian</b>

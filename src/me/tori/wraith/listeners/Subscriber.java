@@ -1,4 +1,4 @@
-package me.tori.wrath.listeners;
+package me.tori.wraith.listeners;
 
 import java.util.Collection;
 
