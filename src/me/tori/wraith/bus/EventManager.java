@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EventManager implements IEventBus {
 
-    private static int maxID = 0;
+    private static int instances = 0;
 
     private static final ConcurrentHashMap<Class<?>, List<IListener>> LISTENERS = new ConcurrentHashMap<>();
     private final Set<Subscriber> subscribers;
@@ -28,7 +28,7 @@ public class EventManager implements IEventBus {
     private final int busID;
 
     public EventManager() {
-        this.busID = maxID++;
+        this.busID = instances++;
         this.subscribers = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 

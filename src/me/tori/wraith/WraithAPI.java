@@ -10,5 +10,5 @@ import java.util.logging.Logger;
  */
 public class WraithAPI {
 
-    public static final Logger LOGGER = LogManager.getLogManager().getLogger("WrathAPI");
+    public static final Logger LOGGER = LogManager.getLogManager().getLogger("WraithAPI");
 }
