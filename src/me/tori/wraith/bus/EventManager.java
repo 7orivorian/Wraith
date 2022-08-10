@@ -1,6 +1,6 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.WraithAPI;
+import me.tori.wraith.WraithLib;
 import me.tori.wraith.listeners.ICancelable;
 import me.tori.wraith.listeners.IListener;
 import me.tori.wraith.listeners.Subscriber;
@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Implementation of {@link IEventBus}
  *
  * @author <b>7orivorian</b>
- * @version <b>WraithAPI v1.0.0</b>
+ * @version <b>WraithLib v1.0.0</b>
  * @since <b>December 12, 2021</b>
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -152,7 +152,7 @@ public class EventManager implements IEventBus {
 
     @Override
     public void shutdown() {
-        WraithAPI.LOGGER.warning("EventBus " + this.busID + " shutting down! Future events will not be posted.");
+        WraithLib.LOGGER.warning("EventBus " + this.busID + " shutting down! Future events will not be posted.");
         shutdown = true;
     }
 }
