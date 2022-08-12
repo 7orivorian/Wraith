@@ -1,3 +1,3 @@
-## WraithAPI
+## WraithLib
 
-Lightweight event api created and maintained by 7orivorian
+Lightweight event library created and maintained by 7orivoriank
