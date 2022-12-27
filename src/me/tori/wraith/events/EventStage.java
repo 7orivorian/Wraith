@@ -7,5 +7,6 @@ package me.tori.wraith.events;
  */
 public enum EventStage {
     PRE,
+    PERI,
     POST
 }
