@@ -1,4 +1,4 @@
-### WraithLib
+# Wraith
 
 Lightweight java event library created and maintained by [7orivorian](https://github.com/7orivorian)
 

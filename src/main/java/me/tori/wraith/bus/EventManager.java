@@ -19,6 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EventManager implements IEventBus {
 
+    @SuppressWarnings("FieldNamingConvention")
     private static int instances = 0;
 
     private static final ConcurrentHashMap<Class<?>, List<IListener>> LISTENERS = new ConcurrentHashMap<>();
