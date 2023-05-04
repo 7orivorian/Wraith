@@ -1,40 +1,40 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.WraithLib;
-import me.tori.wraith.listeners.ICancelable;
-import me.tori.wraith.listeners.IListener;
-import me.tori.wraith.listeners.Subscriber;
+import me.tori.wraith.WraithLogger;
+import me.tori.wraith.event.ICancelable;
+import me.tori.wraith.listener.IListener;
+import me.tori.wraith.subscriber.ISubscriber;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Implementation of {@link IEventBus}
+ * Default implementation of {@link IEventBus}
  *
  * @author <b>7orivorian</b>
- * @version <b>WraithLib v1.0.0</b>
  * @since <b>December 12, 2021</b>
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class EventManager implements IEventBus {
+public class EventBus implements IEventBus {
 
-    @SuppressWarnings("FieldNamingConvention")
     private static int instances = 0;
 
-    private static final ConcurrentHashMap<Class<?>, List<IListener>> LISTENERS = new ConcurrentHashMap<>();
-    private final Set<Subscriber> subscribers;
-
-    private boolean shutdown = false;
     private final int busID;
+    private boolean shutdown;
+    private final Set<ISubscriber> subscribers;
+    private final ConcurrentHashMap<Class<?>, List<IListener>> listeners;
 
-    public EventManager() {
+    public EventBus() {
         this.busID = instances++;
+        this.shutdown = false;
         this.subscribers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        this.listeners = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void subscribe(Subscriber subscriber) {
+    public void subscribe(ISubscriber subscriber) {
+        Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus %d!".formatted(busID));
         for (IListener<?> listener : subscriber.getListeners()) {
             register(listener);
         }
@@ -42,7 +42,8 @@ public class EventManager implements IEventBus {
     }
 
     @Override
-    public void unsubscribe(Subscriber subscriber) {
+    public void unsubscribe(ISubscriber subscriber) {
+        Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus %d!".formatted(busID));
         for (IListener<?> listener : subscriber.getListeners()) {
             unregister(listener);
         }
@@ -51,10 +52,12 @@ public class EventManager implements IEventBus {
 
     @Override
     public void register(IListener<?> listener) {
-        List<IListener> listeners = LISTENERS.computeIfAbsent(listener.getTarget(), target -> new CopyOnWriteArrayList<>());
+        Objects.requireNonNull(listener, "Cannot register null listener to event bus %d!".formatted(busID));
 
+        List<IListener> listeners = this.listeners.computeIfAbsent(listener.getTarget(), target -> new CopyOnWriteArrayList<>());
+        final int size = listeners.size();
         int index = 0;
-        for (; index < listeners.size(); index++) {
+        for (; index < size; index++) {
             if (listener.getPriority() > listeners.get(index).getPriority()) {
                 break;
             }
@@ -64,16 +67,17 @@ public class EventManager implements IEventBus {
 
     @Override
     public void unregister(IListener<?> listener) {
-        LISTENERS.get(listener.getTarget()).removeIf(l -> l.equals(listener));
+        Objects.requireNonNull(listener, "Cannot unregister null listener from event bus %d!".formatted(busID));
+        listeners.get(listener.getTarget()).removeIf(l -> l.equals(listener));
     }
 
     @Override
     public boolean post(Object event) {
-        Objects.requireNonNull(event, "Cannot post a null event");
+        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
         if (isShutdown()) {
             return false;
         } else {
-            List<IListener> listeners = LISTENERS.get(event.getClass());
+            List<IListener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 listeners.forEach(listener -> listener.invoke(event));
             }
@@ -86,11 +90,11 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean post(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event");
+        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
         if (isShutdown()) {
             return false;
         } else {
-            List<IListener> listeners = LISTENERS.get(event.getClass());
+            List<IListener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 listeners.stream()
                         .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
@@ -105,11 +109,11 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean postInverted(Object event) {
-        Objects.requireNonNull(event, "Cannot post a null event");
+        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
         if (isShutdown()) {
             return false;
         } else {
-            List<IListener> listeners = LISTENERS.get(event.getClass());
+            List<IListener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 ListIterator<IListener> iterator = listeners.listIterator(listeners.size());
                 while (iterator.hasPrevious()) {
@@ -125,11 +129,11 @@ public class EventManager implements IEventBus {
 
     @Override
     public boolean postInverted(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event");
+        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
         if (isShutdown()) {
             return false;
         } else {
-            List<IListener> listeners = LISTENERS.get(event.getClass());
+            List<IListener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 ListIterator<IListener> iterator = listeners.listIterator(listeners.size());
                 while (iterator.hasPrevious()) {
@@ -147,13 +151,44 @@ public class EventManager implements IEventBus {
     }
 
     @Override
+    public void shutdown() {
+        WraithLogger.LOGGER.warning("EventBus %d shutting down! Future events will not be posted.".formatted(busID));
+        shutdown = true;
+    }
+
+    @Override
     public boolean isShutdown() {
         return shutdown;
     }
 
     @Override
-    public void shutdown() {
-        WraithLib.LOGGER.warning("EventBus " + this.busID + " shutting down! Future events will not be posted.");
-        shutdown = true;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if ((o == null) || (getClass() != o.getClass())) {
+            return false;
+        }
+        EventBus that = (EventBus) o;
+        return busID == that.busID;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = busID;
+        result = 31 * result + (shutdown ? 1 : 0);
+        result = 31 * result + subscribers.hashCode();
+        result = 31 * result + listeners.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "EventBus{" +
+                "busID=" + busID +
+                ", shutdown=" + shutdown +
+                ", subscribers=" + subscribers +
+                ", listeners=" + listeners +
+                '}';
     }
 }

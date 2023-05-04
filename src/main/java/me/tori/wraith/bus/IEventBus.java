@@ -1,20 +1,19 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.listeners.IListener;
-import me.tori.wraith.listeners.Subscriber;
+import me.tori.wraith.listener.IListener;
+import me.tori.wraith.subscriber.ISubscriber;
 
 /**
  * @author <b>7orivorian</b>
- * @version <b>WraithLib v1.0.0</b>
  * @since <b>December 12, 2021</b>
  */
 public interface IEventBus {
 
     int DEFAULT_PRIORITY = 0;
 
-    void subscribe(Subscriber subscriber);
+    void subscribe(ISubscriber subscriber);
 
-    void unsubscribe(Subscriber subscriber);
+    void unsubscribe(ISubscriber subscriber);
 
     void register(IListener<?> listener);
 
@@ -28,7 +27,7 @@ public interface IEventBus {
 
     boolean postInverted(Object event, Class<?> type);
 
-    boolean isShutdown();
-
     void shutdown();
+
+    boolean isShutdown();
 }

@@ -1,8 +1,9 @@
-package me.tori.wraith.listeners;
+package me.tori.wraith.listener;
+
+import me.tori.wraith.event.Invokable;
 
 /**
  * @author <b>7orivorian</b>
- * @version <b>WraithLib v1.0.0</b>
  * @since <b>December 12, 2021</b>
  */
 public interface IListener<T> extends Invokable<T> {
