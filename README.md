@@ -1,5 +1,4 @@
-![text](wraith_logo.svg)
-<img src="wraith_logo.svg">
+![](wraith_logo.png)
 
 # Wraith
 
