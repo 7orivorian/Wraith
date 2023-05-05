@@ -2,7 +2,7 @@
 
 Lightweight Java event library created and maintained by [7orivorian](https://github.com/7orivorian)
 
-# Importing Library
+# Importing
 
 ## Maven
 
@@ -58,13 +58,13 @@ Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/
 * Clone this repository
 * Run `mvn package`
 
-Packaged file can be found in the `/target` directory.
+Packaged file can be found in the `target/` directory.
 
 # Usage
 
 ### Subscribers
 
-A subscriber can be defined by either:
+A subscriber can be defined by
 
 * Extending the `Subscriber` class
 
@@ -142,16 +142,16 @@ public class ExampleEvent {
 }
 ```
 
-For an event to be cancelable, it must either:
+A cancelable event can be defined by
 
-* Extend the `Cancelable` class
+* Extending the `Cancelable` class
 
 ```java
 public class CancelableEvent extends Cancelable {
 }
 ```
 
-* Implement the `ICancelable` interface
+* Implementing the `ICancelable` interface
 
 ```java
 public class CancelableEvent implements ICancelable {
@@ -180,6 +180,7 @@ public class ExampleListener extends EventListener<ExampleEvent> {
 public class ExampleSubscriber extends Subscriber {
 
     public ExampleSubscriber() {
+        // Register the listener
         registerListener(new ExampleListener());
     }
 }
@@ -191,6 +192,7 @@ Lambda event listener.
 public class ExampleSubscriber extends Subscriber {
 
     public ExampleSubscriber() {
+        // Register the listener
         registerListener(
                 new LambdaEventListener<>(ExampleEvent.class, event -> {
                     if (event.getStage() == EventStage.PRE) {
@@ -208,13 +210,15 @@ To post an event to an event bus, call one of the "post" methods defined in `IEv
 parameter.
 
 ```java
+import me.tori.wraith.event.EventStage;
+
 public class Example {
 
     private static final IEventBus EVENT_BUS = new EventBus();
 
     public static void main(String[] args) {
 
-        ExampleEvent event = new ExampleEvent("hello");
+        ExampleEvent event = new ExampleEvent(EventStage.PRE);
 
         EVENT_BUS.post(event);
 
