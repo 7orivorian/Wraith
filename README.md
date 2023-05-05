@@ -168,4 +168,4 @@ public class Example {
 }
 ```
 
-[Click here](url) to view a small program with a simple Wraith implementation
+[Click here](src/example/java/me/tori/example) to view a small program with a simple Wraith implementation
