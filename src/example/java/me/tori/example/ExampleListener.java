@@ -5,7 +5,6 @@ import me.tori.wraith.listener.EventListener;
 
 /**
  * @author <b>7orivorian</b>
- * @version <b>WraithLib v1.3.0</b>
  * @since <b>May 04, 2023</b>
  */
 public class ExampleListener extends EventListener<ExampleEvent> {
