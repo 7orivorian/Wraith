@@ -30,7 +30,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 <dependency>
     <groupId>com.github.7orivorian</groupId>
     <artifactId>Wraith</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
@@ -50,13 +50,13 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:2.0.0'
+    implementation 'com.github.7orivorian:Wraith:2.0.1'
 }
 ```
 
 ## Other
 
-Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/2.0.0)
+Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/2.0.1)
 
 # Building
 
