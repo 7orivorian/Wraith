@@ -8,7 +8,7 @@ _Latest version: [1.4.0](https://github.com/7orivorian/WraithLib/releases/tag/v1
 
 ### Subscribers
 
-A subscriber can be defined by either
+A subscriber can be defined by either:
 
 * Extending the `Subscriber` class
 
@@ -24,7 +24,7 @@ public class ExampleSubscriber implements ISubscriber {
 }
 ```
 
-the subscriber must then be subscribed to an event bus. This can be done within the subsciber itself
+The subscriber must then be subscribed to an event bus, which can be done within the subsciber itself.
 
 ```java
 public class ExampleSubscriber extends Subscriber {
@@ -37,7 +37,7 @@ public class ExampleSubscriber extends Subscriber {
 }
 ```
 
-or externally
+This can also by done externally.
 
 ```java
 public class Example {
@@ -65,7 +65,7 @@ public class Example {
 
 ### Defining an event
 
-Any class can be passed as an event
+Any class can be passed as an event.
 
 ```java
 public class ExampleEvent {
@@ -86,7 +86,7 @@ public class ExampleEvent {
 }
 ```
 
-For an event to be cancelable, it must either
+For an event to be cancelable, it must either:
 
 * Extend the `Cancelable` class
 
@@ -104,7 +104,7 @@ public class CancelableEvent implements ICancelable {
 
 ### Listeners
 
-Class event listener
+Class event listener.
 
 ```java
 public class ExampleListener extends EventListener<ExampleEvent> {
@@ -129,7 +129,7 @@ public class ExampleSubscriber extends Subscriber {
 }
 ```
 
-Lambda event listener
+Lambda event listener.
 
 ```java
 public class ExampleSubscriber extends Subscriber {
@@ -148,7 +148,8 @@ public class ExampleSubscriber extends Subscriber {
 
 ### Posting events
 
-To post an event to an event bus, call one of the "post" methods defined in `IEventBus`, passing your event as a parameter.
+To post an event to an event bus, call one of the "post" methods defined in `IEventBus`, passing your event as a
+parameter.
 
 ```java
 public class Example {
@@ -156,11 +157,11 @@ public class Example {
     private static final IEventBus EVENT_BUS = new EventBus();
 
     public static void main(String[] args) {
-        
+
         ExampleEvent event = new ExampleEvent("hello");
-        
+
         EVENT_BUS.post(event);
-        
+
         if (!event.isCanceled()) {
             System.out.println(event.getString());
         }
@@ -168,4 +169,8 @@ public class Example {
 }
 ```
 
-[Click here](src/example/java/me/tori/example) to view a small program with a simple Wraith implementation
+[Click here](src/example/java/me/tori/example) to view a small program with a simple Wraith implementation.
+
+# License
+
+[This project is licensed under MIT](src/main/resources/LICENSE.md)
