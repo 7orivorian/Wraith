@@ -8,7 +8,7 @@ import me.tori.wraith.event.EventStage;
  * @author <b>7orivorian</b>
  * @since <b>May 04, 2023</b>
  */
-public class Main {
+public class ExampleMain {
 
     private static final IEventBus EVENT_BUS = new EventBus();
 
