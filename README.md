@@ -1,3 +1,6 @@
+![text](wraith_logo.svg)
+<img src="wraith_logo.svg">
+
 # Wraith
 
 Lightweight Java event library created and maintained by [7orivorian](https://github.com/7orivorian)
@@ -93,7 +96,7 @@ public class ExampleSubscriber extends Subscriber {
 }
 ```
 
-This can also by done externally.
+This can also be done externally.
 
 ```java
 public class Example {
