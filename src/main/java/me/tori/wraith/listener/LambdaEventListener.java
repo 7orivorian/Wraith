@@ -6,7 +6,6 @@ import java.util.Objects;
 
 /**
  * @author <b>7orivorian</b>
- * @version <b>Wraith v1.3.0</b>
  * @since <b>April 05, 2023</b>
  */
 public class LambdaEventListener<E> extends EventListener<E> {
