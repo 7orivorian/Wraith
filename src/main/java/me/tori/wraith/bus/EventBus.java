@@ -34,7 +34,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public void subscribe(ISubscriber subscriber) {
-        Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus %d!".formatted(busID));
+        Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus " + busID + "!");
         for (IListener<?> listener : subscriber.getListeners()) {
             register(listener);
         }
@@ -43,7 +43,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public void unsubscribe(ISubscriber subscriber) {
-        Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus %d!".formatted(busID));
+        Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus " + busID + "!");
         for (IListener<?> listener : subscriber.getListeners()) {
             unregister(listener);
         }
@@ -52,7 +52,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public void register(IListener<?> listener) {
-        Objects.requireNonNull(listener, "Cannot register null listener to event bus %d!".formatted(busID));
+        Objects.requireNonNull(listener, "Cannot register null listener to event bus " + busID + "!");
 
         List<IListener> listeners = this.listeners.computeIfAbsent(listener.getTarget(), target -> new CopyOnWriteArrayList<>());
         final int size = listeners.size();
@@ -67,13 +67,13 @@ public class EventBus implements IEventBus {
 
     @Override
     public void unregister(IListener<?> listener) {
-        Objects.requireNonNull(listener, "Cannot unregister null listener from event bus %d!".formatted(busID));
+        Objects.requireNonNull(listener, "Cannot unregister null listener from event bus " + busID + "!");
         listeners.get(listener.getTarget()).removeIf(l -> l.equals(listener));
     }
 
     @Override
     public boolean post(Object event) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
+        Objects.requireNonNull(event, "Cannot post a null event to event bus " + busID + "!");
         if (isShutdown()) {
             return false;
         } else {
@@ -90,7 +90,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public boolean post(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
+        Objects.requireNonNull(event, "Cannot post a null event to event bus " + busID + "!");
         if (isShutdown()) {
             return false;
         } else {
@@ -109,7 +109,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public boolean postInverted(Object event) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
+        Objects.requireNonNull(event, "Cannot post a null event to event bus " + busID + "!");
         if (isShutdown()) {
             return false;
         } else {
@@ -129,7 +129,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public boolean postInverted(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus %d!".formatted(busID));
+        Objects.requireNonNull(event, "Cannot post a null event to event bus " + busID + "!");
         if (isShutdown()) {
             return false;
         } else {
@@ -152,7 +152,7 @@ public class EventBus implements IEventBus {
 
     @Override
     public void shutdown() {
-        WraithLogger.LOGGER.warning("EventBus %d shutting down! Future events will not be posted.".formatted(busID));
+        WraithLogger.LOGGER.warning("EventBus " + busID + " shutting down! Future events will not be posted.");
         shutdown = true;
     }
 
