@@ -1,8 +1,64 @@
 # Wraith
 
-Lightweight java event library created and maintained by [7orivorian](https://github.com/7orivorian)
+Lightweight Java event library created and maintained by [7orivorian](https://github.com/7orivorian)
 
-_Latest version: [1.4.0](https://github.com/7orivorian/WraithLib/releases/tag/v1.4.0)_
+# Importing Library
+
+## Maven
+
+* Include JitPack in your maven build file
+
+```xml
+
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+* Add Wraith as a dependency
+
+```xml
+
+<dependency>
+    <groupId>com.github.7orivorian</groupId>
+    <artifactId>Wraith</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
+## Gradle
+
+* Add JitPack to your root `build.gradle` at the end of repositories
+
+```gradle
+repositories {
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+```
+
+* Add the dependency
+
+```gradle
+dependencies {
+    implementation 'com.github.7orivorian:Wraith:2.0.0'
+}
+```
+
+## Other
+
+Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/2.0.0)
+
+# Building
+
+* Clone this repository
+* Run `mvn package`
+
+Packaged file can be found in the `/target` directory.
 
 # Usage
 
