@@ -3,6 +3,7 @@
 # Wraith
 ![GitHub all releases](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=flat-square)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/7orivorian/Wraith?style=flat-square)
+[![](https://jitci.com/gh/7orivorian/Wraith/svg)](https://jitci.com/gh/7orivorian/Wraith)
 
 Lightweight Java event library created and maintained by [7orivorian](https://github.com/7orivorian)
 
