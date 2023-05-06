@@ -1,6 +1,7 @@
 ![logo](wraith_logo.png)
 
 # Wraith
+
 ![GitHub all releases](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=flat-square)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/7orivorian/Wraith?style=flat-square)
 [![](https://jitci.com/gh/7orivorian/Wraith/svg)](https://jitci.com/gh/7orivorian/Wraith)
@@ -9,7 +10,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 
 # Importing
 
-## Maven
+### Maven
 
 * Include JitPack in your maven build file
 
@@ -34,7 +35,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 </dependency>
 ```
 
-## Gradle
+### Gradle
 
 * Add JitPack to your root `build.gradle` at the end of repositories
 
@@ -54,7 +55,7 @@ dependencies {
 }
 ```
 
-## Other
+### Other
 
 Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/2.0.1)
 
@@ -234,8 +235,26 @@ public class Example {
 }
 ```
 
-[Click here](src/example/java/me/tori/example) to view a small program with a simple Wraith implementation.
+[Click here](src/example/java/me/tori/example) to view an example program with a simple Wraith implementation.
+
+# Contributing
+
+Contributions are welcome! Feel free to open a pull request.
+
+### Guidelines
+
+* Utilize similar [formatting](.editorconfig) and practises to the rest of the codebase
+* Do not include workspace files (such as an `.idea/` or `target/` directory) in your pull request
+
+
+### How to submit a contribution
+
+To make a contribution, follow these steps:
+
+1. Fork and clone this repository
+2. Make the changes to your fork
+3. Submit a pull request
 
 # License
 
-[This project is licensed under MIT](src/main/resources/LICENSE.md)
+[Wraith is licensed under MIT](src/main/resources/LICENSE.md)
