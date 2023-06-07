@@ -12,6 +12,7 @@ public interface ISubscriber {
 
     <T extends IListener<?>> T registerListener(T listener);
 
+    @SuppressWarnings("unchecked")
     <T extends IListener<?>> T[] registerListeners(T... listeners);
 
     Collection<IListener<?>> getListeners();
