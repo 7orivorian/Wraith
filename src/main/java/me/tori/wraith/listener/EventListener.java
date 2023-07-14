@@ -5,10 +5,10 @@ import me.tori.wraith.bus.IEventBus;
 import java.util.Objects;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>December 12, 2021</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @since <b>1.0.0</b>
  */
-public abstract class EventListener<T> implements IListener<T> {
+public abstract class EventListener<T> implements Listener<T> {
 
     protected final int priority;
     protected final Class<?> type;

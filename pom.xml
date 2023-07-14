@@ -6,7 +6,7 @@
     <groupId>me.tori</groupId>
     <artifactId>Wraith</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

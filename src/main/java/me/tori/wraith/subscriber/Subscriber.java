@@ -1,6 +1,6 @@
 package me.tori.wraith.subscriber;
 
-import me.tori.wraith.listener.IListener;
+import me.tori.wraith.listener.Listener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,47 +10,29 @@ import java.util.List;
 /**
  * Default implementation of {@link ISubscriber}
  *
- * @author <b>7orivorian</b>
- * @since <b>December 12, 2021</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @since <b>1.0.0</b>
  */
 public class Subscriber implements ISubscriber {
 
-    private final List<IListener<?>> listeners = new ArrayList<>();
+    private final List<Listener<?>> listeners = new ArrayList<>();
 
     @Override
-    public <T extends IListener<?>> T registerListener(T listener) {
+    public <T extends Listener<?>> T registerListener(T listener) {
         listeners.add(listener);
         return listener;
     }
 
     @SafeVarargs
     @Override
-    public final <T extends IListener<?>> T[] registerListeners(T... listeners) {
+    public final <T extends Listener<?>> T[] registerListeners(T... listeners) {
         this.listeners.addAll(Arrays.asList(listeners));
         return listeners;
     }
 
     @Override
-    public Collection<IListener<?>> getListeners() {
+    public Collection<Listener<?>> getListeners() {
         return listeners;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if ((o == null) || (getClass() != o.getClass())) {
-            return false;
-        }
-
-        Subscriber that = (Subscriber) o;
-        return listeners.equals(that.listeners);
-    }
-
-    @Override
-    public int hashCode() {
-        return listeners.hashCode();
     }
 
     @Override

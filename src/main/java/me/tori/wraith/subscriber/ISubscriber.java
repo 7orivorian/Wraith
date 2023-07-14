@@ -1,19 +1,19 @@
 package me.tori.wraith.subscriber;
 
-import me.tori.wraith.listener.IListener;
+import me.tori.wraith.listener.Listener;
 
 import java.util.Collection;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>December 12, 2021</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @since <b>1.0.0</b>
  */
 public interface ISubscriber {
 
-    <T extends IListener<?>> T registerListener(T listener);
+    <T extends Listener<?>> T registerListener(T listener);
 
     @SuppressWarnings("unchecked")
-    <T extends IListener<?>> T[] registerListeners(T... listeners);
+    <T extends Listener<?>> T[] registerListeners(T... listeners);
 
-    Collection<IListener<?>> getListeners();
+    Collection<Listener<?>> getListeners();
 }

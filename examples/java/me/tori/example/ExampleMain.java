@@ -2,13 +2,12 @@ package me.tori.example;
 
 import me.tori.wraith.bus.EventBus;
 import me.tori.wraith.bus.IEventBus;
-import me.tori.wraith.event.EventStage;
+import me.tori.wraith.event.staged.EventStage;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>May 04, 2023</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  */
-public class ExampleMain {
+class ExampleMain {
 
     private static final IEventBus EVENT_BUS = new EventBus();
 

@@ -4,8 +4,8 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>December 12, 2021</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @since <b>1.0.0</b>
  */
 public final class WraithLogger {
 

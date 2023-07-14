@@ -31,7 +31,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 <dependency>
     <groupId>com.github.7orivorian</groupId>
     <artifactId>Wraith</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -51,13 +51,13 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:2.0.1'
+    implementation 'com.github.7orivorian:Wraith:3.0.0'
 }
 ```
 
 ### Other
 
-Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/2.0.1)
+Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/3.0.0)
 
 # Building
 
@@ -177,7 +177,7 @@ public class ExampleListener extends EventListener<ExampleEvent> {
 
     @Override
     public void invoke(ExampleEvent event) {
-        if (event.getStage() == EventStage.POST) {
+        if (event.stage() == EventStage.POST) {
             event.setString("I feel wonderful!");
         }
     }
@@ -201,7 +201,7 @@ public class ExampleSubscriber extends Subscriber {
         // Register the listener
         registerListener(
                 new LambdaEventListener<>(ExampleEvent.class, event -> {
-                    if (event.getStage() == EventStage.PRE) {
+                    if (event.stage() == EventStage.PRE) {
                         event.setString("Hello world!");
                     }
                 })
@@ -216,7 +216,7 @@ To post an event to an event bus, call one of the "post" methods defined in `IEv
 parameter.
 
 ```java
-import me.tori.wraith.event.EventStage;
+import me.tori.wraith.event.staged.EventStage;
 
 public class Example {
 
@@ -235,7 +235,7 @@ public class Example {
 }
 ```
 
-[Click here](src/example/java/me/tori/example) to view an example program with a simple Wraith implementation.
+[Click here](examples/java/me/tori/example) to view some examples of Wraith implementation.
 
 # Contributing
 
@@ -245,7 +245,6 @@ Contributions are welcome! Feel free to open a pull request.
 
 * Utilize similar [formatting](.editorconfig) and practises to the rest of the codebase
 * Do not include workspace files (such as an `.idea/` or `target/` directory) in your pull request
-
 
 ### How to submit a contribution
 

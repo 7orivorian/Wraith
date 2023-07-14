@@ -1,11 +1,11 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.listener.IListener;
+import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>December 12, 2021</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @since <b>1.0.0</b>
  */
 public interface IEventBus {
 
@@ -15,19 +15,18 @@ public interface IEventBus {
 
     void unsubscribe(ISubscriber subscriber);
 
-    void register(IListener<?> listener);
+    void register(Listener<?> listener);
 
-    void unregister(IListener<?> listener);
+    void unregister(Listener<?> listener);
 
     boolean post(Object event);
 
     boolean post(Object event, Class<?> type);
 
-    boolean postInverted(Object event);
-
-    boolean postInverted(Object event, Class<?> type);
-
     void shutdown();
 
+    /**
+     * @return {@code true} if this event bus is shut down, {@code false} otherwise
+     */
     boolean isShutdown();
 }
