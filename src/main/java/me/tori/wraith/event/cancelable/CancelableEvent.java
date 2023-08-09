@@ -1,16 +1,16 @@
 package me.tori.wraith.event.cancelable;
 
 /**
- * Default implementation of the {@link ICancelable} interface.
+ * Default implementation of the {@link ICancelableEvent} interface.
  *
  * <p>This class provides a basic implementation of the cancelable event behavior.
  * Event classes can extend this class to inherit the cancellation capability.
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @see ICancelable
+ * @see ICancelableEvent
  * @since <b>1.0.0</b>
  */
-public class Cancelable implements ICancelable {
+public class CancelableEvent implements ICancelableEvent {
 
     /**
      * Indicates the cancellation state of this event.

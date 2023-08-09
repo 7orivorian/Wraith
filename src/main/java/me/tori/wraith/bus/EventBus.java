@@ -1,6 +1,6 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.event.cancelable.ICancelable;
+import me.tori.wraith.event.cancelable.ICancelableEvent;
 import me.tori.wraith.event.targeted.IClassTargetingEvent;
 import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
@@ -148,7 +148,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * Dispatches an event to listeners.
      *
      * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -164,7 +164,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
             if (listeners != null) {
                 listeners.forEach(listener -> listener.invoke(event));
             }
-            if (event instanceof ICancelable cancelable) {
+            if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }
@@ -179,7 +179,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      *
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -197,7 +197,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                         .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
                         .forEach(listener -> listener.invoke(event));
             }
-            if (event instanceof ICancelable cancelable) {
+            if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }
@@ -208,7 +208,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * Dispatches the given event to the target listener class
      *
      * @param event the {@linkplain IClassTargetingEvent} to be dispatched
-     * @return {@code true} if the given event was {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event was {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -226,7 +226,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                         .filter(listener -> listener.getClass().equals(event.getTargetClass()))
                         .forEach(listener -> listener.invoke(event));
             }
-            if (event instanceof ICancelable cancelable) {
+            if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }
@@ -241,7 +241,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      *
      * @param event the {@linkplain IClassTargetingEvent} to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -260,7 +260,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                         .filter(listener -> listener.getClass().equals(event.getTargetClass()))
                         .forEach(listener -> listener.invoke(event));
             }
-            if (event instanceof ICancelable cancelable) {
+            if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }
@@ -272,7 +272,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * invoked before the highest priority listeners.
      *
      * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -291,7 +291,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                     iterator.previous().invoke(event);
                 }
             }
-            if (event instanceof ICancelable cancelable) {
+            if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }
@@ -307,7 +307,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      *
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -329,7 +329,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                     }
                 }
             }
-            if (event instanceof ICancelable cancelable) {
+            if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }

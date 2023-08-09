@@ -8,10 +8,10 @@ package me.tori.wraith.event.cancelable;
  * to be halted from performing its intended action.
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @see Cancelable
+ * @see CancelableEvent
  * @since <b>1.0.0</b>
  */
-public interface ICancelable {
+public interface ICancelableEvent {
 
     /**
      * Checks whether this event is canceled.

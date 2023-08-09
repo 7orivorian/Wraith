@@ -8,12 +8,12 @@ import java.util.Objects;
  * Represents a staged event implementation that specifies the stage at which the event occurs.
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @see Staged
+ * @see IStagedEvent
  * @see EventStage
  * @since <b>1.0.0</b>
  */
 @SuppressWarnings("ClassCanBeRecord")
-public class StagedEvent implements Staged {
+public class StagedEvent implements IStagedEvent {
 
     private final @NotNull EventStage stage;
 

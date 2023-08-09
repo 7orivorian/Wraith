@@ -1,7 +1,7 @@
 package me.tori.example.simple;
 
 import me.tori.wraith.bus.EventBus;
-import me.tori.wraith.event.cancelable.Cancelable;
+import me.tori.wraith.event.cancelable.CancelableEvent;
 import me.tori.wraith.listener.LambdaEventListener;
 import me.tori.wraith.subscriber.Subscriber;
 
@@ -54,7 +54,7 @@ class SimpleExample {
         }
     }
 
-    private static final class SimpleEvent extends Cancelable {
+    private static final class SimpleEvent extends CancelableEvent {
 
         private final String message;
 

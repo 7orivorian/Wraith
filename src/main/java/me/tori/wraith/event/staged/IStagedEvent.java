@@ -11,7 +11,7 @@ package me.tori.wraith.event.staged;
  * @see StagedEvent
  * @since <b>3.0.0</b>
  */
-public interface Staged {
+public interface IStagedEvent {
 
     /**
      * Gets the stage at which this event is occurring.
