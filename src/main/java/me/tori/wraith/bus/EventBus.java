@@ -1,23 +1,31 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.WraithLogger;
 import me.tori.wraith.event.cancelable.ICancelable;
-import me.tori.wraith.event.targeted.TargetedEvent;
+import me.tori.wraith.event.targeted.IClassTargetingEvent;
 import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
+import me.tori.wraith.task.TaskExecutor;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
- * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}
+ * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
+ *
+ * <p>Manages event subscription, dispatching, and listener registration.
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  * @since <b>1.0.0</b>
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EventBus implements TargetableEventBus, InvertableEventBus {
+
+    @ApiStatus.Internal
+    private static final Logger LOGGER = LogManager.getLogManager().getLogger("Wraith/EventBus");
 
     /**
      * The amount of {@linkplain EventBus} instances that have been created
@@ -30,7 +38,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     private final int id;
     /**
      * Indicates whether this event bus is shutdown.
-     * <p>Shutdown event dispatchers cannot dispatch events, and throw {@link UnsupportedOperationException} when
+     * <p>Shut-down event dispatchers cannot dispatch events, and throw {@link UnsupportedOperationException} when
      * attempting to do so
      */
     private boolean shutdown;
@@ -42,15 +50,31 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * A {@link ConcurrentHashMap} of this event bus' {@link Listener listeners}
      */
     private final ConcurrentHashMap<Class<?>, List<Listener>> listeners;
+    /**
+     * A {@link TaskExecutor} that manages the scheduling and execution of tasks associated with events. It provides
+     * a mechanism to associate event classes with queues of tasks and ensures their orderly execution when the
+     * corresponding events are dispatched.
+     *
+     * @see #scheduleTask(Class, Runnable)
+     */
+    private final TaskExecutor taskExecutor;
 
     /**
-     * Creates a new event bus
+     * Creates a new event bus instance
      */
     public EventBus() {
         this.id = instances++;
         this.shutdown = false;
         this.subscribers = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.listeners = new ConcurrentHashMap<>();
+        this.taskExecutor = new TaskExecutor();
+    }
+
+    /**
+     * @return The amount of {@linkplain EventBus} instances that have been created.
+     */
+    public static int getInstanceCount() {
+        return instances;
     }
 
     /**
@@ -123,17 +147,19 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     /**
      * Dispatches an event to listeners.
      *
-     * @param event the event to be posted
+     * @param event the event to be dispatched
      * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
-    public boolean post(Object event) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus " + id + "!");
+    public boolean dispatch(Object event) {
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
         } else {
+            taskExecutor.onEvent(event);
+
             List<Listener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 listeners.forEach(listener -> listener.invoke(event));
@@ -151,18 +177,20 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
-     * @param event the event to be posted
+     * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
-    public boolean post(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus " + id + "!");
+    public boolean dispatch(Object event, Class<?> type) {
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
         } else {
+            taskExecutor.onEvent(event);
+
             List<Listener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 listeners.stream()
@@ -179,17 +207,19 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     /**
      * Dispatches the given event to the target listener class
      *
-     * @param event the {@linkplain TargetedEvent} to dispatch
+     * @param event the {@linkplain IClassTargetingEvent} to be dispatched
      * @return {@code true} if the given event was {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
-    public boolean dispatchTargeted(TargetedEvent<? extends Listener<?>> event) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus " + id + "!");
+    public boolean dispatchTargeted(IClassTargetingEvent event) {
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
         } else {
+            taskExecutor.onEvent(event);
+
             List<Listener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 listeners.stream()
@@ -204,23 +234,25 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
-     * Dispatches the given {@link TargetedEvent} to the target listener class.
+     * Dispatches the given {@link IClassTargetingEvent} to the target listener class.
      *
      * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
-     * @param event the {@linkplain TargetedEvent} to be posted
+     * @param event the {@linkplain IClassTargetingEvent} to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
-    public boolean dispatchTargeted(TargetedEvent<? extends Listener<?>> event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus " + id + "!");
+    public boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type) {
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
         } else {
+            taskExecutor.onEvent(event);
+
             List<Listener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 listeners.stream()
@@ -239,17 +271,19 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * Dispatches an event to listeners in order of inverse-priority. E.g. the lowest priority listeners will be
      * invoked before the highest priority listeners.
      *
-     * @param event the event to be posted
+     * @param event the event to be dispatched
      * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
-    public boolean postInverted(Object event) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus " + id + "!");
+    public boolean dispatchInverted(Object event) {
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
         } else {
+            taskExecutor.onEvent(event);
+
             List<Listener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
@@ -271,18 +305,20 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
-     * @param event the event to be posted
+     * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event is {@linkplain ICancelable cancelable} and canceled, {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
-    public boolean postInverted(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot post a null event to event bus " + id + "!");
+    public boolean dispatchInverted(Object event, Class<?> type) {
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
         } else {
+            taskExecutor.onEvent(event);
+
             List<Listener> listeners = this.listeners.get(event.getClass());
             if (listeners != null) {
                 ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
@@ -301,13 +337,34 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
-     * Logs a warning message and shuts down this event bus
+     * Schedules a task to be executed when an event of the specified class is dispatched.
+     *
+     * @param target The class of event that should be targeted by the given task.
+     * @param task   The task to be executed.
+     * @see TaskExecutor#schedule(Class, Runnable)
+     */
+    public void scheduleTask(Class<?> target, Runnable task) {
+        taskExecutor.schedule(target, task);
+    }
+
+    /**
+     * Clears all tasks associated with events from the underlying {@link #taskExecutor}, effectively
+     * resetting the task scheduling within this {@link EventBus}.
+     *
+     * @see TaskExecutor#clear()
+     */
+    public void clearTaskExecutor() {
+        taskExecutor.clear();
+    }
+
+    /**
+     * Logs a warning message and shuts down this event bus, preventing future events from being dispatched
      *
      * @see #shutdown
      */
     @Override
     public void shutdown() {
-        WraithLogger.LOGGER.warning("EventBus " + id + " shutting down! Future events will not be posted.");
+        LOGGER.warning("EventBus " + id + " shutting down! Future events will not be dispatched.");
         shutdown = true;
     }
 

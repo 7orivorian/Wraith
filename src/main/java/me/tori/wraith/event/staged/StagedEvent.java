@@ -1,23 +1,41 @@
 package me.tori.wraith.event.staged;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
+ * Represents a staged event implementation that specifies the stage at which the event occurs.
+ *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @see Staged
+ * @see EventStage
  * @since <b>1.0.0</b>
  */
 @SuppressWarnings("ClassCanBeRecord")
 public class StagedEvent implements Staged {
 
-    private final EventStage stage;
+    private final @NotNull EventStage stage;
 
-    public StagedEvent(EventStage stage) {
+    /**
+     * Constructs a {@code StagedEvent} with the specified stage.
+     *
+     * @param stage The {@link EventStage} representing the stage of the event.
+     * @throws NullPointerException If the provided {@code stage} is {@code null}.
+     */
+    public StagedEvent(@NotNull EventStage stage) {
         Objects.requireNonNull(stage);
         this.stage = stage;
     }
 
+    /**
+     * Gets the stage of this staged event.
+     *
+     * @return The {@link EventStage} representing the stage of the event.
+     */
+    @NotNull
     @Override
-    public EventStage stage() {
+    public EventStage getStage() {
         return stage;
     }
 

@@ -1,4 +1,4 @@
-package me.tori.example;
+package me.tori.example.expanded;
 
 import me.tori.wraith.event.cancelable.Cancelable;
 import me.tori.wraith.event.staged.EventStage;
@@ -12,24 +12,24 @@ import me.tori.wraith.event.staged.Staged;
  */
 class ExampleEvent extends Cancelable implements Staged {
 
-    private String string;
+    private String message;
     private final EventStage stage;
 
     public ExampleEvent(EventStage stage) {
         this.stage = stage;
-        this.string = null;
+        this.message = "nothing to say";
     }
 
-    public String getString() {
-        return string;
+    public String getMessage() {
+        return message;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
-    public EventStage stage() {
+    public EventStage getStage() {
         return stage;
     }
 }

@@ -1,8 +1,7 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.event.targeted.TargetedEvent;
 import me.tori.wraith.event.cancelable.ICancelable;
-import me.tori.wraith.listener.Listener;
+import me.tori.wraith.event.targeted.IClassTargetingEvent;
 
 /**
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
@@ -11,17 +10,17 @@ import me.tori.wraith.listener.Listener;
 public interface TargetableEventBus extends IEventBus {
 
     /**
-     * @param event the {@linkplain TargetedEvent} to dispatch
+     * @param event the {@linkplain IClassTargetingEvent} to dispatch
      * @return {@code true} if the given event was {@linkplain ICancelable cancelable} and canceled, {@code false otherwise}
-     * @see EventBus#dispatchTargeted(TargetedEvent)
+     * @see EventBus#dispatchTargeted(IClassTargetingEvent)
      */
-    boolean dispatchTargeted(TargetedEvent<? extends Listener<?>> event);
+    boolean dispatchTargeted(IClassTargetingEvent event);
 
     /**
-     * @param event the {@linkplain TargetedEvent} to dispatch
+     * @param event the {@linkplain IClassTargetingEvent} to dispatch
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event was {@linkplain ICancelable cancelable} and canceled, {@code false otherwise}
-     * @see EventBus#dispatchTargeted(TargetedEvent, Class)
+     * @see EventBus#dispatchTargeted(IClassTargetingEvent, Class)
      */
-    boolean dispatchTargeted(TargetedEvent<? extends Listener<?>> event, Class<?> type);
+    boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type);
 }

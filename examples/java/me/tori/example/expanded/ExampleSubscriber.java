@@ -1,4 +1,4 @@
-package me.tori.example;
+package me.tori.example.expanded;
 
 import me.tori.wraith.event.staged.EventStage;
 import me.tori.wraith.listener.LambdaEventListener;
@@ -16,8 +16,8 @@ class ExampleSubscriber extends Subscriber {
     public ExampleSubscriber() {
         registerListener(
                 new LambdaEventListener<>(ExampleEvent.class, event -> {
-                    if (event.stage() == EventStage.PRE) {
-                        event.setString("Hello world!");
+                    if (event.getStage() == EventStage.PRE) {
+                        event.setMessage("Hello world!");
                     }
                 })
         );

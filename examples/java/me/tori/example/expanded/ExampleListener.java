@@ -1,4 +1,4 @@
-package me.tori.example;
+package me.tori.example.expanded;
 
 import me.tori.wraith.event.staged.EventStage;
 import me.tori.wraith.listener.EventListener;
@@ -18,8 +18,8 @@ class ExampleListener extends EventListener<ExampleEvent> {
 
     @Override
     public void invoke(ExampleEvent event) {
-        if (event.stage() == EventStage.POST) {
-            event.setString("I feel wonderful!");
+        if (event.getStage() == EventStage.POST) {
+            event.setMessage("I feel wonderful!");
         }
     }
 }
