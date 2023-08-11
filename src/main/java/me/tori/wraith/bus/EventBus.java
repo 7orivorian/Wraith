@@ -4,6 +4,7 @@ import me.tori.wraith.event.cancelable.ICancelableEvent;
 import me.tori.wraith.event.targeted.IClassTargetingEvent;
 import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
+import me.tori.wraith.task.ScheduledTask;
 import me.tori.wraith.task.TaskExecutor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -337,14 +338,14 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
-     * Schedules a task to be executed when an event of the specified class is dispatched.
+     * Schedules a task to be executed.
      *
-     * @param target The class of event that should be targeted by the given task.
-     * @param task   The task to be executed.
-     * @see TaskExecutor#schedule(Class, Runnable)
+     * @param task The task to be executed.
+     * @see TaskExecutor#schedule(ScheduledTask)
+     * @see ScheduledTask
      */
-    public void scheduleTask(Class<?> target, Runnable task) {
-        taskExecutor.schedule(target, task);
+    public void scheduleTask(ScheduledTask task) {
+        taskExecutor.schedule(task);
     }
 
     /**

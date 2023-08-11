@@ -1,22 +1,23 @@
 package me.tori.wraith.task;
 
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * A simple task executor that allows scheduling and execution of tasks based on events.
  *
- * <p> Each task submitted to the executor will be executed once the corresponding targeted
- * event is dispatched. After execution, the task is removed and will not execute on
- * subsequent event dispatches unless explicitly resubmitted to the TaskExecutor.
+ * <p> Each task submitted to the executor will be executed once its delay has elapsed
+ * and the corresponding targeted event is dispatched. After execution, the task is
+ * removed and will not execute on subsequent event dispatches unless explicitly resubmitted
+ * to the TaskExecutor.
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @see ScheduledTask
  * @since <b>3.0.0</b>
  */
 public class TaskExecutor {
 
-    private final ConcurrentHashMap<Class<?>, Queue<Runnable>> tasks;
+    private final ConcurrentHashMap<Class<?>, ArrayList<ScheduledTask>> tasks;
 
     /**
      * Constructs a new TaskExecutor with an empty task mapping.
@@ -32,14 +33,18 @@ public class TaskExecutor {
      * @return {@code true} if any tasks were executed, {@code false} otherwise.
      */
     public boolean onEvent(Object event) {
-        Queue<Runnable> queue = tasks.get(event.getClass());
+        ArrayList<ScheduledTask> queue = tasks.get(event.getClass());
         if (queue != null) {
             boolean executed = false;
-            while (!queue.isEmpty()) {
-                Runnable task = queue.poll();
-                task.run();
-                executed = true;
+            for (int i = 0; i < queue.size(); ) {
+                ScheduledTask task = queue.get(i);
+                if (task.decrementDelay() < 0) {
+                    task.run();
+                    executed = true;
+                }
+                i++;
             }
+            queue.removeIf(task -> task.getDelay() < 0);
             return executed;
         }
         return false;
@@ -48,11 +53,11 @@ public class TaskExecutor {
     /**
      * Schedules a task to be executed when an event of the specified class is dispatched.
      *
-     * @param target The class of event that should be targeted by the given task.
-     * @param task   The task to be executed.
+     * @param task The task to be executed.
+     * @see ScheduledTask
      */
-    public void schedule(Class<?> target, Runnable task) {
-        tasks.computeIfAbsent(target, clazz -> new ConcurrentLinkedQueue<>()).add(task);
+    public void schedule(ScheduledTask task) {
+        tasks.computeIfAbsent(task.getTarget(), clazz -> new ArrayList<>()).add(task);
     }
 
     /**
