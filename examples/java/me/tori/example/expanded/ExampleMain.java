@@ -1,14 +1,16 @@
-package me.tori.example;
+package me.tori.example.expanded;
 
 import me.tori.wraith.bus.EventBus;
 import me.tori.wraith.bus.IEventBus;
-import me.tori.wraith.event.EventStage;
+import me.tori.wraith.event.staged.EventStage;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>May 04, 2023</b>
+ * Example program
+ * <p>Last updated for version <b>3.0.0</b>
+ *
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  */
-public class ExampleMain {
+class ExampleMain {
 
     private static final IEventBus EVENT_BUS = new EventBus();
 
@@ -19,18 +21,18 @@ public class ExampleMain {
 
         ExampleEvent event1 = new ExampleEvent(EventStage.PRE);
 
-        EVENT_BUS.post(event1);
+        EVENT_BUS.dispatch(event1);
 
         if (!event1.isCanceled()) {
-            System.out.println(event1.getString());
+            System.out.println(event1.getMessage());
         }
 
         ExampleEvent event2 = new ExampleEvent(EventStage.POST);
 
-        EVENT_BUS.post(event2);
+        EVENT_BUS.dispatch(event2);
 
         if (!event2.isCanceled()) {
-            System.out.println(event2.getString());
+            System.out.println(event2.getMessage());
         }
     }
 }

@@ -1,33 +1,66 @@
 package me.tori.wraith.bus;
 
-import me.tori.wraith.listener.IListener;
+import me.tori.wraith.event.cancelable.ICancelableEvent;
+import me.tori.wraith.listener.EventListener;
+import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
 
 /**
- * @author <b>7orivorian</b>
- * @since <b>December 12, 2021</b>
+ * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @since <b>1.0.0</b>
  */
 public interface IEventBus {
 
+    /**
+     * Default priority that used when no other priority is specified
+     *
+     * @see EventListener#EventListener(Class)
+     * @see EventListener#EventListener(Class, Class)
+     */
     int DEFAULT_PRIORITY = 0;
 
+    /**
+     * @param subscriber the {@link ISubscriber} to be subscribed
+     * @see #register(Listener)
+     */
     void subscribe(ISubscriber subscriber);
 
+    /**
+     * @param subscriber the {@link ISubscriber} to be unsubscribed
+     * @see #unregister(Listener)
+     */
     void unsubscribe(ISubscriber subscriber);
 
-    void register(IListener<?> listener);
+    /**
+     * @param listener the {@link Listener} to be registered
+     */
+    void register(Listener<?> listener);
 
-    void unregister(IListener<?> listener);
+    /**
+     * @param listener the {@link Listener} to be unregistered
+     */
+    void unregister(Listener<?> listener);
 
-    boolean post(Object event);
+    /**
+     * @param event the event to be dispatched
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     */
+    boolean dispatch(Object event);
 
-    boolean post(Object event, Class<?> type);
+    /**
+     * @param event the event to be dispatched
+     * @param type  the type of listener to invoke (can be {@code null})
+     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     */
+    boolean dispatch(Object event, Class<?> type);
 
-    boolean postInverted(Object event);
-
-    boolean postInverted(Object event, Class<?> type);
-
+    /**
+     * Shuts down this event bus, preventing future events from being dispatched
+     */
     void shutdown();
 
+    /**
+     * @return {@code true} if this event bus is shut down, {@code false} otherwise
+     */
     boolean isShutdown();
 }

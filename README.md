@@ -31,7 +31,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 <dependency>
     <groupId>com.github.7orivorian</groupId>
     <artifactId>Wraith</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -51,13 +51,13 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:2.0.1'
+    implementation 'com.github.7orivorian:Wraith:3.0.0'
 }
 ```
 
 ### Other
 
-Use a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/2.0.1)
+Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/3.0.0)
 
 # Building
 
@@ -68,29 +68,32 @@ Packaged file can be found in the `target/` directory.
 
 # Usage
 
+While the code itself is thoroughly documented, here's a simple guide to help you get started with the latest features.
+
 ### Subscribers
 
-A subscriber can be defined by
+To define a subscriber, you have multiple options:
 
-* Extending the `Subscriber` class
+Extending the Subscriber class:
 
 ```java
 public class ExampleSubscriber extends Subscriber {
+// ...
 }
 ```
 
-* Implementing the `ISubscriber` interface
+Implementing the ISubscriber interface:
 
 ```java
 public class ExampleSubscriber implements ISubscriber {
+// ...
 }
 ```
 
-The subscriber must then be subscribed to an event bus, which can be done within the subsciber itself.
+Once you've defined your subscriber, you can subscribe it to an event bus directly within the subscriber's constructor:
 
 ```java
 public class ExampleSubscriber extends Subscriber {
-
     private static final IEventBus EVENT_BUS = new EventBus();
 
     public ExampleSubscriber() {
@@ -99,74 +102,61 @@ public class ExampleSubscriber extends Subscriber {
 }
 ```
 
-This can also be done externally.
+Alternatively, you can subscribe a subscriber externally:
 
 ```java
 public class Example {
-
     private static final IEventBus EVENT_BUS = new EventBus();
 
     public static void main(String[] args) {
         EVENT_BUS.subscribe(new ExampleSubscriber());
     }
 }
-
-// OR
-
-public class Example {
-
-    private static final IEventBus EVENT_BUS = new EventBus();
-
-    private ExampleSubscriber exampleSubscriber = new ExampleSubscriber();
-
-    public void sub() {
-        EVENT_BUS.subscribe(exampleSubscriber);
-    }
-}
 ```
 
-### Defining an event
+### Defining Events
 
-Any class can be passed as an event.
+Any class can be used as an event. For instance:
 
 ```java
 public class ExampleEvent {
+    private String message;
 
-    private String string;
-
-    public ExampleEvent(String string) {
-        this.string = string;
+    public ExampleEvent(String message) {
+        this.message = message;
     }
 
-    public String getString() {
-        return string;
+    public String getMessage() {
+        return message;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
 ```
 
-A cancelable event can be defined by
+To create a cancelable event, you can:
 
-* Extending the `Cancelable` class
+Extend the Cancelable class:
 
 ```java
 public class CancelableEvent extends Cancelable {
+// ...
 }
 ```
 
-* Implementing the `ICancelable` interface
+Implement the ICancelable interface:
 
 ```java
 public class CancelableEvent implements ICancelable {
+// ...
 }
 ```
 
 ### Listeners
 
-Class event listener.
+For class event listeners, you can define your listeners as follows:
 
 ```java
 public class ExampleListener extends EventListener<ExampleEvent> {
@@ -178,11 +168,13 @@ public class ExampleListener extends EventListener<ExampleEvent> {
     @Override
     public void invoke(ExampleEvent event) {
         if (event.getStage() == EventStage.POST) {
-            event.setString("I feel wonderful!");
+            event.setMessage("I feel wonderful!");
         }
     }
 }
+```
 
+```java
 public class ExampleSubscriber extends Subscriber {
 
     public ExampleSubscriber() {
@@ -192,7 +184,7 @@ public class ExampleSubscriber extends Subscriber {
 }
 ```
 
-Lambda event listener.
+Lambda event listeners provide a more concise way to achieve the same functionality:
 
 ```java
 public class ExampleSubscriber extends Subscriber {
@@ -202,7 +194,7 @@ public class ExampleSubscriber extends Subscriber {
         registerListener(
                 new LambdaEventListener<>(ExampleEvent.class, event -> {
                     if (event.getStage() == EventStage.PRE) {
-                        event.setString("Hello world!");
+                        event.setMessage("Hello world!");
                     }
                 })
         );
@@ -210,13 +202,13 @@ public class ExampleSubscriber extends Subscriber {
 }
 ```
 
-### Posting events
+### Dispatching Events
 
-To post an event to an event bus, call one of the "post" methods defined in `IEventBus`, passing your event as a
-parameter.
+To dispatch an event to an event bus, simply call one of the `dispatch` methods defined in any `IEventBus`
+implementation, passing your event as a parameter:
 
 ```java
-import me.tori.wraith.event.EventStage;
+import me.tori.wraith.event.staged.EventStage;
 
 public class Example {
 
@@ -224,18 +216,18 @@ public class Example {
 
     public static void main(String[] args) {
 
-        ExampleEvent event = new ExampleEvent(EventStage.PRE);
+        ExampleEvent event = new ExampleEvent("Initial message");
 
-        EVENT_BUS.post(event);
+        EVENT_BUS.dispatch(event);
 
         if (!event.isCanceled()) {
-            System.out.println(event.getString());
+            System.out.println(event.getMessage());
         }
     }
 }
 ```
 
-[Click here](src/example/java/me/tori/example) to view an example program with a simple Wraith implementation.
+Feel free to explore the [example folder](examples/java/me/tori/example) for more Wraith implementations.
 
 # Contributing
 
@@ -245,9 +237,9 @@ Contributions are welcome! Feel free to open a pull request.
 
 * Utilize similar [formatting](.editorconfig) and practises to the rest of the codebase
 * Do not include workspace files (such as an `.idea/` or `target/` directory) in your pull request
+* Include unit tests for any features you add
 
-
-### How to submit a contribution
+### How to contribute
 
 To make a contribution, follow these steps:
 
@@ -258,3 +250,10 @@ To make a contribution, follow these steps:
 # License
 
 [Wraith is licensed under MIT](src/main/resources/LICENSE.md)
+
+### MIT License Summary:
+
+The MIT License is a permissive open-source license that allows you to use, modify, and distribute the software for both
+personal and commercial purposes. You are not required to share your changes, but you must include the original
+copyright notice and disclaimer in your distribution. The software is provided "as is," without any warranties or
+conditions.
