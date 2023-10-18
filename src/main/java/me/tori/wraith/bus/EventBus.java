@@ -375,6 +375,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * @return the {@code id} of this event bus
+     * @author 7orivorian
+     * @since 3.1.0
      */
     public int getId() {
         return id;

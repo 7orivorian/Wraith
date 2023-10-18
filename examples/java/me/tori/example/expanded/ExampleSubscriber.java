@@ -6,7 +6,7 @@ import me.tori.wraith.subscriber.Subscriber;
 
 /**
  * Example subscriber.
- * <p>Last updated for version <b>3.0.0</b>
+ * <p>Last updated for version <b>3.1.0</b>
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  * @since <b>1.0.0</b>

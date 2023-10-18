@@ -5,7 +5,7 @@ import me.tori.wraith.listener.EventListener;
 
 /**
  * Example listener.
- * <p>Last updated for version <b>3.0.0</b>
+ * <p>Last updated for version <b>3.1.0</b>
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  * @since <b>1.0.0</b>
