@@ -381,6 +381,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
+     * @return the {@code id} of this event bus
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
      * Checks if this event bus is equal to another object.
      * <p>If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
      *
