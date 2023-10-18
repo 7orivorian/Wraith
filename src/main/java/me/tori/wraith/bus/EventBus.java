@@ -6,13 +6,10 @@ import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
 import me.tori.wraith.task.ScheduledTask;
 import me.tori.wraith.task.TaskExecutor;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
@@ -24,9 +21,6 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EventBus implements TargetableEventBus, InvertableEventBus {
-
-    @ApiStatus.Internal
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger("Wraith/EventBus");
 
     /**
      * The amount of {@linkplain EventBus} instances that have been created
@@ -366,7 +360,6 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      */
     @Override
     public void shutdown() {
-        LOGGER.warning("EventBus " + id + " shutting down! Future events will not be dispatched.");
         shutdown = true;
     }
 
