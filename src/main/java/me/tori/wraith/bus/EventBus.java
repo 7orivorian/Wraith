@@ -56,7 +56,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * a mechanism to associate event classes with queues of tasks and ensures their orderly execution when the
      * corresponding events are dispatched.
      *
-     * @see #scheduleTask(Class, Runnable)
+     * @see #scheduleTask(ScheduledTask)
      */
     private final TaskExecutor taskExecutor;
 
@@ -359,9 +359,10 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
-     * Logs a warning message and shuts down this event bus, preventing future events from being dispatched
+     * Logs a warning message and shuts down this event bus, preventing future events from being dispatched.
      *
-     * @see #shutdown
+     * @implNote Shut-down event dispatchers cannot dispatch events, and throw {@link UnsupportedOperationException}
+     * when attempting to do so.
      */
     @Override
     public void shutdown() {
@@ -371,7 +372,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * @return {@code true} if this event bus is shut down
-     * @see #shutdown
+     * @implNote Shut-down event dispatchers cannot dispatch events, and throw {@link UnsupportedOperationException}
+     * when attempting to do so.
      */
     @Override
     public boolean isShutdown() {
@@ -380,7 +382,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * Checks if this event bus is equal to another object.
-     * <p>If the given object is an event bus, it is only considered equal if {@code this.id == that.id}
+     * <p>If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
      *
      * @param o the object to compare with
      * @return {@code true} if the object is equal to this event bus, {@code false} otherwise
