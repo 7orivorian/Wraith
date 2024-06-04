@@ -71,6 +71,8 @@ Packaged file can be found in the `target/` directory.
 While the code itself is thoroughly documented, here's a simple guide to help you get started with the latest features.
 
 ### Subscribers
+<details>
+<summary><i>Details...</i></summary>
 
 To define a subscriber, you have multiple options:
 
@@ -113,8 +115,11 @@ public class Example {
     }
 }
 ```
+</details>
 
 ### Defining Events
+<details>
+<summary><i>Details...</i></summary>
 
 Any class can be used as an event. For instance:
 
@@ -153,8 +158,11 @@ public class CancelableEvent implements ICancelable {
 // ...
 }
 ```
+</details>
 
 ### Listeners
+<details>
+<summary><i>Details...</i></summary>
 
 For class event listeners, you can define your listeners as follows:
 
@@ -201,8 +209,11 @@ public class ExampleSubscriber extends Subscriber {
     }
 }
 ```
+</details>
 
 ### Dispatching Events
+<details>
+<summary><i>Details...</i></summary>
 
 To dispatch an event to an event bus, simply call one of the `dispatch` methods defined in any `IEventBus`
 implementation, passing your event as a parameter:
@@ -226,6 +237,7 @@ public class Example {
     }
 }
 ```
+</details>
 
 Feel free to explore the [example folder](examples/java/me/tori/example) for more Wraith implementations.
 
