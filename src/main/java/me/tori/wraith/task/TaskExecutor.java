@@ -34,7 +34,7 @@ public class TaskExecutor {
      */
     public boolean onEvent(Object event) {
         ArrayList<ScheduledTask> queue = tasks.get(event.getClass());
-        if (queue != null) {
+        if ((queue != null) && !queue.isEmpty()) {
             boolean executed = false;
             for (int i = 0; i < queue.size(); ) {
                 ScheduledTask task = queue.get(i);
