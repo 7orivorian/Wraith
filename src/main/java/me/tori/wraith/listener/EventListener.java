@@ -18,6 +18,8 @@ import java.util.Objects;
  */
 public abstract class EventListener<T> implements Listener<T> {
 
+    protected int persists;
+    protected final boolean persistent;
     protected final int priority;
     protected final @Nullable Class<?> type;
     protected final @NotNull Class<? super T> target;
@@ -63,10 +65,25 @@ public abstract class EventListener<T> implements Listener<T> {
      * @throws NullPointerException if {@code target} is {@code null}.
      */
     public EventListener(@NotNull Class<? super T> target, int priority, @Nullable Class<?> type) {
+        this(target, type, priority, -1);
+    }
+
+    /**
+     * Constructs an event listener with a specified priority and type.
+     *
+     * @param target   The target class that this listener is designed to handle events for.
+     * @param type     The type of events that this listener can handle.
+     * @param priority The priority level of this listener for event handling.
+     * @param persists How many events this listener should handle before being killed.
+     * @throws NullPointerException if {@code target} is {@code null}.
+     */
+    public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type, int priority, int persists) {
         Objects.requireNonNull(target);
         this.priority = priority;
         this.target = target;
         this.type = type;
+        this.persists = persists;
+        this.persistent = persists <= 0;
     }
 
     /**
@@ -99,6 +116,32 @@ public abstract class EventListener<T> implements Listener<T> {
     @Override
     public Class<? super T> getTarget() {
         return target;
+    }
+
+    /**
+     * Determines whether this listener should persist after being invoked.
+     * The listener persists if it is inherently persistent (as determined by {@link #isPersistent()})
+     * or if the {@linkplain EventListener#persists internal persistence counter} is greater than zero
+     * after being decremented.
+     *
+     * @return {@code true} if the listener should persist, {@code false} otherwise
+     * @since 3.1.0
+     */
+    @Override
+    public boolean shouldPersist() {
+        return isPersistent() || ((--persists) > 0);
+    }
+
+    /**
+     * Indicates whether this listener is inherently persistent.
+     * A listener is considered inherently persistent if the {@linkplain #persistent} flag is set to {@code true}.
+     *
+     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
+     * @since 3.1.0
+     */
+    @Override
+    public boolean isPersistent() {
+        return persistent;
     }
 
     @Override

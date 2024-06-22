@@ -1,5 +1,11 @@
 package me.tori.wraith.listener;
 
+import me.tori.wraith.bus.EventBus;
+
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 /**
  * An interface representing an event listener with priority, type, and target class information.
  *
@@ -31,4 +37,25 @@ public interface Listener<T> extends Invokable<T> {
      * @return The target class that this listener is designed to handle events for.
      */
     Class<? super T> getTarget();
+
+    /**
+     * Determines whether this listener should persist after being invoked.
+     *
+     * @return {@code true} if the listener should persist, {@code false} otherwise
+     * @see EventBus#forEachListener(List, Predicate, Consumer, boolean)
+     * @since 3.1.0
+     */
+    default boolean shouldPersist() {
+        return isPersistent();
+    }
+
+    /**
+     * Indicates whether this listener is inherently persistent.
+     *
+     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
+     * @since 3.1.0
+     */
+    default boolean isPersistent() {
+        return true;
+    }
 }

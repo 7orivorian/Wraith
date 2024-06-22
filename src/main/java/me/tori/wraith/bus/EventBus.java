@@ -10,6 +10,8 @@ import me.tori.wraith.task.TaskExecutor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
@@ -83,8 +85,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     @Override
     public void subscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus " + id + "!");
-        for (Listener<?> listener : subscriber.getListeners()) {
-            register(listener);
+        Collection<Listener<?>> listeners = subscriber.getListeners();
+        if (listeners.size() == 1) {
+            register(listeners.iterator().next());
+        } else {
+            for (Listener<?> listener : listeners) {
+                register(listener);
+            }
         }
         subscribers.add(subscriber);
     }
@@ -100,8 +107,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     @Override
     public void unsubscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus " + id + "!");
-        for (Listener<?> listener : subscriber.getListeners()) {
-            unregister(listener);
+        Collection<Listener<?>> listeners = subscriber.getListeners();
+        if (listeners.size() == 1) {
+            unregister(listeners.iterator().next());
+        } else {
+            for (Listener<?> listener : listeners) {
+                unregister(listener);
+            }
         }
         subscribers.remove(subscriber);
     }
@@ -155,10 +167,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.forEach(listener -> listener.invoke(event));
-            }
+            forEachListener(
+                    this.listeners.get(event.getClass()),
+                    listener -> true,
+                    listener -> listener.invoke(event),
+                    false
+            );
+
             if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
@@ -186,12 +201,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.stream()
-                        .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
-                        .forEach(listener -> listener.invoke(event));
-            }
+            forEachListener(
+                    this.listeners.get(event.getClass()),
+                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    listener -> listener.invoke(event),
+                    false
+            );
+
             if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
@@ -215,12 +231,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.stream()
-                        .filter(listener -> listener.getClass().equals(event.getTargetClass()))
-                        .forEach(listener -> listener.invoke(event));
-            }
+            forEachListener(
+                    this.listeners.get(event.getClass()),
+                    listener -> listener.getClass().equals(event.getTargetClass()),
+                    listener -> listener.invoke(event),
+                    false
+            );
+
             if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
@@ -248,13 +265,14 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.stream()
-                        .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
-                        .filter(listener -> listener.getClass().equals(event.getTargetClass()))
-                        .forEach(listener -> listener.invoke(event));
-            }
+            forEachListener(
+                    this.listeners.get(event.getClass()),
+                    listener -> ((type == null) || (listener.getType() == null) || (listener.getType() == type))
+                            && listener.getClass().equals(event.getTargetClass()),
+                    listener -> listener.invoke(event),
+                    false
+            );
+
             if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
@@ -279,13 +297,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
-                while (iterator.hasPrevious()) {
-                    iterator.previous().invoke(event);
-                }
-            }
+            forEachListener(
+                    this.listeners.get(event.getClass()),
+                    listener -> true,
+                    listener -> listener.invoke(event),
+                    true
+            );
+
             if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
@@ -314,21 +332,61 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
-                while (iterator.hasPrevious()) {
-                    Listener listener = iterator.previous();
-                    if ((listener.getType() == null) || (listener.getType() == type)) {
-                        listener.invoke(event);
-                    }
-                }
-            }
+            forEachListener(
+                    this.listeners.get(event.getClass()),
+                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    listener -> listener.invoke(event),
+                    true
+            );
+
             if (event instanceof ICancelableEvent cancelable) {
                 return cancelable.isCanceled();
             }
         }
         return false;
+    }
+
+    /**
+     * Applies a given action to each {@linkplain Listener} in a list that matches a specified predicate.
+     * Listeners are processed either in normal order or in reverse order based on the
+     * {@code invertPriority} flag.
+     * Listeners that should not persist are removed from the list after the action is applied.
+     *
+     * @param listeners      the list of listeners to be processed
+     * @param predicate      the condition that each listener must satisfy to have the action applied
+     * @param action         the action to be performed on each listener that satisfies the predicate
+     * @param invertPriority if {@code true}, listeners are processed in reverse order; otherwise,
+     *                       they are processed in normal order
+     * @since 3.1.0
+     */
+    private void forEachListener(List<Listener> listeners, Predicate<Listener> predicate, Consumer<Listener> action, boolean invertPriority) {
+        if (listeners != null && !listeners.isEmpty()) {
+            if (invertPriority) {
+                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
+                while (iterator.hasPrevious()) {
+                    Listener listener = iterator.previous();
+                    if (!predicate.test(listener)) {
+                        continue;
+                    }
+                    action.accept(listener);
+                    if (!listener.shouldPersist()) {
+                        listeners.remove(listener);
+                    }
+                }
+            } else {
+                Iterator<Listener> iterator = listeners.listIterator(0);
+                while (iterator.hasNext()) {
+                    Listener listener = iterator.next();
+                    if (!predicate.test(listener)) {
+                        continue;
+                    }
+                    action.accept(listener);
+                    if (!listener.shouldPersist()) {
+                        listeners.remove(listener);
+                    }
+                }
+            }
+        }
     }
 
     /**
