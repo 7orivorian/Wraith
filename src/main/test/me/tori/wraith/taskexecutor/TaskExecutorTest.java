@@ -42,28 +42,42 @@ public class TaskExecutorTest {
     @Test
     public void testDelayedSingleExecution() {
         TaskExecutor executor = new TaskExecutor();
-        executor.schedule(new ScheduledTask(TargetEvent.class, 1) { // Skip 1 event
+
+        // Schedule a task to execute after skipping 1 event
+        executor.schedule(new ScheduledTask(TargetEvent.class, 1) {
             @Override
             public void run() {
 
             }
         });
 
-        Assertions.assertFalse(executor.onEvent(new TargetEvent()));
-        Assertions.assertTrue(executor.onEvent(new TargetEvent()));
+        // This event should be skipped
         Assertions.assertFalse(executor.onEvent(new TargetEvent()));
 
-        executor.schedule(new ScheduledTask(TargetEvent.class, 3) { // Skip 3 events
+        // Tasks should be executed on this event
+        Assertions.assertTrue(executor.onEvent(new TargetEvent()));
+
+        // This event should be skipped
+        Assertions.assertFalse(executor.onEvent(new TargetEvent()));
+
+
+        // Schedule a task to execute after skipping 3 events
+        executor.schedule(new ScheduledTask(TargetEvent.class, 3) {
             @Override
             public void run() {
 
             }
         });
 
+        // These events should be skipped
         Assertions.assertFalse(executor.onEvent(new TargetEvent()));
         Assertions.assertFalse(executor.onEvent(new TargetEvent()));
         Assertions.assertFalse(executor.onEvent(new TargetEvent()));
+
+        // Tasks should be executed on this event
         Assertions.assertTrue(executor.onEvent(new TargetEvent()));
+
+        // This event should be skipped
         Assertions.assertFalse(executor.onEvent(new TargetEvent()));
     }
 
