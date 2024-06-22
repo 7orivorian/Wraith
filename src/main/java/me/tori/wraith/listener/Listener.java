@@ -45,6 +45,7 @@ public interface Listener<T> extends Invokable<T> {
      * @see EventBus#forEachListener(List, Predicate, Consumer, boolean)
      * @since 3.1.0
      */
+    @SuppressWarnings("JavadocReference")
     default boolean shouldPersist() {
         return isPersistent();
     }
