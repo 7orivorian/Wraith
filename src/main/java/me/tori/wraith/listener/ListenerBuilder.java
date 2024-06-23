@@ -28,7 +28,7 @@ import java.util.Objects;
  * @param <T> the type of event this listener handles
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see EventListener
- * @since 3.1.0
+ * @since 3.2.0
  */
 public class ListenerBuilder<T> {
 

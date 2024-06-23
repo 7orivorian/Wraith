@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
- * @since 3.1.0
+ * @since 3.2.0
  */
 public class PersistencyTest {
 

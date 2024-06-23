@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
- * @since 3.0.0
+ * @since 3.2.0
  */
 public class MyBenchmark {
 

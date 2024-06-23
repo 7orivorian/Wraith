@@ -27,7 +27,7 @@ public interface Listener<T> extends Invokable<T> {
     /**
      * Gets the type of events that this listener can handle.
      *
-     * @return The type of events that this listener can handle, or null if no type is specified.
+     * @return The type of events that this listener can handle, or {@code null} if no type is specified.
      */
     Class<?> getType();
 
@@ -43,7 +43,7 @@ public interface Listener<T> extends Invokable<T> {
      *
      * @return {@code true} if the listener should persist, {@code false} otherwise
      * @see EventBus#forEachListener(List, Predicate, Consumer, boolean)
-     * @since 3.1.0
+     * @since 3.2.0
      */
     @SuppressWarnings("JavadocReference")
     default boolean shouldPersist() {
@@ -54,7 +54,7 @@ public interface Listener<T> extends Invokable<T> {
      * Indicates whether this listener is inherently persistent.
      *
      * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
-     * @since 3.1.0
+     * @since 3.2.0
      */
     default boolean isPersistent() {
         return true;

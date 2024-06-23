@@ -357,7 +357,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * @param action         the action to be performed on each listener that satisfies the predicate
      * @param invertPriority if {@code true}, listeners are processed in reverse order; otherwise,
      *                       they are processed in normal order
-     * @since 3.1.0
+     * @since 3.2.0
      */
     private void forEachListener(List<Listener> listeners, Predicate<Listener> predicate, Consumer<Listener> action, boolean invertPriority) {
         if (listeners != null && !listeners.isEmpty()) {

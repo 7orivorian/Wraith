@@ -76,6 +76,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * @param priority The priority level of this listener for event handling.
      * @param persists How many events this listener should handle before being killed.
      * @throws NullPointerException if {@code target} is {@code null}.
+     * @since 3.2.0
      */
     public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type, int priority, int persists) {
         Objects.requireNonNull(target);
@@ -125,7 +126,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * after being decremented.
      *
      * @return {@code true} if the listener should persist, {@code false} otherwise
-     * @since 3.1.0
+     * @since 3.2.0
      */
     @Override
     public boolean shouldPersist() {
@@ -137,7 +138,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * A listener is considered inherently persistent if the {@linkplain #persistent} flag is set to {@code true}.
      *
      * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
-     * @since 3.1.0
+     * @since 3.2.0
      */
     @Override
     public boolean isPersistent() {
