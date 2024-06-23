@@ -6,6 +6,7 @@ import me.tori.wraith.subscriber.Subscriber;
 import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.*;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MyBenchmark {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Main.main(args);
     }
 
