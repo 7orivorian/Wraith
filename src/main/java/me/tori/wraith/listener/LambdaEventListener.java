@@ -74,6 +74,22 @@ public class LambdaEventListener<E> extends EventListener<E> {
     }
 
     /**
+     * Constructs a new {@code LambdaEventListener} with the given target class, priority, type, and invokable action.
+     *
+     * @param target    The target class of the event.
+     * @param type      The type of the event.
+     * @param priority  The priority of this listener.
+     * @param persists How many events this listener should handle before being killed.
+     * @param invokable The invokable action to be executed when the event is dispatched.
+     * @throws NullPointerException if {@code target} is {@code null}.
+     */
+    public LambdaEventListener(@NotNull Class<? super E> target, @Nullable Class<?> type, int priority, int persists, @NotNull Invokable<E> invokable) {
+        super(target, type, priority, persists);
+        Objects.requireNonNull(invokable);
+        this.invokable = invokable;
+    }
+
+    /**
      * Invokes the wrapped invokable action with the provided event.
      *
      * @param event The event to be handled.
