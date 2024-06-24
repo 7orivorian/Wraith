@@ -27,6 +27,10 @@ import me.tori.wraith.listener.LambdaEventListener;
 import me.tori.wraith.subscriber.Subscriber;
 
 /**
+ * A simple example of listener persistence.
+ * <p>
+ * Last updated for version <b>3.1.0</b>
+ *
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @since 3.2.0
  */

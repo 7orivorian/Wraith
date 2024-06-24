@@ -28,7 +28,8 @@ import me.tori.wraith.subscriber.Subscriber;
 
 /**
  * One-class example
- * <p>Last updated for version <b>3.1.0</b>
+ * <p>
+ * Last updated for version <b>3.1.0</b>
  *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  */
