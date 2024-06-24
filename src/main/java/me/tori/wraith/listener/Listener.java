@@ -47,7 +47,7 @@ public interface Listener<T> extends Invokable<T> {
      */
     @SuppressWarnings("JavadocReference")
     default boolean shouldPersist() {
-        return isPersistent();
+        return hasIndefinitePersistence();
     }
 
     /**
@@ -56,7 +56,7 @@ public interface Listener<T> extends Invokable<T> {
      * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
      * @since 3.2.0
      */
-    default boolean isPersistent() {
+    default boolean hasIndefinitePersistence() {
         return true;
     }
 }

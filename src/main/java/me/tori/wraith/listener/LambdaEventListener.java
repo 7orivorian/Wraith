@@ -79,7 +79,8 @@ public class LambdaEventListener<E> extends EventListener<E> {
      * @param target    The target class of the event.
      * @param type      The type of the event.
      * @param priority  The priority of this listener.
-     * @param persists How many events this listener should handle before being killed.
+     * @param persists  How many events this listener should handle before being killed.
+     *                  A value {@code <= 0} will flag this listener to {@linkplain #indefinitePersistence persist indefinitely}.
      * @param invokable The invokable action to be executed when the event is dispatched.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
@@ -104,12 +105,13 @@ public class LambdaEventListener<E> extends EventListener<E> {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if ((o == null) || (getClass() != o.getClass())) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
+
         LambdaEventListener<?> that = (LambdaEventListener<?>) o;
         return invokable.equals(that.invokable);
     }
@@ -117,17 +119,19 @@ public class LambdaEventListener<E> extends EventListener<E> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + invokable.hashCode();
+        result = (31 * result) + invokable.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         return "LambdaEventListener{" +
-                "invokable=" + invokable +
-                ", priority=" + priority +
+                "target=" + target +
                 ", type=" + type +
-                ", target=" + target +
+                ", priority=" + priority +
+                ", indefinitePersistence=" + indefinitePersistence +
+                ", persists=" + persists +
+                ", invokable=" + invokable +
                 '}';
     }
 }

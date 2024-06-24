@@ -18,11 +18,11 @@ import java.util.Objects;
  */
 public abstract class EventListener<T> implements Listener<T> {
 
-    protected int persists;
-    protected final boolean persistent;
-    protected final int priority;
-    protected final @Nullable Class<?> type;
     protected final @NotNull Class<? super T> target;
+    protected final @Nullable Class<?> type;
+    protected final int priority;
+    protected final boolean indefinitePersistence;
+    protected int persists;
 
     /**
      * Constructs an event listener with default priority and no specified type.
@@ -49,7 +49,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * Constructs an event listener with default priority and a specified type.
      *
      * @param target The target class that this listener is designed to handle events for.
-     * @param type   The type of events that this listener can handle.
+     * @param type   The type of events that this listener can handle. Can be {@code null}.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
     public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type) {
@@ -61,20 +61,21 @@ public abstract class EventListener<T> implements Listener<T> {
      *
      * @param target   The target class that this listener is designed to handle events for.
      * @param priority The priority level of this listener for event handling.
-     * @param type     The type of events that this listener can handle.
+     * @param type     The type of events that this listener can handle. Can be {@code null}.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
     public EventListener(@NotNull Class<? super T> target, int priority, @Nullable Class<?> type) {
-        this(target, type, priority, -1);
+        this(target, type, priority, 0);
     }
 
     /**
      * Constructs an event listener with a specified priority and type.
      *
      * @param target   The target class that this listener is designed to handle events for.
-     * @param type     The type of events that this listener can handle.
+     * @param type     The type of events that this listener can handle. Can be {@code null}.
      * @param priority The priority level of this listener for event handling.
      * @param persists How many events this listener should handle before being killed.
+     *                 A value {@code <= 0} will flag this listener to {@linkplain #indefinitePersistence persist indefinitely}.
      * @throws NullPointerException if {@code target} is {@code null}.
      * @since 3.2.0
      */
@@ -84,7 +85,7 @@ public abstract class EventListener<T> implements Listener<T> {
         this.target = target;
         this.type = type;
         this.persists = persists;
-        this.persistent = persists <= 0;
+        this.indefinitePersistence = persists <= 0;
     }
 
     /**
@@ -121,7 +122,7 @@ public abstract class EventListener<T> implements Listener<T> {
 
     /**
      * Determines whether this listener should persist after being invoked.
-     * The listener persists if it is inherently persistent (as determined by {@link #isPersistent()})
+     * The listener persists if it is inherently persistent (as determined by {@link #hasIndefinitePersistence()})
      * or if the {@linkplain EventListener#persists internal persistence counter} is greater than zero
      * after being decremented.
      *
@@ -130,19 +131,19 @@ public abstract class EventListener<T> implements Listener<T> {
      */
     @Override
     public boolean shouldPersist() {
-        return isPersistent() || ((--persists) > 0);
+        return hasIndefinitePersistence() || ((--persists) > 0);
     }
 
     /**
      * Indicates whether this listener is inherently persistent.
-     * A listener is considered inherently persistent if the {@linkplain #persistent} flag is set to {@code true}.
+     * A listener is considered inherently persistent if the {@linkplain #indefinitePersistence} flag is set to {@code true}.
      *
      * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
      * @since 3.2.0
      */
     @Override
-    public boolean isPersistent() {
-        return persistent;
+    public boolean hasIndefinitePersistence() {
+        return indefinitePersistence;
     }
 
     @Override
@@ -158,6 +159,9 @@ public abstract class EventListener<T> implements Listener<T> {
         if (priority != that.priority) {
             return false;
         }
+        if (indefinitePersistence != that.indefinitePersistence) {
+            return false;
+        }
         if (!Objects.equals(type, that.type)) {
             return false;
         }
@@ -166,18 +170,22 @@ public abstract class EventListener<T> implements Listener<T> {
 
     @Override
     public int hashCode() {
-        int result = priority;
-        result = (31 * result) + ((type != null) ? type.hashCode() : 0);
-        result = (31 * result) + target.hashCode();
+        int result = target.hashCode();
+        result = 31 * result + Objects.hashCode(type);
+        result = 31 * result + priority;
+        result = 31 * result + Boolean.hashCode(indefinitePersistence);
+        result = 31 * result + persists;
         return result;
     }
 
     @Override
     public String toString() {
         return "EventListener{" +
-                "priority=" + priority +
+                "target=" + target +
                 ", type=" + type +
-                ", target=" + target +
+                ", priority=" + priority +
+                ", indefinitePersistence=" + indefinitePersistence +
+                ", persists=" + persists +
                 '}';
     }
 }
