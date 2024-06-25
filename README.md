@@ -31,7 +31,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 <dependency>
     <groupId>com.github.7orivorian</groupId>
     <artifactId>Wraith</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -51,13 +51,13 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:3.1.0'
+    implementation 'com.github.7orivorian:Wraith:3.2.0'
 }
 ```
 
 ### Other
 
-Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/3.1.0)
+Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/3.2.0)
 
 # Building
 
@@ -66,7 +66,7 @@ Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/rele
 
 Packaged file can be found in the `target/` directory.
 
-# Usage
+# Quick-Start Guide
 
 While the code itself is thoroughly documented, here's a simple guide to help you get started with the latest features.
 
@@ -96,11 +96,13 @@ public class ExampleSubscriber implements ISubscriber {
 Once you've defined your subscriber, you can subscribe it to an event bus directly within the subscriber's constructor:
 
 ```java
-public class ExampleSubscriber extends Subscriber {
+public class Consts {
     private static final IEventBus EVENT_BUS = new EventBus();
+}
+public class ExampleSubscriber extends Subscriber {
 
     public ExampleSubscriber() {
-        EVENT_BUS.subscribe(this);
+        Consts.EVENT_BUS.subscribe(this);
     }
 }
 ```
@@ -144,24 +146,6 @@ public class ExampleEvent {
 }
 ```
 
-To create a cancelable event, you can:
-
-Extend the Cancelable class:
-
-```java
-public class CancelableEvent extends Cancelable {
-// ...
-}
-```
-
-Implement the ICancelable interface:
-
-```java
-public class CancelableEvent implements ICancelable {
-// ...
-}
-```
-
 </details>
 
 ### Listeners
@@ -180,9 +164,7 @@ public class ExampleListener extends EventListener<ExampleEvent> {
 
     @Override
     public void invoke(ExampleEvent event) {
-        if (event.getStage() == EventStage.POST) {
-            event.setMessage("I feel wonderful!");
-        }
+        event.setMessage("Hello world!");
     }
 }
 ```
@@ -205,11 +187,7 @@ public class ExampleSubscriber extends Subscriber {
     public ExampleSubscriber() {
         // Register the listener
         registerListener(
-                new LambdaEventListener<>(ExampleEvent.class, event -> {
-                    if (event.getStage() == EventStage.PRE) {
-                        event.setMessage("Hello world!");
-                    }
-                })
+                new LambdaEventListener<>(ExampleEvent.class, event -> event.setMessage("Hello world!"))
         );
     }
 }
@@ -234,20 +212,18 @@ public class Example {
 
     public static void main(String[] args) {
 
-        ExampleEvent event = new ExampleEvent("Initial message");
+        ExampleEvent event = new ExampleEvent("world greetings");
 
         EVENT_BUS.dispatch(event);
 
-        if (!event.isCanceled()) {
-            System.out.println(event.getMessage());
-        }
+        System.out.println(event.getMessage());
     }
 }
 ```
 
 </details>
 
-Feel free to explore the [example folder](./examples/java/me/tori/example) for more Wraith implementations.
+Please explore the [example folder](./examples/java/me/tori/example) for _even more_ Wraith implementations!
 
 # Contributing
 
