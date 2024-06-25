@@ -22,6 +22,11 @@
 package me.tori.wraith.targetedevent;
 
 import me.tori.wraith.bus.EventBus;
+import me.tori.wraith.event.cancelable.CancelableEvent;
+import me.tori.wraith.event.targeted.IClassTargetingEvent;
+import me.tori.wraith.listener.EventListener;
+import me.tori.wraith.listener.Listener;
+import me.tori.wraith.subscriber.Subscriber;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,10 +40,52 @@ public class TargetedEventTest {
     public void testTargetedEvent() {
         final EventBus bus = new EventBus();
 
-        TestSubsciber subsciber = new TestSubsciber();
-        bus.subscribe(subsciber);
+        bus.subscribe(new Subscriber() {{
+            registerListeners(
+                    new MyListener(),
+                    new OtherListener()
+            );
+        }});
 
-        TestEvent event = new TestEvent("message", ValidListener.class);
+        TestEvent event = new TestEvent(MyListener.class);
         assertFalse(bus.dispatchTargeted(event));
+    }
+
+    public static class MyListener extends EventListener<TestEvent> {
+
+        public MyListener() {
+            super(TestEvent.class);
+        }
+
+        @Override
+        public void invoke(TestEvent event) {
+
+        }
+    }
+
+    public static class OtherListener extends EventListener<TestEvent> {
+
+        public OtherListener() {
+            super(TestEvent.class);
+        }
+
+        @Override
+        public void invoke(TestEvent event) {
+            event.cancel();
+        }
+    }
+
+    public static class TestEvent extends CancelableEvent implements IClassTargetingEvent {
+
+        private final Class<? extends Listener<?>> targetClass;
+
+        public TestEvent(Class<? extends Listener<?>> target) {
+            this.targetClass = target;
+        }
+
+        @Override
+        public Class<? extends Listener<?>> getTargetClass() {
+            return targetClass;
+        }
     }
 }
