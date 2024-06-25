@@ -21,43 +21,36 @@
 
 package me.tori.wraith.event.cancelable;
 
+import me.tori.wraith.event.status.IStatusEvent;
+
 /**
- * Represents a cancelable event that can be prevented from further processing.
- *
- * <p>This interface allows events to be canceled, indicating that they should not proceed through their
- * normal processing flow. This is particularly useful in scenarios where certain conditions require an event
- * to be halted from performing its intended action.
- *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  * @see CancelableEvent
  * @since <b>1.0.0</b>
+ * @deprecated Use {@link IStatusEvent} instead.
  */
-public interface ICancelableEvent {
+@Deprecated(forRemoval = true, since = "3.2.0")
+public interface ICancelableEvent extends IStatusEvent {
 
     /**
-     * Checks whether this event is canceled.
-     *
      * @return {@code true} if this event is canceled, {@code false} otherwise
+     * @see #isSuppressed()
      */
-    boolean isCanceled();
+    default boolean isCanceled() {
+        return isSuppressed();
+    }
 
     /**
-     * Sets the cancellation state of this event.
-     *
-     * @param canceled {@code true} to mark this event as canceled, {@code false} otherwise
-     * @implNote Passing {@code false} to this method can un-cancel this event if it was previously canceled.
+     * @see #setSuppressed(boolean)
      */
-    void setCanceled(boolean canceled);
+    default void setCanceled(boolean canceled) {
+        setSuppressed(canceled);
+    }
 
     /**
-     * Convenience method to cancel this event.
-     *
-     * <p>This is a shorthand method equivalent to calling {@code setCanceled(true)}, conveniently
-     * marking this event as canceled.
-     *
-     * @see #setCanceled(boolean)
+     * @see #suppress()
      */
     default void cancel() {
-        setCanceled(true);
+        suppress();
     }
 }

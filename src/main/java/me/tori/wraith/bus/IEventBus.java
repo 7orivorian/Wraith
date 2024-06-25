@@ -21,7 +21,7 @@
 
 package me.tori.wraith.bus;
 
-import me.tori.wraith.event.cancelable.ICancelableEvent;
+import me.tori.wraith.event.status.IStatusEvent;
 import me.tori.wraith.listener.EventListener;
 import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
@@ -64,14 +64,16 @@ public interface IEventBus {
 
     /**
      * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      */
     boolean dispatch(Object event);
 
     /**
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      */
     boolean dispatch(Object event, Class<?> type);
 
