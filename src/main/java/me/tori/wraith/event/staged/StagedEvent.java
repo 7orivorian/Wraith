@@ -45,7 +45,6 @@ public class StagedEvent implements IStagedEvent {
      * @throws NullPointerException If the provided {@code stage} is {@code null}.
      */
     public StagedEvent(@NotNull EventStage stage) {
-        Objects.requireNonNull(stage);
         this.stage = stage;
     }
 
