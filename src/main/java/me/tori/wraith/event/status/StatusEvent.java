@@ -39,8 +39,9 @@ public class StatusEvent implements IStatusEvent {
      *
      * @return the current {@link EventStatus} of this event.
      */
+    @NotNull
     @Override
-    public @NotNull EventStatus getEventStatus() {
+    public EventStatus getEventStatus() {
         return status;
     }
 
