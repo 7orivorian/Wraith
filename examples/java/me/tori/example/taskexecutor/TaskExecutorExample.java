@@ -44,6 +44,11 @@ public class TaskExecutorExample {
             }
         });
 
+        // These events are ignored
+        EVENT_BUS.dispatch("just a string event");
+        EVENT_BUS.dispatch("just a string event");
+        EVENT_BUS.dispatch("just a string event");
+
         // This event will trigger the previously scheduled task.
         // Note that scheduled tasks will be run before any listeners
         // are invoked, regardless of listener priority.
