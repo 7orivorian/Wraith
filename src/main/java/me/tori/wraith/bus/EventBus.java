@@ -1,6 +1,27 @@
+/*
+ * Copyright (c) 2021-2024 7orivorian.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package me.tori.wraith.bus;
 
-import me.tori.wraith.event.cancelable.ICancelableEvent;
+import me.tori.wraith.event.status.IStatusEvent;
 import me.tori.wraith.event.targeted.IClassTargetingEvent;
 import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
@@ -10,6 +31,7 @@ import me.tori.wraith.task.TaskExecutor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 /**
  * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
@@ -83,8 +105,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     @Override
     public void subscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus " + id + "!");
-        for (Listener<?> listener : subscriber.getListeners()) {
-            register(listener);
+        Collection<Listener<?>> listeners = subscriber.getListeners();
+        if (listeners.size() == 1) {
+            register(listeners.iterator().next());
+        } else {
+            for (Listener<?> listener : listeners) {
+                register(listener);
+            }
         }
         subscribers.add(subscriber);
     }
@@ -100,8 +127,13 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     @Override
     public void unsubscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus " + id + "!");
-        for (Listener<?> listener : subscriber.getListeners()) {
-            unregister(listener);
+        Collection<Listener<?>> listeners = subscriber.getListeners();
+        if (listeners.size() == 1) {
+            unregister(listeners.iterator().next());
+        } else {
+            for (Listener<?> listener : listeners) {
+                unregister(listener);
+            }
         }
         subscribers.remove(subscriber);
     }
@@ -143,27 +175,14 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * Dispatches an event to listeners.
      *
      * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
     public boolean dispatch(Object event) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
-        } else {
-            taskExecutor.onEvent(event);
-
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.forEach(listener -> listener.invoke(event));
-            }
-            if (event instanceof ICancelableEvent cancelable) {
-                return cancelable.isCanceled();
-            }
-        }
-        return false;
+        return dispatch(event, null);
     }
 
     /**
@@ -174,7 +193,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      *
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -186,14 +206,15 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.stream()
-                        .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
-                        .forEach(listener -> listener.invoke(event));
-            }
-            if (event instanceof ICancelableEvent cancelable) {
-                return cancelable.isCanceled();
+            dispatchToEachListener(
+                    event,
+                    this.listeners.get(event.getClass()),
+                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    false
+            );
+
+            if (event instanceof IStatusEvent e) {
+                return e.isSuppressed() || e.isTerminated();
             }
         }
         return false;
@@ -203,29 +224,14 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * Dispatches the given event to the target listener class
      *
      * @param event the {@linkplain IClassTargetingEvent} to be dispatched
-     * @return {@code true} if the given event was {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event was {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
     public boolean dispatchTargeted(IClassTargetingEvent event) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
-        } else {
-            taskExecutor.onEvent(event);
-
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.stream()
-                        .filter(listener -> listener.getClass().equals(event.getTargetClass()))
-                        .forEach(listener -> listener.invoke(event));
-            }
-            if (event instanceof ICancelableEvent cancelable) {
-                return cancelable.isCanceled();
-            }
-        }
-        return false;
+        return dispatchTargeted(event, null);
     }
 
     /**
@@ -236,7 +242,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      *
      * @param event the {@linkplain IClassTargetingEvent} to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -248,61 +255,47 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                listeners.stream()
-                        .filter(listener -> (listener.getType() == null) || (listener.getType() == type))
-                        .filter(listener -> listener.getClass().equals(event.getTargetClass()))
-                        .forEach(listener -> listener.invoke(event));
-            }
-            if (event instanceof ICancelableEvent cancelable) {
-                return cancelable.isCanceled();
+            dispatchToEachListener(
+                    event,
+                    this.listeners.get(event.getClass()),
+                    listener -> ((type == null) || (listener.getType() == null) || (listener.getType() == type))
+                            && listener.getClass().equals(event.getTargetClass()),
+                    false
+            );
+
+            if (event instanceof IStatusEvent e) {
+                return e.isSuppressed() || e.isTerminated();
             }
         }
         return false;
     }
 
     /**
-     * Dispatches an event to listeners in order of inverse-priority. E.g. the lowest priority listeners will be
-     * invoked before the highest priority listeners.
+     * Dispatches an event to listeners in order of inverse-priority.
+     * E.g., the lowest priority listeners will be invoked before the highest priority listeners.
      *
      * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
     @Override
     public boolean dispatchInverted(Object event) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
-        } else {
-            taskExecutor.onEvent(event);
-
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
-                while (iterator.hasPrevious()) {
-                    iterator.previous().invoke(event);
-                }
-            }
-            if (event instanceof ICancelableEvent cancelable) {
-                return cancelable.isCanceled();
-            }
-        }
-        return false;
+        return dispatchInverted(event, null);
     }
 
     /**
-     * Dispatches an event to listeners in order of inverse-priority. E.g. the lowest priority listeners will be
-     * invoked before the highest priority listeners.
+     * Dispatches an event to listeners in order of inverse-priority.
+     * E.g., the lowest priority listeners will be invoked before the highest priority listeners.
      *
      * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain ICancelableEvent cancelable} and canceled, {@code false} otherwise
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
      */
@@ -314,18 +307,15 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
         } else {
             taskExecutor.onEvent(event);
 
-            List<Listener> listeners = this.listeners.get(event.getClass());
-            if (listeners != null) {
-                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
-                while (iterator.hasPrevious()) {
-                    Listener listener = iterator.previous();
-                    if ((listener.getType() == null) || (listener.getType() == type)) {
-                        listener.invoke(event);
-                    }
-                }
-            }
-            if (event instanceof ICancelableEvent cancelable) {
-                return cancelable.isCanceled();
+            dispatchToEachListener(
+                    event,
+                    this.listeners.get(event.getClass()),
+                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    true
+            );
+
+            if (event instanceof IStatusEvent e) {
+                return e.isSuppressed() || e.isTerminated();
             }
         }
         return false;
@@ -380,6 +370,56 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      */
     public int getId() {
         return id;
+    }
+
+    /**
+     * Applies a given action to each {@linkplain Listener} in a list that matches a specified predicate.
+     * Listeners are processed either in normal order or in reverse order based on the
+     * {@code invertPriority} flag.
+     * Listeners that should not persist are removed from the list after the action is applied.
+     *
+     * @param event          the event to be handled by each listener that satisfies the predicate
+     * @param listeners      the list of listeners to be processed
+     * @param predicate      the condition that each listener must satisfy to have the action applied
+     * @param invertPriority if {@code true}, listeners are processed in reverse order; otherwise,
+     *                       they are processed in normal order
+     * @since 3.2.0
+     */
+    @SuppressWarnings("DuplicatedCode")
+    private void dispatchToEachListener(Object event, List<Listener> listeners, Predicate<Listener> predicate, boolean invertPriority) {
+        if (listeners != null && !listeners.isEmpty()) {
+            if (invertPriority) {
+                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
+                while (iterator.hasPrevious()) {
+                    Listener listener = iterator.previous();
+                    if (!predicate.test(listener)) {
+                        continue;
+                    }
+                    listener.invoke(event);
+                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
+                        break;
+                    }
+                    if (!listener.shouldPersist()) {
+                        listeners.remove(listener);
+                    }
+                }
+            } else {
+                Iterator<Listener> iterator = listeners.listIterator(0);
+                while (iterator.hasNext()) {
+                    Listener listener = iterator.next();
+                    if (!predicate.test(listener)) {
+                        continue;
+                    }
+                    listener.invoke(event);
+                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
+                        break;
+                    }
+                    if (!listener.shouldPersist()) {
+                        listeners.remove(listener);
+                    }
+                }
+            }
+        }
     }
 
     /**

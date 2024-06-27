@@ -19,73 +19,62 @@
  * THE SOFTWARE.
  */
 
-package me.tori.wraith.targetedevent;
+package me.tori.wraith.persistency;
 
 import me.tori.wraith.bus.EventBus;
 import me.tori.wraith.event.cancelable.CancelableEvent;
-import me.tori.wraith.event.targeted.IClassTargetingEvent;
 import me.tori.wraith.listener.EventListener;
-import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.Subscriber;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 3.2.0
  */
-public class TargetedEventTest {
+public class PersistencyTest {
 
     @Test
-    public void testTargetedEvent() {
+    public void testEventPersistency() {
         final EventBus bus = new EventBus();
 
         bus.subscribe(new Subscriber() {{
-            registerListeners(
-                    new MyListener(),
-                    new OtherListener()
-            );
+            registerListener(new MyListener(3));
         }});
 
-        TestEvent event = new TestEvent(MyListener.class);
-        assertFalse(bus.dispatchTargeted(event));
+        Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        Assertions.assertTrue(bus.dispatch(new MyEvent()));
+
+        Assertions.assertFalse(bus.dispatch(new MyEvent()));
     }
 
-    public static class MyListener extends EventListener<TestEvent> {
+    @Test
+    public void testIndefiniteEvent() {
+        final EventBus bus = new EventBus();
 
-        public MyListener() {
-            super(TestEvent.class);
+        bus.subscribe(new Subscriber() {{
+            registerListener(new MyListener(0)); // <= 0 means persist indefinitely
+        }});
+
+        for (int i = 0; i < 1_000_000; i++) {
+            Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        }
+    }
+
+    public static class MyListener extends EventListener<MyEvent> {
+
+        public MyListener(int persists) {
+            super(MyEvent.class, null, 0, persists);
         }
 
         @Override
-        public void invoke(TestEvent event) {
-
-        }
-    }
-
-    public static class OtherListener extends EventListener<TestEvent> {
-
-        public OtherListener() {
-            super(TestEvent.class);
-        }
-
-        @Override
-        public void invoke(TestEvent event) {
+        public void invoke(MyEvent event) {
             event.cancel();
         }
     }
 
-    public static class TestEvent extends CancelableEvent implements IClassTargetingEvent {
+    public static class MyEvent extends CancelableEvent {
 
-        private final Class<? extends Listener<?>> targetClass;
-
-        public TestEvent(Class<? extends Listener<?>> target) {
-            this.targetClass = target;
-        }
-
-        @Override
-        public Class<? extends Listener<?>> getTargetClass() {
-            return targetClass;
-        }
     }
 }

@@ -19,41 +19,39 @@
  * THE SOFTWARE.
  */
 
-package me.tori.example.expanded;
+package me.tori.example.persistence;
 
 import me.tori.wraith.bus.EventBus;
 import me.tori.wraith.bus.IEventBus;
-import me.tori.wraith.event.staged.EventStage;
+import me.tori.wraith.listener.LambdaEventListener;
+import me.tori.wraith.subscriber.Subscriber;
 
 /**
- * Example program
- * <p>Last updated for version <b>3.1.0</b>
+ * A simple example of listener persistence.
+ * <p>
+ * Last updated for version <b>3.1.0</b>
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 3.2.0
  */
-class ExampleMain {
+class PersistenceExample {
 
     private static final IEventBus EVENT_BUS = new EventBus();
-
-    private static final ExampleSubscriber EXAMPLE_SUBSCRIBER = new ExampleSubscriber();
+    private static final Subscriber SUBSCRIBER = new Subscriber() {{
+        // Register a listener that prints a single
+        // String event & is then removed from the event bus
+        registerListener(new LambdaEventListener<>(String.class, null, IEventBus.DEFAULT_PRIORITY, 1, System.out::println));
+    }};
 
     public static void main(String[] args) {
-        EVENT_BUS.subscribe(EXAMPLE_SUBSCRIBER);
+        // Subscribe our subscriber. This will never be removed from the event bus.
+        EVENT_BUS.subscribe(SUBSCRIBER);
 
-        ExampleEvent event1 = new ExampleEvent(EventStage.PRE);
+        // After this event is dispatched, and it's listener invoked,
+        // the listener will be removed since it's set to only persist once.
+        EVENT_BUS.dispatch("Hello world!");
 
-        EVENT_BUS.dispatch(event1);
-
-        if (!event1.isCanceled()) {
-            System.out.println(event1.getMessage());
-        }
-
-        ExampleEvent event2 = new ExampleEvent(EventStage.POST);
-
-        EVENT_BUS.dispatch(event2);
-
-        if (!event2.isCanceled()) {
-            System.out.println(event2.getMessage());
-        }
+        // You can still dispatch events to remaining listeners.
+        EVENT_BUS.dispatch("I wont be printed :(");
     }
 }

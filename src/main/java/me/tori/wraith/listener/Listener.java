@@ -1,4 +1,31 @@
+/*
+ * Copyright (c) 2021-2024 7orivorian.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package me.tori.wraith.listener;
+
+import me.tori.wraith.bus.EventBus;
+
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * An interface representing an event listener with priority, type, and target class information.
@@ -21,7 +48,7 @@ public interface Listener<T> extends Invokable<T> {
     /**
      * Gets the type of events that this listener can handle.
      *
-     * @return The type of events that this listener can handle, or null if no type is specified.
+     * @return The type of events that this listener can handle, or {@code null} if no type is specified.
      */
     Class<?> getType();
 
@@ -31,4 +58,26 @@ public interface Listener<T> extends Invokable<T> {
      * @return The target class that this listener is designed to handle events for.
      */
     Class<? super T> getTarget();
+
+    /**
+     * Determines whether this listener should persist after being invoked.
+     *
+     * @return {@code true} if the listener should persist, {@code false} otherwise
+     * @see EventBus#forEachListener(List, Predicate, Consumer, boolean)
+     * @since 3.2.0
+     */
+    @SuppressWarnings("JavadocReference")
+    default boolean shouldPersist() {
+        return hasIndefinitePersistence();
+    }
+
+    /**
+     * Indicates whether this listener is inherently persistent.
+     *
+     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
+     * @since 3.2.0
+     */
+    default boolean hasIndefinitePersistence() {
+        return true;
+    }
 }

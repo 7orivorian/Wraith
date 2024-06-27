@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2024 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,18 +19,34 @@
  * THE SOFTWARE.
  */
 
-package me.tori.wraith.event.staged;
+package me.tori.example.taskexecutor;
+
+import me.tori.wraith.bus.EventBus;
+import me.tori.wraith.task.ScheduledTask;
+import me.tori.wraith.task.TaskExecutor;
 
 /**
- * Represents the possible stages at which an event can occur.
+ * A simple example showing how to use the {@link TaskExecutor}
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @see IStagedEvent
- * @see StagedEvent
- * @since <b>1.0.0</b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 3.2.0
  */
-public enum EventStage {
-    PRE,
-    PERI,
-    POST
+public class TaskExecutorExample {
+
+    private static final EventBus EVENT_BUS = new EventBus();
+
+    public static void main(final String[] args) {
+        // Schedule a task to run when the next String event is dispatched
+        EVENT_BUS.scheduleTask(new ScheduledTask(String.class, 3) {
+            @Override
+            public void run() {
+                System.out.println("Hello World!");
+            }
+        });
+
+        // This event will trigger the previously scheduled task.
+        // Note that scheduled tasks will be run before any listeners
+        // are invoked, regardless of listener priority.
+        EVENT_BUS.dispatch("just a string event");
+    }
 }
