@@ -6,6 +6,7 @@
     <groupId>me.tori</groupId>
     <artifactId>Wraith</artifactId>
     <packaging>jar</packaging>
+    <version>3.2.0</version>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -30,7 +31,6 @@
             <version>1.37</version>
         </dependency>
     </dependencies>
-    <version>3.1.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
