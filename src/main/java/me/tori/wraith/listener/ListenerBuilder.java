@@ -36,7 +36,7 @@ import java.util.Objects;
  * <p><b>Usage Example:</b>
  * <pre>
  * {@code
- * EventListener<MyEvent> listener = new ListenerBuilder<MyEvent>()
+ * EventListener<MyEvent> listener = new ListenerBuilder<>()
  *     .target(MyEvent.class)
  *     .type(SomeSpecificType.class)
  *     .priority(5)
@@ -46,7 +46,7 @@ import java.util.Objects;
  * }
  * </pre>
  *
- * @param <T> the type of event this listener handles
+ * @param <T> the type of event the built listener handles
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see EventListener
  * @since 3.2.0
@@ -147,7 +147,7 @@ public class ListenerBuilder<T> {
         Objects.requireNonNull(invokable, "invokable must not be null");
         if ((persistent && (persists > 0)) || (!persistent && (persists <= 0))) {
             throw new IllegalArgumentException(
-                    "Persistency missmatch. persistent=" + persistent + " and persists>" + persists + " is not allowed."
+                    "Persistency missmatch. persistent=" + persistent + " and persists=" + persists + " is not allowed."
             );
         }
         return new EventListener<>(target, type, priority, persists) {
