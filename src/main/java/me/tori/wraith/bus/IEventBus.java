@@ -41,28 +41,38 @@ public interface IEventBus {
     int DEFAULT_PRIORITY = 0;
 
     /**
+     * Subscribes the specified subscriber to this event bus.
+     *
      * @param subscriber the {@link ISubscriber} to be subscribed
      * @see #register(Listener)
      */
     void subscribe(ISubscriber subscriber);
 
     /**
+     * Unsubscribes the specified subscriber from this event bus.
+     *
      * @param subscriber the {@link ISubscriber} to be unsubscribed
      * @see #unregister(Listener)
      */
     void unsubscribe(ISubscriber subscriber);
 
     /**
+     * Registers the specified listener to this event bus.
+     *
      * @param listener the {@link Listener} to be registered
      */
     void register(Listener<?> listener);
 
     /**
+     * Unregisters the specified listener from this event bus.
+     *
      * @param listener the {@link Listener} to be unregistered
      */
     void unregister(Listener<?> listener);
 
     /**
+     * Dispatches the specified event to all registered listeners.
+     *
      * @param event the event to be dispatched
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise.
@@ -70,6 +80,8 @@ public interface IEventBus {
     boolean dispatch(Object event);
 
     /**
+     * Dispatches the specified event to all registered listeners of the specified type.
+     *
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
@@ -83,6 +95,8 @@ public interface IEventBus {
     void shutdown();
 
     /**
+     * Checks if this event bus is shut down.
+     *
      * @return {@code true} if this event bus is shut down, {@code false} otherwise.
      */
     boolean isShutdown();
