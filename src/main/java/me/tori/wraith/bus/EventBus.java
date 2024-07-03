@@ -351,7 +351,6 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * @return the {@code id} of this event bus
-     * @author 7orivorian
      * @since 3.1.0
      */
     public int getId() {
@@ -367,7 +366,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * @param event          the event to be handled by each listener that satisfies the predicate
      * @param listeners      the list of listeners to be processed
      * @param predicate      the condition that each listener must satisfy to have the action applied
-     * @param invertPriority if {@code true}, listeners are processed in reverse order; otherwise,
+     * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
      *                       they are processed in normal order
      * @since 3.2.0
      */
@@ -410,7 +409,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * Checks if this event bus is equal to another object.
-     * <p>If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
+     * <p>
+     * If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
      *
      * @param o the object to compare with
      * @return {@code true} if the object is equal to this event bus, {@code false} otherwise
