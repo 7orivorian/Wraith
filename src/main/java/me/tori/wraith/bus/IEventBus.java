@@ -90,6 +90,29 @@ public interface IEventBus {
     boolean dispatch(Object event, Class<?> type);
 
     /**
+     * Dispatches the specified event to all registered listeners, with the option to invert the processing priority.
+     *
+     * @param event          the event to be dispatched
+     * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
+     *                       they are processed in normal order
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise.
+     */
+    boolean dispatch(Object event, boolean invertPriority);
+
+    /**
+     * Dispatches the specified event to all registered listeners of the specified type, with the option to invert the processing priority.
+     *
+     * @param event          the event to be dispatched
+     * @param type           the type of listener to invoke (can be {@code null})
+     * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
+     *                       they are processed in normal order
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise.
+     */
+    boolean dispatch(Object event, Class<?> type, boolean invertPriority);
+
+    /**
      * Shuts down this event bus, preventing future events from being dispatched.
      */
     void shutdown();

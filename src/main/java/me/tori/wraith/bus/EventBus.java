@@ -173,23 +173,45 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
-     * Dispatches an event to listeners.
+     * Convenience method to dispatch an event with no {@linkplain Listener#getType() listener type} restriction, and
+     * normal processing priority.
      *
-     * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
-     * @throws NullPointerException          if the given event is {@code null}
-     * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @see #dispatch(Object, Class, boolean)
+     * @since 3.3.0
      */
     @Override
     public boolean dispatch(Object event) {
-        return dispatch(event, null);
+        return dispatch(event, null, false);
     }
 
     /**
-     * Dispatches an event to listeners.
+     * Convenience method to dispatch an event with an optional {@linkplain Listener#getType() listener type} restriction, and
+     * normal processing priority.
      *
-     * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
+     * @see #dispatch(Object, Class, boolean)
+     * @since 3.3.0
+     */
+    @Override
+    public boolean dispatch(Object event, Class<?> type) {
+        return dispatch(event, type, false);
+    }
+
+    /**
+     * Convenience method to dispatch an event with no {@linkplain Listener#getType() listener type} restriction, and
+     * optional inverted processing priority.
+     *
+     * @see #dispatch(Object, Class, boolean)
+     * @since 3.3.0
+     */
+    @Override
+    public boolean dispatch(Object event, boolean invertPriority) {
+        return dispatch(event, null, invertPriority);
+    }
+
+    /**
+     * Dispatches the given event to all valid registered listeners.
+     * <p>
+     * The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
      * @param event the event to be dispatched
@@ -198,9 +220,10 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @since 3.3.0
      */
     @Override
-    public boolean dispatch(Object event, Class<?> type) {
+    public boolean dispatch(Object event, Class<?> type, boolean invertPriority) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
@@ -211,7 +234,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                     event,
                     this.listeners.get(event.getClass()),
                     listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
-                    false
+                    invertPriority
             );
 
             if (event instanceof IStatusEvent e) {
@@ -266,7 +289,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchInverted(Object event) {
         return dispatchInverted(event, null);
@@ -285,7 +310,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchInverted(Object event, Class<?> type) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
