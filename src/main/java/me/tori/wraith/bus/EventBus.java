@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
@@ -172,23 +173,45 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     }
 
     /**
-     * Dispatches an event to listeners.
+     * Convenience method to dispatch an event with no {@linkplain Listener#getType() listener type} restriction, and
+     * normal processing priority.
      *
-     * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
-     * @throws NullPointerException          if the given event is {@code null}
-     * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @see #dispatch(Object, Class, boolean)
+     * @since 3.3.0
      */
     @Override
     public boolean dispatch(Object event) {
-        return dispatch(event, null);
+        return dispatch(event, null, false);
     }
 
     /**
-     * Dispatches an event to listeners.
+     * Convenience method to dispatch an event with an optional {@linkplain Listener#getType() listener type} restriction, and
+     * normal processing priority.
      *
-     * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
+     * @see #dispatch(Object, Class, boolean)
+     * @since 3.3.0
+     */
+    @Override
+    public boolean dispatch(Object event, Class<?> type) {
+        return dispatch(event, type, false);
+    }
+
+    /**
+     * Convenience method to dispatch an event with no {@linkplain Listener#getType() listener type} restriction, and
+     * optional inverted processing priority.
+     *
+     * @see #dispatch(Object, Class, boolean)
+     * @since 3.3.0
+     */
+    @Override
+    public boolean dispatch(Object event, boolean invertPriority) {
+        return dispatch(event, null, invertPriority);
+    }
+
+    /**
+     * Dispatches the given event to all valid registered listeners.
+     * <p>
+     * The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
      * @param event the event to be dispatched
@@ -197,9 +220,10 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @since 3.3.0
      */
     @Override
-    public boolean dispatch(Object event, Class<?> type) {
+    public boolean dispatch(Object event, Class<?> type, boolean invertPriority) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
@@ -209,8 +233,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
             dispatchToEachListener(
                     event,
                     this.listeners.get(event.getClass()),
-                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
-                    false
+                    listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
+                    invertPriority
             );
 
             if (event instanceof IStatusEvent e) {
@@ -228,7 +252,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchTargeted(IClassTargetingEvent event) {
         return dispatchTargeted(event, null);
@@ -246,28 +272,12 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object, Class)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
-        } else {
-            taskExecutor.onEvent(event);
-
-            dispatchToEachListener(
-                    event,
-                    this.listeners.get(event.getClass()),
-                    listener -> ((type == null) || (listener.getType() == null) || (listener.getType() == type))
-                            && listener.getClass().equals(event.getTargetClass()),
-                    false
-            );
-
-            if (event instanceof IStatusEvent e) {
-                return e.isSuppressed() || e.isTerminated();
-            }
-        }
-        return false;
+        return dispatch(event, type);
     }
 
     /**
@@ -279,7 +289,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchInverted(Object event) {
         return dispatchInverted(event, null);
@@ -298,7 +310,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchInverted(Object event, Class<?> type) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
@@ -310,7 +324,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
             dispatchToEachListener(
                     event,
                     this.listeners.get(event.getClass()),
-                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
                     true
             );
 
@@ -365,7 +379,6 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * @return the {@code id} of this event bus
-     * @author 7orivorian
      * @since 3.1.0
      */
     public int getId() {
@@ -381,42 +394,32 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * @param event          the event to be handled by each listener that satisfies the predicate
      * @param listeners      the list of listeners to be processed
      * @param predicate      the condition that each listener must satisfy to have the action applied
-     * @param invertPriority if {@code true}, listeners are processed in reverse order; otherwise,
+     * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
      *                       they are processed in normal order
      * @since 3.2.0
      */
-    @SuppressWarnings("DuplicatedCode")
     private void dispatchToEachListener(Object event, List<Listener> listeners, Predicate<Listener> predicate, boolean invertPriority) {
         if (listeners != null && !listeners.isEmpty()) {
+            ListIterator<Listener> iterator;
+            Supplier<Listener> supplier;
             if (invertPriority) {
-                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
-                while (iterator.hasPrevious()) {
-                    Listener listener = iterator.previous();
-                    if (!predicate.test(listener)) {
-                        continue;
-                    }
-                    listener.invoke(event);
-                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
-                        break;
-                    }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
-                    }
-                }
+                iterator = listeners.listIterator(listeners.size());
+                supplier = () -> (iterator.hasPrevious() ? iterator.previous() : null);
             } else {
-                Iterator<Listener> iterator = listeners.listIterator(0);
-                while (iterator.hasNext()) {
-                    Listener listener = iterator.next();
-                    if (!predicate.test(listener)) {
-                        continue;
-                    }
-                    listener.invoke(event);
-                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
-                        break;
-                    }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
-                    }
+                iterator = listeners.listIterator(0);
+                supplier = () -> (iterator.hasNext() ? iterator.next() : null);
+            }
+            Listener listener;
+            while ((listener = supplier.get()) != null) {
+                if (!predicate.test(listener)) {
+                    continue;
+                }
+                listener.invoke(event);
+                if ((event instanceof IStatusEvent e) && e.isTerminated()) {
+                    break;
+                }
+                if (!listener.shouldPersist()) {
+                    listeners.remove(listener);
                 }
             }
         }
@@ -424,7 +427,8 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
 
     /**
      * Checks if this event bus is equal to another object.
-     * <p>If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
+     * <p>
+     * If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
      *
      * @param o the object to compare with
      * @return {@code true} if the object is equal to this event bus, {@code false} otherwise

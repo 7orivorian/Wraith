@@ -25,14 +25,15 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a task that can be scheduled for execution based on events, with an optional delay.
- * The task's execution is triggered when an event of the specified target class is dispatched.
+ * The task's execution is triggered when an event of the specified target class is dispatched, before any
+ * listeners are invoked.
  *
  * <p> The delay value determines the number of event dispatches that should occur before the task is executed.
  * The delay decrements with each event dispatch, and once it becomes less than or equal to 0, the task is executed.
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see TaskExecutor
- * @since <b>3.0.0</b>
+ * @since 3.0.0
  */
 public abstract class ScheduledTask implements Runnable {
 

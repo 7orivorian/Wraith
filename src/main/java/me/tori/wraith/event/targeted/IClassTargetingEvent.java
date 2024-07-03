@@ -35,9 +35,39 @@ import me.tori.wraith.listener.Listener;
 public interface IClassTargetingEvent {
 
     /**
+     * Determines if a listener is targeted by a specific event.
+     * <p>
+     * This method checks if the given event is not an instance of {@code IClassTargetingEvent}
+     * or, if it is, delegates the check to the {@code isListenerTargeted} method of the event.
+     *
+     * @param listener the listener to check
+     * @param event    the event to check against
+     * @return {@code true} if the event targets the listener, {@code false} otherwise.
+     * @since 3.3.0
+     */
+    static boolean isListenerTargetedByEvent(Listener<?> listener, Object event) {
+        return !(event instanceof IClassTargetingEvent e)
+                || e.isListenerTargeted(listener);
+    }
+
+    /**
      * Retrieves the target class of listeners for this event.
      *
      * @return The class that represents the type of listeners targeted by this event.
      */
     Class<? extends Listener<?>> getTargetClass();
+
+    /**
+     * Checks if the listener is an instance of the target class of this event.
+     * <p>
+     * This default method verifies if the provided listener is an instance of the class
+     * that the event targets by using the {@code getTargetClass} method.
+     *
+     * @param listener the listener to check
+     * @return {@code true} if the listener is an instance of the target class, {@code false} otherwise.
+     * @since 3.3.0
+     */
+    default boolean isListenerTargeted(Listener<?> listener) {
+        return getTargetClass().isInstance(listener);
+    }
 }

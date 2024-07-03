@@ -41,49 +41,86 @@ public interface IEventBus {
     int DEFAULT_PRIORITY = 0;
 
     /**
+     * Subscribes the specified subscriber to this event bus.
+     *
      * @param subscriber the {@link ISubscriber} to be subscribed
      * @see #register(Listener)
      */
     void subscribe(ISubscriber subscriber);
 
     /**
+     * Unsubscribes the specified subscriber from this event bus.
+     *
      * @param subscriber the {@link ISubscriber} to be unsubscribed
      * @see #unregister(Listener)
      */
     void unsubscribe(ISubscriber subscriber);
 
     /**
+     * Registers the specified listener to this event bus.
+     *
      * @param listener the {@link Listener} to be registered
      */
     void register(Listener<?> listener);
 
     /**
+     * Unregisters the specified listener from this event bus.
+     *
      * @param listener the {@link Listener} to be unregistered
      */
     void unregister(Listener<?> listener);
 
     /**
+     * Dispatches the specified event to all registered listeners.
+     *
      * @param event the event to be dispatched
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
+     * {@code false} otherwise.
      */
     boolean dispatch(Object event);
 
     /**
+     * Dispatches the specified event to all registered listeners of the specified type.
+     *
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
+     * {@code false} otherwise.
      */
     boolean dispatch(Object event, Class<?> type);
 
     /**
-     * Shuts down this event bus, preventing future events from being dispatched
+     * Dispatches the specified event to all registered listeners, with the option to invert the processing priority.
+     *
+     * @param event          the event to be dispatched
+     * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
+     *                       they are processed in normal order
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise.
+     */
+    boolean dispatch(Object event, boolean invertPriority);
+
+    /**
+     * Dispatches the specified event to all registered listeners of the specified type, with the option to invert the processing priority.
+     *
+     * @param event          the event to be dispatched
+     * @param type           the type of listener to invoke (can be {@code null})
+     * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
+     *                       they are processed in normal order
+     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
+     * {@code false} otherwise.
+     */
+    boolean dispatch(Object event, Class<?> type, boolean invertPriority);
+
+    /**
+     * Shuts down this event bus, preventing future events from being dispatched.
      */
     void shutdown();
 
     /**
-     * @return {@code true} if this event bus is shut down, {@code false} otherwise
+     * Checks if this event bus is shut down.
+     *
+     * @return {@code true} if this event bus is shut down, {@code false} otherwise.
      */
     boolean isShutdown();
 }

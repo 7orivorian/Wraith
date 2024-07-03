@@ -22,7 +22,7 @@
 package me.tori.wraith.targetedevent;
 
 import me.tori.wraith.bus.EventBus;
-import me.tori.wraith.event.cancelable.CancelableEvent;
+import me.tori.wraith.event.status.StatusEvent;
 import me.tori.wraith.event.targeted.IClassTargetingEvent;
 import me.tori.wraith.listener.EventListener;
 import me.tori.wraith.listener.Listener;
@@ -51,7 +51,7 @@ public class TargetedEventTest {
         assertFalse(bus.dispatchTargeted(event));
     }
 
-    public static class MyListener extends EventListener<TestEvent> {
+    static class MyListener extends EventListener<TestEvent> {
 
         public MyListener() {
             super(TestEvent.class);
@@ -63,7 +63,7 @@ public class TargetedEventTest {
         }
     }
 
-    public static class OtherListener extends EventListener<TestEvent> {
+    static class OtherListener extends EventListener<TestEvent> {
 
         public OtherListener() {
             super(TestEvent.class);
@@ -71,11 +71,11 @@ public class TargetedEventTest {
 
         @Override
         public void invoke(TestEvent event) {
-            event.cancel();
+            event.terminate();
         }
     }
 
-    public static class TestEvent extends CancelableEvent implements IClassTargetingEvent {
+    static class TestEvent extends StatusEvent implements IClassTargetingEvent {
 
         private final Class<? extends Listener<?>> targetClass;
 

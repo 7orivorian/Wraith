@@ -24,9 +24,11 @@ package me.tori.wraith.bus;
 import me.tori.wraith.event.status.IStatusEvent;
 
 /**
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @since <b>3.0.0</b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 3.0.0
+ * @deprecated This event bus' functionality is now built into the {@linkplain IEventBus standard event bus}.
  */
+@Deprecated(since = "3.3.0", forRemoval = true)
 public interface InvertableEventBus extends IEventBus {
 
     /**
@@ -34,7 +36,9 @@ public interface InvertableEventBus extends IEventBus {
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise
      * @see EventBus#dispatchInverted(Object)
+     * @deprecated This method's functionality is now handled by {@link #dispatch(Object, boolean)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     boolean dispatchInverted(Object event);
 
     /**
@@ -43,6 +47,8 @@ public interface InvertableEventBus extends IEventBus {
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise
      * @see EventBus#dispatchInverted(Object, Class)
+     * @deprecated This method's functionality is now handled by {@link #dispatch(Object, Class, boolean)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     boolean dispatchInverted(Object event, Class<?> type);
 }

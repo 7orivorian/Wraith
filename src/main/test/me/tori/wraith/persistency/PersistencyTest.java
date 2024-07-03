@@ -22,7 +22,7 @@
 package me.tori.wraith.persistency;
 
 import me.tori.wraith.bus.EventBus;
-import me.tori.wraith.event.cancelable.CancelableEvent;
+import me.tori.wraith.event.status.StatusEvent;
 import me.tori.wraith.listener.EventListener;
 import me.tori.wraith.subscriber.Subscriber;
 import org.junit.jupiter.api.Assertions;
@@ -62,7 +62,7 @@ public class PersistencyTest {
         }
     }
 
-    public static class MyListener extends EventListener<MyEvent> {
+    static class MyListener extends EventListener<MyEvent> {
 
         public MyListener(int persists) {
             super(MyEvent.class, null, 0, persists);
@@ -70,11 +70,11 @@ public class PersistencyTest {
 
         @Override
         public void invoke(MyEvent event) {
-            event.cancel();
+            event.terminate();
         }
     }
 
-    public static class MyEvent extends CancelableEvent {
+    static class MyEvent extends StatusEvent {
 
     }
 }

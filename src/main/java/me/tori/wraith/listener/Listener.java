@@ -62,7 +62,7 @@ public interface Listener<T> extends Invokable<T> {
     /**
      * Determines whether this listener should persist after being invoked.
      *
-     * @return {@code true} if the listener should persist, {@code false} otherwise
+     * @return {@code true} if the listener should persist, {@code false} otherwise.
      * @see EventBus#forEachListener(List, Predicate, Consumer, boolean)
      * @since 3.2.0
      */
@@ -74,10 +74,29 @@ public interface Listener<T> extends Invokable<T> {
     /**
      * Indicates whether this listener is inherently persistent.
      *
-     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
+     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise.
      * @since 3.2.0
      */
     default boolean hasIndefinitePersistence() {
         return true;
+    }
+
+    /**
+     * Checks if the provided type is acceptable for this listener.
+     * <p>
+     * This default method evaluates whether the given type is acceptable by comparing it with
+     * the type associated with this listener. It returns {@code true} if any of the following conditions are met:
+     * <ul>
+     *   <li>The provided type is {@code null}.</li>
+     *   <li>The listener's type is {@code null}.</li>
+     *   <li>The provided type is equal to the listener's type.</li>
+     * </ul>
+     *
+     * @param type the class type to check for acceptability
+     * @return {@code true} if the type is acceptable, {@code false} otherwise.
+     * @since 3.3.0
+     */
+    default boolean isAcceptableType(Class<?> type) {
+        return (type == null) || (getType() == null) || (getType() == type);
     }
 }

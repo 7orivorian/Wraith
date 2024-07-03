@@ -31,7 +31,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 <dependency>
     <groupId>com.github.7orivorian</groupId>
     <artifactId>Wraith</artifactId>
-    <version>3.2.2</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
@@ -51,13 +51,13 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:3.2.2'
+    implementation 'com.github.7orivorian:Wraith:3.3.0'
 }
 ```
 
 ### Other
 
-Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/3.2.2)
+Download a `.jar` file from [releases](https://github.com/7orivorian/Wraith/releases/tag/3.3.0)
 
 # Building
 
@@ -99,6 +99,7 @@ Once you've defined your subscriber, you can subscribe it to an event bus direct
 public class Consts {
     private static final IEventBus EVENT_BUS = new EventBus();
 }
+
 public class ExampleSubscriber extends Subscriber {
 
     public ExampleSubscriber() {
@@ -200,8 +201,7 @@ public class ExampleSubscriber extends Subscriber {
 <details>
 <summary><i>Details...</i></summary>
 
-To dispatch an event to an event bus, call one of the `dispatch` methods defined in any `IEventBus`
-implementation, passing your event as a parameter:
+To dispatch an event, call one of the `dispatch` methods defined in `EventBus`, passing your event as a parameter:
 
 ```java
 import me.tori.wraith.event.staged.EventStage;

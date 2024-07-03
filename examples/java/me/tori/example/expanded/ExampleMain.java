@@ -26,10 +26,10 @@ import me.tori.wraith.bus.IEventBus;
 import me.tori.wraith.event.staged.EventStage;
 
 /**
- * Example program
- * <p>Last updated for version <b>3.1.0</b>
+ * Example program.
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 1.0.0
  */
 class ExampleMain {
 
@@ -44,7 +44,7 @@ class ExampleMain {
 
         EVENT_BUS.dispatch(event1);
 
-        if (!event1.isCanceled()) {
+        if (!event1.isSuppressed()) {
             System.out.println(event1.getMessage());
         }
 
@@ -52,7 +52,7 @@ class ExampleMain {
 
         EVENT_BUS.dispatch(event2);
 
-        if (!event2.isCanceled()) {
+        if (!event2.isSuppressed()) {
             System.out.println(event2.getMessage());
         }
     }
