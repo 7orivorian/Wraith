@@ -25,9 +25,9 @@ import me.tori.wraith.event.status.IStatusEvent;
 import me.tori.wraith.event.targeted.IClassTargetingEvent;
 
 /**
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @since <b>3.0.0</b>
- * @deprecated This event bus' functionality is now built into the standard event bus.
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 3.0.0
+ * @deprecated This event bus' functionality is now built into the {@linkplain IEventBus standard event bus}.
  */
 @Deprecated(since = "3.3.0", forRemoval = true)
 public interface TargetableEventBus extends IEventBus {
