@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
@@ -370,38 +371,28 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      *                       they are processed in normal order
      * @since 3.2.0
      */
-    @SuppressWarnings("DuplicatedCode")
     private void dispatchToEachListener(Object event, List<Listener> listeners, Predicate<Listener> predicate, boolean invertPriority) {
         if (listeners != null && !listeners.isEmpty()) {
+            ListIterator<Listener> iterator;
+            Supplier<Listener> supplier;
             if (invertPriority) {
-                ListIterator<Listener> iterator = listeners.listIterator(listeners.size());
-                while (iterator.hasPrevious()) {
-                    Listener listener = iterator.previous();
-                    if (!predicate.test(listener)) {
-                        continue;
-                    }
-                    listener.invoke(event);
-                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
-                        break;
-                    }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
-                    }
-                }
+                iterator = listeners.listIterator(listeners.size());
+                supplier = () -> (iterator.hasPrevious() ? iterator.previous() : null);
             } else {
-                Iterator<Listener> iterator = listeners.listIterator(0);
-                while (iterator.hasNext()) {
-                    Listener listener = iterator.next();
-                    if (!predicate.test(listener)) {
-                        continue;
-                    }
-                    listener.invoke(event);
-                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
-                        break;
-                    }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
-                    }
+                iterator = listeners.listIterator(0);
+                supplier = () -> (iterator.hasNext() ? iterator.next() : null);
+            }
+            Listener listener;
+            while ((listener = supplier.get()) != null) {
+                if (!predicate.test(listener)) {
+                    continue;
+                }
+                listener.invoke(event);
+                if ((event instanceof IStatusEvent e) && e.isTerminated()) {
+                    break;
+                }
+                if (!listener.shouldPersist()) {
+                    listeners.remove(listener);
                 }
             }
         }
