@@ -21,17 +21,17 @@
 
 package me.tori.example.expanded;
 
-import me.tori.wraith.event.cancelable.CancelableEvent;
 import me.tori.wraith.event.staged.EventStage;
 import me.tori.wraith.event.staged.IStagedEvent;
+import me.tori.wraith.event.status.StatusEvent;
 
 /**
  * Example event.
- * <p>Last updated for version <b>3.1.0</b>
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 1.0.0
  */
-class ExampleEvent extends CancelableEvent implements IStagedEvent {
+class ExampleEvent extends StatusEvent implements IStagedEvent {
 
     private String message;
     private final EventStage stage;

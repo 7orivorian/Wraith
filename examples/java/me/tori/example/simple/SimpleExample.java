@@ -22,16 +22,14 @@
 package me.tori.example.simple;
 
 import me.tori.wraith.bus.EventBus;
-import me.tori.wraith.event.cancelable.CancelableEvent;
+import me.tori.wraith.event.status.StatusEvent;
 import me.tori.wraith.listener.LambdaEventListener;
 import me.tori.wraith.subscriber.Subscriber;
 
 /**
- * One-class example
- * <p>
- * Last updated for version <b>3.1.0</b>
+ * One-class example.
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
  */
 class SimpleExample {
 
@@ -45,38 +43,23 @@ class SimpleExample {
         // Subscribe to the event bus
         bus.subscribe(subscriber);
 
-        SimpleEvent event;
-
         // Create a simple event
-        // This event will be canceled, see the lambda in SimpleSubscriber to know why ;P
-        event = new SimpleEvent("Pie is gross!");
+        SimpleEvent event = new SimpleEvent("Pie is delicious <3");
 
-        if (!bus.dispatch(event)) {
-            // Only log the message if our event isn't canceled
-            System.out.println(event.getMessage());
-        }
-
-        event = new SimpleEvent("Pie is delicious <3");
-        if (!bus.dispatch(event)) {
-            System.out.println(event.getMessage());
-        }
+        // Dispatch our event
+        bus.dispatch(event);
     }
 
     private static final class SimpleSubscriber extends Subscriber {
 
         public SimpleSubscriber() {
             registerListener(
-                    new LambdaEventListener<>(SimpleEvent.class, event -> {
-                        if (event.getMessage().contains("gross")) {
-                            // Pie is not gross, so we cancel this event, preventing it from being written to the console
-                            event.cancel();
-                        }
-                    })
+                    new LambdaEventListener<>(SimpleEvent.class, event -> System.out.println(event.getMessage()))
             );
         }
     }
 
-    private static final class SimpleEvent extends CancelableEvent {
+    private static final class SimpleEvent extends StatusEvent {
 
         private final String message;
 
