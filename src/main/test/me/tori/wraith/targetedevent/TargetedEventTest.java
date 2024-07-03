@@ -42,36 +42,51 @@ public class TargetedEventTest {
 
         bus.subscribe(new Subscriber() {{
             registerListeners(
-                    new MyListener(),
-                    new OtherListener()
+                    new MyListener(0),
+                    new OtherListener(1)
             );
         }});
 
         TestEvent event = new TestEvent(MyListener.class);
-        assertFalse(bus.dispatchTargeted(event));
+        assertFalse(bus.dispatch(event));
+    }
+
+    @Test
+    public void testTargetedEvent2() {
+        final EventBus bus = new EventBus();
+
+        bus.subscribe(new Subscriber() {{
+            registerListeners(
+                    new MyListener(1),
+                    new OtherListener(0)
+            );
+        }});
+
+        TestEvent event = new TestEvent(MyListener.class);
+        assertFalse(bus.dispatch(event));
     }
 
     static class MyListener extends EventListener<TestEvent> {
 
-        public MyListener() {
-            super(TestEvent.class);
+        public MyListener(int priority) {
+            super(TestEvent.class, priority);
         }
 
         @Override
         public void invoke(TestEvent event) {
-
+            event.setSuppressed(false);
         }
     }
 
     static class OtherListener extends EventListener<TestEvent> {
 
-        public OtherListener() {
-            super(TestEvent.class);
+        public OtherListener(int priority) {
+            super(TestEvent.class, priority);
         }
 
         @Override
         public void invoke(TestEvent event) {
-            event.terminate();
+            event.suppress();
         }
     }
 

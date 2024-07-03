@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Default implementation of {@link IEventBus}, {@link TargetableEventBus}, and {@link InvertableEventBus}.
+ * Default implementation of {@link IEventBus}.
  *
  * <p>Manages event subscription, dispatching, and listener registration.
  *
@@ -43,7 +43,7 @@ import java.util.function.Supplier;
  * @since <b>1.0.0</b>
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class EventBus implements TargetableEventBus, InvertableEventBus {
+public class EventBus implements IEventBus {
 
     /**
      * The amount of {@linkplain EventBus} instances that have been created
@@ -235,97 +235,6 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
                     this.listeners.get(event.getClass()),
                     listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
                     invertPriority
-            );
-
-            if (event instanceof IStatusEvent e) {
-                return e.isSuppressed() || e.isTerminated();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Dispatches the given event to the target listener class
-     *
-     * @param event the {@linkplain IClassTargetingEvent} to be dispatched
-     * @return {@code true} if the given event was {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
-     * @throws NullPointerException          if the given event is {@code null}
-     * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
-     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
-     */
-    @Deprecated(since = "3.3.0", forRemoval = true)
-    @Override
-    public boolean dispatchTargeted(IClassTargetingEvent event) {
-        return dispatchTargeted(event, null);
-    }
-
-    /**
-     * Dispatches the given {@link IClassTargetingEvent} to the target listener class.
-     *
-     * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
-     * listeners based on their type, allowing for more targeted event handling.
-     *
-     * @param event the {@linkplain IClassTargetingEvent} to be dispatched
-     * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
-     * @throws NullPointerException          if the given event is {@code null}
-     * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
-     * @deprecated This method's functionality is now built into {@link #dispatch(Object, Class)}.
-     */
-    @Deprecated(since = "3.3.0", forRemoval = true)
-    @Override
-    public boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type) {
-        return dispatch(event, type);
-    }
-
-    /**
-     * Dispatches an event to listeners in order of inverse-priority.
-     * E.g., the lowest priority listeners will be invoked before the highest priority listeners.
-     *
-     * @param event the event to be dispatched
-     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
-     * @throws NullPointerException          if the given event is {@code null}
-     * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
-     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
-     */
-    @Deprecated(since = "3.3.0", forRemoval = true)
-    @Override
-    public boolean dispatchInverted(Object event) {
-        return dispatchInverted(event, null);
-    }
-
-    /**
-     * Dispatches an event to listeners in order of inverse-priority.
-     * E.g., the lowest priority listeners will be invoked before the highest priority listeners.
-     *
-     * <p>The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
-     * listeners based on their type, allowing for more targeted event handling.
-     *
-     * @param event the event to be dispatched
-     * @param type  the type of listener to invoke (can be {@code null})
-     * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
-     * @throws NullPointerException          if the given event is {@code null}
-     * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
-     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
-     */
-    @Deprecated(since = "3.3.0", forRemoval = true)
-    @Override
-    public boolean dispatchInverted(Object event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
-        } else {
-            taskExecutor.onEvent(event);
-
-            dispatchToEachListener(
-                    event,
-                    this.listeners.get(event.getClass()),
-                    listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
-                    true
             );
 
             if (event instanceof IStatusEvent e) {
