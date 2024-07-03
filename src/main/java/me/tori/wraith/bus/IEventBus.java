@@ -65,7 +65,7 @@ public interface IEventBus {
     /**
      * @param event the event to be dispatched
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
+     * {@code false} otherwise.
      */
     boolean dispatch(Object event);
 
@@ -73,17 +73,17 @@ public interface IEventBus {
      * @param event the event to be dispatched
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
+     * {@code false} otherwise.
      */
     boolean dispatch(Object event, Class<?> type);
 
     /**
-     * Shuts down this event bus, preventing future events from being dispatched
+     * Shuts down this event bus, preventing future events from being dispatched.
      */
     void shutdown();
 
     /**
-     * @return {@code true} if this event bus is shut down, {@code false} otherwise
+     * @return {@code true} if this event bus is shut down, {@code false} otherwise.
      */
     boolean isShutdown();
 }
