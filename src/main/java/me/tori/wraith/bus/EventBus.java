@@ -209,7 +209,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
             dispatchToEachListener(
                     event,
                     this.listeners.get(event.getClass()),
-                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
                     false
             );
 
@@ -253,25 +253,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
     @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
-        } else {
-            taskExecutor.onEvent(event);
-
-            dispatchToEachListener(
-                    event,
-                    this.listeners.get(event.getClass()),
-                    listener -> ((type == null) || (listener.getType() == null) || (listener.getType() == type))
-                            && listener.getClass().equals(event.getTargetClass()),
-                    false
-            );
-
-            if (event instanceof IStatusEvent e) {
-                return e.isSuppressed() || e.isTerminated();
-            }
-        }
-        return false;
+        return dispatch(event, type);
     }
 
     /**
@@ -314,7 +296,7 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
             dispatchToEachListener(
                     event,
                     this.listeners.get(event.getClass()),
-                    listener -> (type == null) || (listener.getType() == null) || (listener.getType() == type),
+                    listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
                     true
             );
 
