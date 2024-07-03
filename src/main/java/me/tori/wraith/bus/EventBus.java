@@ -228,7 +228,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchTargeted(IClassTargetingEvent event) {
         return dispatchTargeted(event, null);
@@ -246,7 +248,9 @@ public class EventBus implements TargetableEventBus, InvertableEventBus {
      * {@code false} otherwise
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object, Class)}.
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     @Override
     public boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");

@@ -27,23 +27,29 @@ import me.tori.wraith.event.targeted.IClassTargetingEvent;
 /**
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  * @since <b>3.0.0</b>
+ * @deprecated This event bus' functionality is now built into the standard event bus.
  */
+@Deprecated(since = "3.3.0", forRemoval = true)
 public interface TargetableEventBus extends IEventBus {
 
     /**
      * @param event the {@linkplain IClassTargetingEvent} to dispatch
      * @return {@code true} if the given event was {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false otherwise}
+     * {@code false} otherwise
      * @see EventBus#dispatchTargeted(IClassTargetingEvent)
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     boolean dispatchTargeted(IClassTargetingEvent event);
 
     /**
      * @param event the {@linkplain IClassTargetingEvent} to dispatch
      * @param type  the type of listener to invoke (can be {@code null})
      * @return {@code true} if the given event was {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false otherwise}
+     * {@code false} otherwise
      * @see EventBus#dispatchTargeted(IClassTargetingEvent, Class)
+     * @deprecated This method's functionality is now built into {@link #dispatch(Object)}
      */
+    @Deprecated(since = "3.3.0", forRemoval = true)
     boolean dispatchTargeted(IClassTargetingEvent event, Class<?> type);
 }
