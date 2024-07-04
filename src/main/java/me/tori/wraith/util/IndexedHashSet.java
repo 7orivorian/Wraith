@@ -22,98 +22,97 @@
 package me.tori.wraith.util;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @since 4.0.0
  */
-public class IndexedHashSet<E> {
+public class IndexedHashSet<E> extends ArrayList<E> {
 
-    private final ArrayList<E> list;
-    private final HashSet<E> set;
+    private final HashMap<E, Boolean> map;
 
     public IndexedHashSet() {
-        this.list = new ArrayList<>();
-        this.set = new HashSet<>();
+        this.map = new HashMap<>();
     }
 
+    @Override
     public boolean add(E element) {
-        if (set.add(element)) {
-            list.add(element);
+        Objects.requireNonNull(element);
+        if (map.put(element, true) == null) {
+            super.add(element);
             return true;
         }
         return false;
     }
 
-    public boolean add(int index, E element) {
-        if (set.add(element)) {
-            list.add(index, element);
-            return true;
+    @Override
+    public void add(int index, E element) {
+        Objects.requireNonNull(element);
+        rangeCheckForAdd(index);
+        if (map.put(element, true) == null) {
+            super.add(index, element);
         }
-        return false;
     }
 
-    public E get(int index) {
-        return list.get(index);
-    }
-
+    @Override
     public E remove(int index) {
-        E element = list.remove(index);
-        set.remove(element);
+        E element = super.remove(index);
+        map.remove(element);
         return element;
     }
 
-    @SuppressWarnings("SuspiciousMethodCalls")
+    @Override
     public boolean remove(Object element) {
-        if (set.remove(element)) {
-            list.remove(element);
+        if (map.remove(element) != null) {
+            super.remove(element);
             return true;
         }
         return false;
     }
 
+    @Override
     public boolean removeIf(Predicate<? super E> filter) {
+        Objects.requireNonNull(filter);
         boolean removed = false;
-        Iterator<E> it = list.iterator();
+        Iterator<E> it = iterator();
         while (it.hasNext()) {
             E element = it.next();
             if (filter.test(element)) {
                 it.remove();
-                set.remove(element);
+                map.remove(element);
                 removed = true;
             }
         }
         return removed;
     }
 
-    public int size() {
-        return list.size();
-    }
-
+    @Override
     @SuppressWarnings("SuspiciousMethodCalls")
     public boolean contains(Object element) {
-        return set.contains(element);
-    }
-
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    public ListIterator<E> listIterator(int index) {
-        return list.listIterator(index);
-    }
-
-    public void clear() {
-        list.clear();
-        set.clear();
+        return map.containsKey(element);
     }
 
     @Override
-    public String toString() {
-        return list.toString();
+    public void clear() {
+        super.clear();
+        map.clear();
+    }
+
+    public ArrayList<E> asList() {
+        return new ArrayList<>(this);
+    }
+
+    private void rangeCheckForAdd(int index) {
+        if ((index > size()) || (index < 0)) {
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        }
+    }
+
+    private String outOfBoundsMsg(int index) {
+        return "Index: " + index + ", Size: " + size();
     }
 }
