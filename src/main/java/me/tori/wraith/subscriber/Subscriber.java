@@ -21,13 +21,12 @@
 
 package me.tori.wraith.subscriber;
 
+import me.tori.wraith.bus.IEventBus;
 import me.tori.wraith.listener.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The default implementation of {@link ISubscriber} that manages event listeners and their registration.
@@ -40,6 +39,7 @@ import java.util.List;
  */
 public class Subscriber implements ISubscriber {
 
+    private final Set<@NotNull IEventBus> linkedBuses = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final List<@NotNull Listener<?>> listeners = new ArrayList<>();
 
     /**
@@ -52,6 +52,9 @@ public class Subscriber implements ISubscriber {
     @Override
     public <T extends Listener<?>> T registerListener(@NotNull T listener) {
         listeners.add(listener);
+        if (!linkedBuses.isEmpty()) {
+            linkedBuses.forEach(bus -> bus.register(listener));
+        }
         return listener;
     }
 
@@ -65,8 +68,37 @@ public class Subscriber implements ISubscriber {
     @SafeVarargs
     @Override
     public final <T extends Listener<?>> T[] registerListeners(@NotNull T... listeners) {
-        this.listeners.addAll(Arrays.asList(listeners));
+        final List<@NotNull T> list = Arrays.asList(listeners);
+        this.listeners.addAll(list);
+        if (!linkedBuses.isEmpty()) {
+            linkedBuses.forEach(bus -> list.forEach(bus::register));
+        }
         return listeners;
+    }
+
+    /**
+     * Unregisters a single event listener from this subscriber.
+     *
+     * @param listener The event listener to unregister.
+     * @param <T>      The type of the listener.
+     * @return {@code true} if this subscriber contained the specified listener, {@code false} otherwise.
+     */
+    @Override
+    public <T extends Listener<?>> boolean unregisterListener(T listener) {
+        return listeners.remove(listener);
+    }
+
+    /**
+     * Unregisters multiple event listeners from this subscriber.
+     *
+     * @param listeners The event listeners to unregister.
+     * @param <T>       The type of the listeners.
+     * @return {@code true} if this subscriber was changed as a result of the call, {@code false} otherwise.
+     */
+    @SafeVarargs
+    @Override
+    public final <T extends Listener<?>> boolean unregisterListeners(T... listeners) {
+        return this.listeners.removeAll(Arrays.asList(listeners));
     }
 
     /**
@@ -79,10 +111,41 @@ public class Subscriber implements ISubscriber {
         return listeners;
     }
 
+    /**
+     * Links this subscriber to the specified event bus.
+     * <p>
+     * This method adds the given {@code eventBus} to the {@linkplain #linkedBuses set of event buses that this subscriber is linked to}.
+     * Once linked, the event bus can register the event listeners managed by this subscriber.
+     *
+     * @param eventBus The event bus to link to this subscriber. Must not be {@code null}.
+     * @throws NullPointerException If the {@code eventBus} is {@code null}.
+     */
+    @Override
+    public void linkToBus(IEventBus eventBus) {
+        Objects.requireNonNull(eventBus, "Cannot subscribe to a null event bus");
+        linkedBuses.add(eventBus);
+    }
+
+    /**
+     * Unlinks this subscriber from the specified event bus.
+     * <p>
+     * This method removes the given {@code eventBus} from the {@linkplain #linkedBuses set of event buses that this subscriber is linked to}.
+     * Once unlinked, the event bus will no longer register the event listeners managed by this subscriber.
+     *
+     * @param eventBus The event bus to unlink from this subscriber. Must not be {@code null}.
+     * @throws NullPointerException If the {@code eventBus} is {@code null}.
+     */
+    @Override
+    public void unlinkFromBus(IEventBus eventBus) {
+        Objects.requireNonNull(eventBus, "Cannot unsubscribe from a null event bus");
+        linkedBuses.remove(eventBus);
+    }
+
     @Override
     public String toString() {
         return "Subscriber{" +
-                "listeners=" + listeners +
+                "busRefs=" + linkedBuses +
+                ", listeners=" + listeners +
                 '}';
     }
 }

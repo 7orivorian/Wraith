@@ -21,6 +21,7 @@
 
 package me.tori.wraith.subscriber;
 
+import me.tori.wraith.bus.IEventBus;
 import me.tori.wraith.listener.Listener;
 
 import java.util.Collection;
@@ -56,9 +57,44 @@ public interface ISubscriber {
     <T extends Listener<?>> T[] registerListeners(T... listeners);
 
     /**
+     * Unregisters a single event listener from this subscriber.
+     *
+     * @param listener The event listener to unregister.
+     * @param <T>      The type of the listener.
+     * @return {@code true} if this subscriber contained the specified listener, {@code false} otherwise.
+     */
+    <T extends Listener<?>> boolean unregisterListener(T listener);
+
+    /**
+     * Unregisters multiple event listeners from this subscriber.
+     *
+     * @param listeners The event listeners to unregister.
+     * @param <T>       The type of the listeners.
+     * @return {@code true} if this subscriber was changed as a result of the call, {@code false} otherwise.
+     */
+    @SuppressWarnings("unchecked")
+    <T extends Listener<?>> boolean unregisterListeners(T... listeners);
+
+    /**
      * Retrieves a collection of event listeners registered with this subscriber.
      *
      * @return A collection of registered event listeners.
      */
     Collection<Listener<?>> getListeners();
+
+    /**
+     * Links this subscriber to the specified event bus.
+     *
+     * @param eventBus The event bus to link to this subscriber. Must not be {@code null}.
+     * @throws NullPointerException If the {@code eventBus} is {@code null}.
+     */
+    void linkToBus(IEventBus eventBus);
+
+    /**
+     * Unlinks this subscriber from the specified event bus.
+     *
+     * @param eventBus The event bus to unlink from this subscriber. Must not be {@code null}.
+     * @throws NullPointerException If the {@code eventBus} is {@code null}.
+     */
+    void unlinkFromBus(IEventBus eventBus);
 }

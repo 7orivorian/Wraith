@@ -27,12 +27,11 @@ import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
 import me.tori.wraith.task.ScheduledTask;
 import me.tori.wraith.task.TaskExecutor;
+import me.tori.wraith.util.IndexedHashSet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link IEventBus}.
@@ -67,7 +66,7 @@ public class EventBus implements IEventBus {
     /**
      * A {@link ConcurrentHashMap} of this event bus' {@link Listener listeners}
      */
-    private final ConcurrentHashMap<Class<?>, List<Listener>> listeners;
+    private final ConcurrentHashMap<Class<?>, IndexedHashSet<Listener>> listeners;
     /**
      * A {@link TaskExecutor} that manages the scheduling and execution of tasks associated with events. It provides
      * a mechanism to associate event classes with queues of tasks and ensures their orderly execution when the
@@ -106,15 +105,20 @@ public class EventBus implements IEventBus {
     @Override
     public void subscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus " + id + "!");
+
+        subscribers.add(subscriber);
+        subscriber.linkToBus(this);
+
         Collection<Listener<?>> listeners = subscriber.getListeners();
-        if (listeners.size() == 1) {
-            register(listeners.iterator().next());
-        } else {
-            for (Listener<?> listener : listeners) {
-                register(listener);
+        if (!listeners.isEmpty()) {
+            if (listeners.size() == 1) {
+                register(listeners.iterator().next());
+            } else {
+                for (Listener<?> listener : listeners) {
+                    register(listener);
+                }
             }
         }
-        subscribers.add(subscriber);
     }
 
     /**
@@ -128,15 +132,20 @@ public class EventBus implements IEventBus {
     @Override
     public void unsubscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus " + id + "!");
+
+        subscribers.remove(subscriber);
+        subscriber.unlinkFromBus(this);
+
         Collection<Listener<?>> listeners = subscriber.getListeners();
-        if (listeners.size() == 1) {
-            unregister(listeners.iterator().next());
-        } else {
-            for (Listener<?> listener : listeners) {
-                unregister(listener);
+        if (!listeners.isEmpty()) {
+            if (listeners.size() == 1) {
+                unregister(listeners.iterator().next());
+            } else {
+                for (Listener<?> listener : listeners) {
+                    unregister(listener);
+                }
             }
         }
-        subscribers.remove(subscriber);
     }
 
     /**
@@ -149,7 +158,7 @@ public class EventBus implements IEventBus {
     public void register(Listener<?> listener) {
         Objects.requireNonNull(listener, "Cannot register null listener to event bus " + id + "!");
 
-        List<Listener> listeners = this.listeners.computeIfAbsent(listener.getTarget(), target -> new CopyOnWriteArrayList<>());
+        IndexedHashSet<Listener> listeners = this.listeners.computeIfAbsent(listener.getTarget(), target -> new IndexedHashSet<>());
         final int size = listeners.size();
         int index = 0;
         for (; index < size; index++) {
@@ -307,28 +316,36 @@ public class EventBus implements IEventBus {
      *                       they are processed in normal order
      * @since 3.2.0
      */
-    private void dispatchToEachListener(Object event, List<Listener> listeners, Predicate<Listener> predicate, boolean invertPriority) {
-        if (listeners != null && !listeners.isEmpty()) {
-            ListIterator<Listener> iterator;
-            Supplier<Listener> supplier;
+    @SuppressWarnings("DuplicatedCode")
+    private void dispatchToEachListener(Object event, IndexedHashSet<Listener> listeners, Predicate<Listener> predicate, boolean invertPriority) {
+        if ((listeners != null) && !listeners.isEmpty()) {
+            final ArrayList<Listener> li = listeners.asList();
             if (invertPriority) {
-                iterator = listeners.listIterator(listeners.size());
-                supplier = () -> (iterator.hasPrevious() ? iterator.previous() : null);
+                for (int i = li.size() - 1; i >= 0; i--) {
+                    Listener listener = li.get(i);
+                    if (!predicate.test(listener)) {
+                        continue;
+                    }
+                    listener.invoke(event);
+                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
+                        break;
+                    }
+                    if (!listener.shouldPersist()) {
+                        listeners.remove(listener);
+                    }
+                }
             } else {
-                iterator = listeners.listIterator(0);
-                supplier = () -> (iterator.hasNext() ? iterator.next() : null);
-            }
-            Listener listener;
-            while ((listener = supplier.get()) != null) {
-                if (!predicate.test(listener)) {
-                    continue;
-                }
-                listener.invoke(event);
-                if ((event instanceof IStatusEvent e) && e.isTerminated()) {
-                    break;
-                }
-                if (!listener.shouldPersist()) {
-                    listeners.remove(listener);
+                for (Listener listener : li) {
+                    if (!predicate.test(listener)) {
+                        continue;
+                    }
+                    listener.invoke(event);
+                    if ((event instanceof IStatusEvent e) && e.isTerminated()) {
+                        break;
+                    }
+                    if (!listener.shouldPersist()) {
+                        listeners.remove(listener);
+                    }
                 }
             }
         }
