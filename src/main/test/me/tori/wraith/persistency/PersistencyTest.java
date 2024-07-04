@@ -70,7 +70,7 @@ public class PersistencyTest {
 
         @Override
         public void invoke(MyEvent event) {
-            event.terminate();
+            event.suppress();
         }
     }
 
