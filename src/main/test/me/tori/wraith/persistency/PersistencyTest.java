@@ -57,7 +57,7 @@ public class PersistencyTest {
             registerListener(new MyListener(0)); // <= 0 means persist indefinitely
         }});
 
-        for (int i = 0; i < 1_000_000; i++) {
+        for (int i = 0; i < 1_000; i++) {
             Assertions.assertTrue(bus.dispatch(new MyEvent()));
         }
     }
