@@ -24,10 +24,8 @@ package me.tori.wraith.benchmarking;
 import me.tori.wraith.bus.EventBus;
 import me.tori.wraith.listener.EventListener;
 import me.tori.wraith.subscriber.Subscriber;
-import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.*;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,10 +33,6 @@ import java.util.concurrent.TimeUnit;
  * @since 3.2.0
  */
 public class MyBenchmark {
-
-    public static void main(String[] args) throws IOException {
-        Main.main(args);
-    }
 
     @State(Scope.Thread)
     public static class BenchmarkState {
