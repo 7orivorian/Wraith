@@ -32,10 +32,10 @@ import java.util.Objects;
  * Event listeners provide event handling logic with specified priorities, target classes, and types.
  *
  * @param <T> The type of event this listener is designed to handle.
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see Listener
  * @see Invokable
- * @since <b>1.0.0</b>
+ * @since 1.0.0
  */
 public abstract class EventListener<T> implements Listener<T> {
 

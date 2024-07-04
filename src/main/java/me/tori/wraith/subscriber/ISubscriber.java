@@ -27,11 +27,12 @@ import java.util.Collection;
 
 /**
  * Represents a subscriber that can register and manage event listeners.
- * <p>An instance of a class implementing this interface can subscribe to an event bus by registering listeners.
+ * <p>
+ * An instance of a class implementing this interface can subscribe to an event bus by registering listeners.
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see Subscriber
- * @since <b>1.0.0</b>
+ * @since 1.0.0
  */
 public interface ISubscriber {
 

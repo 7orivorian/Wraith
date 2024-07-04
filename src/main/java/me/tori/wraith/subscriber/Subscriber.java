@@ -30,12 +30,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A concrete implementation of {@link ISubscriber} that manages event listeners and their registration.
+ * The default implementation of {@link ISubscriber} that manages event listeners and their registration.
+ * <p>
  * This class provides methods to register single or multiple event listeners and retrieve registered listeners.
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see ISubscriber
- * @since <b>1.0.0</b>
+ * @since 1.0.0
  */
 public class Subscriber implements ISubscriber {
 

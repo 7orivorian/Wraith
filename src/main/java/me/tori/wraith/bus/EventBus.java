@@ -36,11 +36,11 @@ import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link IEventBus}.
+ * <p>
+ * Manages subscription, listener registration, and event dispatching.
  *
- * <p>Manages event subscription, dispatching, and listener registration.
- *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @since <b>1.0.0</b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 1.0.0
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EventBus implements IEventBus {
