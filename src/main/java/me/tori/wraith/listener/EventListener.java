@@ -52,7 +52,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * @throws NullPointerException if {@code target} is {@code null}.
      */
     public EventListener(@NotNull Class<? super T> target) {
-        this(target, IEventBus.DEFAULT_PRIORITY, null);
+        this(target, null, IEventBus.DEFAULT_PRIORITY, DEFAULT_PERSISTENCE);
     }
 
     /**
@@ -63,7 +63,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * @throws NullPointerException if {@code target} is {@code null}.
      */
     public EventListener(@NotNull Class<? super T> target, int priority) {
-        this(target, priority, null);
+        this(target, null, priority, DEFAULT_PERSISTENCE);
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * @throws NullPointerException if {@code target} is {@code null}.
      */
     public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type) {
-        this(target, IEventBus.DEFAULT_PRIORITY, type);
+        this(target, type, IEventBus.DEFAULT_PRIORITY, DEFAULT_PERSISTENCE);
     }
 
     /**
@@ -85,8 +85,8 @@ public abstract class EventListener<T> implements Listener<T> {
      * @param type     The type of events that this listener can handle. Can be {@code null}.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public EventListener(@NotNull Class<? super T> target, int priority, @Nullable Class<?> type) {
-        this(target, type, priority, 0);
+    public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type, int priority) {
+        this(target, type, priority, DEFAULT_PERSISTENCE);
     }
 
     /**
@@ -102,9 +102,9 @@ public abstract class EventListener<T> implements Listener<T> {
      */
     public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type, int priority, int persists) {
         Objects.requireNonNull(target);
-        this.priority = priority;
         this.target = target;
         this.type = type;
+        this.priority = priority;
         this.persists = persists;
         this.indefinitePersistence = persists <= 0;
     }

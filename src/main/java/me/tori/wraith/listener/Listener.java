@@ -38,6 +38,8 @@ import java.util.function.Predicate;
  */
 public interface Listener<T> extends Invokable<T> {
 
+    int DEFAULT_PERSISTENCE = 0;
+
     /**
      * Gets the priority level of this listener for event handling.
      *

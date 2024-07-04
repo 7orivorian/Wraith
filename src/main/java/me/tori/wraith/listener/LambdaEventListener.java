@@ -88,8 +88,8 @@ public class LambdaEventListener<E> extends EventListener<E> {
      * @param invokable The invokable action to be executed when the event is dispatched.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public LambdaEventListener(@NotNull Class<? super E> target, int priority, @Nullable Class<?> type, @NotNull Invokable<E> invokable) {
-        super(target, priority, type);
+    public LambdaEventListener(@NotNull Class<? super E> target, @Nullable Class<?> type, int priority, @NotNull Invokable<E> invokable) {
+        super(target, type, priority);
         Objects.requireNonNull(invokable);
         this.invokable = invokable;
     }
