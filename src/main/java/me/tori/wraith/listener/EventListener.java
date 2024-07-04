@@ -177,25 +177,18 @@ public abstract class EventListener<T> implements Listener<T> {
         }
 
         EventListener<?> that = (EventListener<?>) o;
-        if (priority != that.priority) {
-            return false;
-        }
-        if (indefinitePersistence != that.indefinitePersistence) {
-            return false;
-        }
-        if (!Objects.equals(type, that.type)) {
-            return false;
-        }
-        return target.equals(that.target);
+        return (priority == that.priority)
+                && (indefinitePersistence == that.indefinitePersistence)
+                && target.equals(that.target)
+                && Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
         int result = target.hashCode();
-        result = 31 * result + Objects.hashCode(type);
-        result = 31 * result + priority;
-        result = 31 * result + Boolean.hashCode(indefinitePersistence);
-        result = 31 * result + persists;
+        result = (31 * result) + Objects.hashCode(type);
+        result = (31 * result) + priority;
+        result = (31 * result) + Boolean.hashCode(indefinitePersistence);
         return result;
     }
 
