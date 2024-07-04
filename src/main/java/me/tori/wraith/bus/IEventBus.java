@@ -27,13 +27,15 @@ import me.tori.wraith.listener.Listener;
 import me.tori.wraith.subscriber.ISubscriber;
 
 /**
+ * An event bus that allows for the subscription, registration, and dispatching of events to listeners.
+ *
  * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
  * @since <b>1.0.0</b>
  */
 public interface IEventBus {
 
     /**
-     * Default priority that used when no other priority is specified
+     * Default priority used when no other priority is specified.
      *
      * @see EventListener#EventListener(Class)
      * @see EventListener#EventListener(Class, Class)
