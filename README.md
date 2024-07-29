@@ -204,8 +204,6 @@ public class ExampleSubscriber extends Subscriber {
 To dispatch an event, call one of the `dispatch` methods defined in `EventBus`, passing your event as a parameter:
 
 ```java
-import me.tori.wraith.event.staged.EventStage;
-
 public class Example {
 
     private static final IEventBus EVENT_BUS = new EventBus();
@@ -223,7 +221,7 @@ public class Example {
 
 </details>
 
-Please explore the [example folder](./examples/java/me/tori/example) for _even more_ Wraith implementations!
+Please explore the [example folder](./examples/java/dev/tori/example) for _even more_ Wraith implementations!
 
 # Contributing
 

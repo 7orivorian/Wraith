@@ -7,7 +7,7 @@
     <description>Java event library</description>
     <url>https://github.com/7orivorian/Wraith</url>
 
-    <groupId>me.tori</groupId>
+    <groupId>dev.tori</groupId>
     <artifactId>Wraith</artifactId>
     <packaging>jar</packaging>
     <version>4.0.0</version>
@@ -22,7 +22,7 @@
     <developers>
         <developer>
             <id>7orivorian</id>
-            <name>Tori Vii</name>
+            <name>Tori</name>
             <url>https://7ori.dev</url>
         </developer>
     </developers>
@@ -59,6 +59,14 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub 7orivorian Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/7orivorian/Wraith</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
