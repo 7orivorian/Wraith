@@ -22,8 +22,8 @@
 package dev.tori.wraith.listener;
 
 import dev.tori.wraith.bus.IEventBus;
+import dev.tori.wraith.event.Target;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -37,8 +37,7 @@ import java.util.Objects;
  * <pre>
  * {@code
  * EventListener<MyEvent> listener = new ListenerBuilder<>()
- *     .target(MyEvent.class)
- *     .type(SomeSpecificType.class)
+ *     .target(ClassTarget.fine(MyEvent.class))
  *     .priority(5)
  *     .persists(10)
  *     .invokable(event -> handleEvent(event))
@@ -53,40 +52,28 @@ import java.util.Objects;
  */
 public class ListenerBuilder<T> {
 
-    private Class<? super T> target = null;
-    private @Nullable Class<?> type = null;
+    private Target target = null;
     private int priority = IEventBus.DEFAULT_PRIORITY;
     private int persists = -1;
     private boolean persistent = true;
     private Invokable<T> invokable = null;
 
     /**
-     * Sets the target class for this listener.
+     * Sets the {@link Target} for this listener.
      *
-     * @param target the class of the event this listener will handle
-     * @return this {@code ListenerBuilder} instance
+     * @param target This listener's {@link Target}.
+     * @return this {@code ListenerBuilder} instance.
      */
-    public ListenerBuilder<T> target(@NotNull Class<? super T> target) {
+    public ListenerBuilder<T> target(@NotNull Target target) {
         this.target = target;
-        return this;
-    }
-
-    /**
-     * Sets the specific type for this listener.
-     *
-     * @param type the specific type of event this listener will handle
-     * @return this {@code ListenerBuilder} instance
-     */
-    public ListenerBuilder<T> type(@Nullable Class<? super T> type) {
-        this.type = type;
         return this;
     }
 
     /**
      * Sets the priority for this listener.
      *
-     * @param priority the priority of the listener
-     * @return this {@code ListenerBuilder} instance
+     * @param priority the priority of the listener.
+     * @return this {@code ListenerBuilder} instance.
      */
     public ListenerBuilder<T> priority(int priority) {
         this.priority = priority;
@@ -98,8 +85,8 @@ public class ListenerBuilder<T> {
      * <p>
      * Overrides {@link #persistent}.
      *
-     * @param persists the number of events this listener should handle before being removed
-     * @return this {@code ListenerBuilder} instance
+     * @param persists the number of events this listener should handle before being removed.
+     * @return this {@code ListenerBuilder} instance.
      */
     public ListenerBuilder<T> persists(int persists) {
         this.persists = persists;
@@ -112,8 +99,8 @@ public class ListenerBuilder<T> {
      * <p>
      * Overrides {@link #persists}.
      *
-     * @param persistent {@code true} if the listener should be persistent, {@code false} otherwise
-     * @return this {@code ListenerBuilder} instance
+     * @param persistent {@code true} if the listener should be persistent, {@code false} otherwise.
+     * @return this {@code ListenerBuilder} instance.
      */
     public ListenerBuilder<T> persistent(boolean persistent) {
         this.persistent = persistent;
@@ -127,7 +114,7 @@ public class ListenerBuilder<T> {
      * Sets the invokable action for this listener.
      *
      * @param invokable the action to be invoked when an event is handled
-     * @return this {@code ListenerBuilder} instance
+     * @return this {@code ListenerBuilder} instance.
      */
     public ListenerBuilder<T> invokable(@NotNull Invokable<T> invokable) {
         this.invokable = invokable;
@@ -137,9 +124,9 @@ public class ListenerBuilder<T> {
     /**
      * Builds and returns an {@link EventListener} with the configured properties.
      *
-     * @return a new {@link EventListener} instance
-     * @throws NullPointerException     if the target or invokable is not set
-     * @throws IllegalArgumentException if there is a mismatch between persistence settings
+     * @return a new {@link EventListener} instance.
+     * @throws NullPointerException     if the target or invokable is not set.
+     * @throws IllegalArgumentException if there is a mismatch between persistence settings.
      */
     @NotNull
     public EventListener<T> build() {
@@ -150,7 +137,7 @@ public class ListenerBuilder<T> {
                     "Persistency missmatch. persistent=" + persistent + " and persists=" + persists + " is not allowed."
             );
         }
-        return new EventListener<>(target, type, priority, persists) {
+        return new EventListener<>(target, priority, persists) {
             @Override
             public void invoke(T event) {
                 invokable.invoke(event);

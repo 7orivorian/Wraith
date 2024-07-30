@@ -22,6 +22,7 @@
 package dev.tori.example.simple;
 
 import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
@@ -44,7 +45,7 @@ class SimpleExample {
         bus.subscribe(subscriber);
 
         // Create a simple event
-        SimpleEvent event = new SimpleEvent("Pie is delicious <3");
+        StringEvent event = new StringEvent("Pie is delicious <3");
 
         // Dispatch our event
         bus.dispatch(event);
@@ -54,16 +55,16 @@ class SimpleExample {
 
         public SimpleSubscriber() {
             registerListener(
-                    new LambdaEventListener<>(SimpleEvent.class, event -> System.out.println(event.getMessage()))
+                    new LambdaEventListener<StringEvent>(Target.fine(StringEvent.class), event -> System.out.println(event.getMessage()))
             );
         }
     }
 
-    private static final class SimpleEvent extends StatusEvent {
+    private static final class StringEvent extends StatusEvent {
 
         private final String message;
 
-        public SimpleEvent(String message) {
+        public StringEvent(String message) {
             this.message = message;
         }
 

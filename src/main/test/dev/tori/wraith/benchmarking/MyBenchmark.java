@@ -22,6 +22,7 @@
 package dev.tori.wraith.benchmarking;
 
 import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.listener.EventListener;
 import dev.tori.wraith.subscriber.Subscriber;
 import org.openjdk.jmh.annotations.*;
@@ -72,7 +73,7 @@ public class MyBenchmark {
     public static class MyListener extends EventListener<MyEvent> {
 
         public MyListener() {
-            super(MyEvent.class);
+            super(Target.fine(MyEvent.class));
         }
 
         @Override

@@ -22,6 +22,7 @@
 package dev.tori.wraith.priority;
 
 import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
@@ -38,15 +39,15 @@ public class PriorityTest {
     public void testPriority() {
         final EventBus bus = new EventBus();
         bus.subscribe(new Subscriber() {{
-            registerListener(new LambdaEventListener<>(MyEvent.class, 5, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<>(MyEvent.class, 4, event -> {
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 5, event -> event.setFlag(true)));
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 4, event -> {
                 event.setFlag(false);
                 event.terminate();
             }));
-            registerListener(new LambdaEventListener<>(MyEvent.class, 3, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<>(MyEvent.class, 2, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<>(MyEvent.class, 1, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<>(MyEvent.class, 0, event -> event.setFlag(true)));
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 3, event -> event.setFlag(true)));
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 2, event -> event.setFlag(true)));
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 1, event -> event.setFlag(true)));
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 0, event -> event.setFlag(true)));
         }});
 
         MyEvent event = new MyEvent();

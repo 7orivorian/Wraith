@@ -22,14 +22,15 @@
 package dev.tori.wraith.listener;
 
 import dev.tori.wraith.bus.IEventBus;
+import dev.tori.wraith.event.Target;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 /**
  * An abstract base class for event listeners that implements the {@link Listener} interface.
- * Event listeners provide event handling logic with specified priorities, target classes, and types.
+ * Event listeners provide event handling logic with specified targets and priorities.
  *
  * @param <T> The type of event this listener is designed to handle.
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
@@ -39,71 +40,49 @@ import java.util.Objects;
  */
 public abstract class EventListener<T> implements Listener<T> {
 
-    protected final @NotNull Class<? super T> target;
-    protected final @Nullable Class<?> type;
+    @NotNull
+    protected final Target target;
     protected final int priority;
     protected final boolean indefinitePersistence;
     protected int persists;
 
     /**
-     * Constructs an event listener with default priority and no specified type.
+     * Constructs an event listener with default {@linkplain IEventBus#DEFAULT_PRIORITY priority} and {@linkplain #DEFAULT_PERSISTENCE persistence}.
      *
-     * @param target The target class that this listener is designed to handle events for.
+     * @param target This listener's {@linkplain Target target class}.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public EventListener(@NotNull Class<? super T> target) {
-        this(target, null, IEventBus.DEFAULT_PRIORITY, DEFAULT_PERSISTENCE);
+    @Contract(pure = true)
+    public EventListener(@NotNull Target target) {
+        this(target, IEventBus.DEFAULT_PRIORITY, DEFAULT_PERSISTENCE);
     }
 
     /**
-     * Constructs an event listener with a specified priority and no specified type.
+     * Constructs an event listener with a specified {@code priority} and {@linkplain #DEFAULT_PERSISTENCE default persistence}.
      *
-     * @param target   The target class that this listener is designed to handle events for.
+     * @param target   This listener's {@link Target}.
      * @param priority The priority level of this listener for event handling.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public EventListener(@NotNull Class<? super T> target, int priority) {
-        this(target, null, priority, DEFAULT_PERSISTENCE);
+    @Contract(pure = true)
+    public EventListener(@NotNull Target target, int priority) {
+        this(target, priority, DEFAULT_PERSISTENCE);
     }
 
     /**
-     * Constructs an event listener with default priority and a specified type.
+     * Constructs an event listener with a specified {@code priority} and {@code persists}.
      *
-     * @param target The target class that this listener is designed to handle events for.
-     * @param type   The type of events that this listener can handle. Can be {@code null}.
-     * @throws NullPointerException if {@code target} is {@code null}.
-     */
-    public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type) {
-        this(target, type, IEventBus.DEFAULT_PRIORITY, DEFAULT_PERSISTENCE);
-    }
-
-    /**
-     * Constructs an event listener with a specified priority and type.
-     *
-     * @param target   The target class that this listener is designed to handle events for.
-     * @param priority The priority level of this listener for event handling.
-     * @param type     The type of events that this listener can handle. Can be {@code null}.
-     * @throws NullPointerException if {@code target} is {@code null}.
-     */
-    public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type, int priority) {
-        this(target, type, priority, DEFAULT_PERSISTENCE);
-    }
-
-    /**
-     * Constructs an event listener with a specified priority and type.
-     *
-     * @param target   The target class that this listener is designed to handle events for.
-     * @param type     The type of events that this listener can handle. Can be {@code null}.
+     * @param target   This listener's {@link Target}.
      * @param priority The priority level of this listener for event handling.
      * @param persists How many events this listener should handle before being killed.
-     *                 A value {@code <= 0} will flag this listener to {@linkplain #indefinitePersistence persist indefinitely}.
+     *                 A value {@code <= 0} will {@linkplain #indefinitePersistence flag this listener to persist indefinitely}.
      * @throws NullPointerException if {@code target} is {@code null}.
      * @since 3.2.0
      */
-    public EventListener(@NotNull Class<? super T> target, @Nullable Class<?> type, int priority, int persists) {
+    @Contract(pure = true)
+    public EventListener(@NotNull Target target, int priority, int persists) {
         Objects.requireNonNull(target);
         this.target = target;
-        this.type = type;
         this.priority = priority;
         this.persists = persists;
         this.indefinitePersistence = persists <= 0;
@@ -120,24 +99,13 @@ public abstract class EventListener<T> implements Listener<T> {
     }
 
     /**
-     * Gets the type of events that this listener can handle.
+     * Gets the {@link Target} of this listener.
      *
-     * @return The type of events that this listener can handle, or {@code null} if no type is specified.
-     */
-    @Nullable
-    @Override
-    public Class<?> getType() {
-        return type;
-    }
-
-    /**
-     * Gets the target class that this listener is designed to handle events for.
-     *
-     * @return The target class that this listener is designed to handle events for.
+     * @return The {@link Target} of this listener.
      */
     @NotNull
     @Override
-    public Class<? super T> getTarget() {
+    public Target getTarget() {
         return target;
     }
 
@@ -147,7 +115,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * or if the {@linkplain EventListener#persists internal persistence counter} is greater than zero
      * after being decremented.
      *
-     * @return {@code true} if the listener should persist, {@code false} otherwise
+     * @return {@code true} if the listener should persist, {@code false} otherwise.
      * @since 3.2.0
      */
     @Override
@@ -159,7 +127,7 @@ public abstract class EventListener<T> implements Listener<T> {
      * Indicates whether this listener is inherently persistent.
      * A listener is considered inherently persistent if the {@linkplain #indefinitePersistence} flag is set to {@code true}.
      *
-     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise
+     * @return {@code true} if the listener is inherently persistent, {@code false} otherwise.
      * @since 3.2.0
      */
     @Override
@@ -168,25 +136,24 @@ public abstract class EventListener<T> implements Listener<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if ((o == null) || (getClass() != o.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
 
-        EventListener<?> that = (EventListener<?>) o;
+        EventListener<?> that = (EventListener<?>) obj;
         return (priority == that.priority)
                 && (indefinitePersistence == that.indefinitePersistence)
-                && target.equals(that.target)
-                && Objects.equals(type, that.type);
+                && target.equals(that.target);
     }
 
     @Override
     public int hashCode() {
         int result = target.hashCode();
-        result = (31 * result) + Objects.hashCode(type);
         result = (31 * result) + priority;
         result = (31 * result) + Boolean.hashCode(indefinitePersistence);
         return result;
@@ -196,7 +163,6 @@ public abstract class EventListener<T> implements Listener<T> {
     public String toString() {
         return "EventListener{" +
                 "target=" + target +
-                ", type=" + type +
                 ", priority=" + priority +
                 ", indefinitePersistence=" + indefinitePersistence +
                 ", persists=" + persists +

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2024 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,63 +19,76 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.persistency;
+package dev.tori.wraith;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;
-import dev.tori.wraith.event.status.StatusEvent;
+import dev.tori.wraith.event.targeted.ClassTargetingEvent;
 import dev.tori.wraith.listener.EventListener;
+import dev.tori.wraith.listener.Listener;
 import dev.tori.wraith.subscriber.Subscriber;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
- * @since 3.2.0
+ * @since 4.0.0
  */
-public class PersistencyTest {
+public class MainTwo {
 
-    @Test
-    public void testEventPersistency() {
+    public static void main(String[] args) {
         final EventBus bus = new EventBus();
-
         bus.subscribe(new Subscriber() {{
-            registerListener(new MyListener(3));
+            registerListeners(
+                    new ListenerOne(),
+                    new ListenerTwo()
+            );
         }});
 
-        Assertions.assertTrue(bus.dispatch(new MyEvent()));
-        Assertions.assertTrue(bus.dispatch(new MyEvent()));
-        Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        TestEvent event = new TestEvent(null);
 
-        Assertions.assertFalse(bus.dispatch(new MyEvent()));
+        bus.dispatch(event);
+
+        System.out.println(event);
     }
 
-    @Test
-    public void testIndefiniteEvent() {
-        final EventBus bus = new EventBus();
+    static class ListenerOne extends EventListener<TestEvent> {
 
-        bus.subscribe(new Subscriber() {{
-            registerListener(new MyListener(0)); // <= 0 means persist indefinitely
-        }});
-
-        for (int i = 0; i < 1_000; i++) {
-            Assertions.assertTrue(bus.dispatch(new MyEvent()));
-        }
-    }
-
-    static class MyListener extends EventListener<MyEvent> {
-
-        public MyListener(int persists) {
-            super(Target.fine(MyEvent.class), 0, persists);
+        public ListenerOne() {
+            super(Target.fine(TestEvent.class));
         }
 
         @Override
-        public void invoke(MyEvent event) {
-            event.suppress();
+        public void invoke(TestEvent event) {
+            event.mod();
         }
     }
 
-    static class MyEvent extends StatusEvent {
+    static class ListenerTwo extends EventListener<TestEvent> {
 
+        public ListenerTwo() {
+            super(Target.fine(TestEvent.class));
+        }
+
+        @Override
+        public void invoke(TestEvent event) {
+            event.mod();
+        }
+    }
+
+    static class TestEvent extends ClassTargetingEvent {
+
+        private int mods = 0;
+
+        public TestEvent(Class<? extends Listener<?>> target) {
+            super(target);
+        }
+
+        public void mod() {
+            this.mods++;
+        }
+
+        @Override
+        public String toString() {
+            return "mods=" + mods;
+        }
     }
 }

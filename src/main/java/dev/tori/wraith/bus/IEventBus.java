@@ -21,31 +21,31 @@
 
 package dev.tori.wraith.bus;
 
-import dev.tori.wraith.subscriber.ISubscriber;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.IStatusEvent;
 import dev.tori.wraith.listener.EventListener;
 import dev.tori.wraith.listener.Listener;
+import dev.tori.wraith.subscriber.ISubscriber;
 
 /**
  * An event bus that allows for the subscription, registration, and dispatching of events to listeners.
  *
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @since <b>1.0.0</b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 1.0.0
  */
 public interface IEventBus {
 
     /**
      * Default priority used when no other priority is specified.
      *
-     * @see EventListener#EventListener(Class)
-     * @see EventListener#EventListener(Class, Class)
+     * @see EventListener#EventListener(Target)
      */
     int DEFAULT_PRIORITY = 0;
 
     /**
      * Subscribes the specified subscriber to this event bus.
      *
-     * @param subscriber the {@link ISubscriber} to be subscribed
+     * @param subscriber the {@link ISubscriber} to be subscribed.
      * @see #register(Listener)
      */
     void subscribe(ISubscriber subscriber);
@@ -53,7 +53,7 @@ public interface IEventBus {
     /**
      * Unsubscribes the specified subscriber from this event bus.
      *
-     * @param subscriber the {@link ISubscriber} to be unsubscribed
+     * @param subscriber the {@link ISubscriber} to be unsubscribed.
      * @see #unregister(Listener)
      */
     void unsubscribe(ISubscriber subscriber);
@@ -61,21 +61,21 @@ public interface IEventBus {
     /**
      * Registers the specified listener to this event bus.
      *
-     * @param listener the {@link Listener} to be registered
+     * @param listener the {@link Listener} to be registered.
      */
     void register(Listener<?> listener);
 
     /**
      * Unregisters the specified listener from this event bus.
      *
-     * @param listener the {@link Listener} to be unregistered
+     * @param listener the {@link Listener} to be unregistered.
      */
     void unregister(Listener<?> listener);
 
     /**
      * Dispatches the specified event to all registered listeners.
      *
-     * @param event the event to be dispatched
+     * @param event the event to be dispatched.
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise.
      */
@@ -84,35 +84,38 @@ public interface IEventBus {
     /**
      * Dispatches the specified event to all registered listeners of the specified type.
      *
-     * @param event the event to be dispatched
-     * @param type  the type of listener to invoke (can be {@code null})
+     * @param event  the event to be dispatched.
+     * @param target the {@linkplain Target target class} of listener to invoke.
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise.
+     * @since 4.0.0
      */
-    boolean dispatch(Object event, Class<?> type);
+    boolean dispatch(Object event, Target target);
 
     /**
      * Dispatches the specified event to all registered listeners, with the option to invert the processing priority.
      *
-     * @param event          the event to be dispatched
+     * @param event          the event to be dispatched.
      * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
-     *                       they are processed in normal order
+     *                       they are processed in normal order.
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise.
+     * @since 3.3.0
      */
     boolean dispatch(Object event, boolean invertPriority);
 
     /**
      * Dispatches the specified event to all registered listeners of the specified type, with the option to invert the processing priority.
      *
-     * @param event          the event to be dispatched
-     * @param type           the type of listener to invoke (can be {@code null})
+     * @param event          the event to be dispatched.
+     * @param target         the {@linkplain Target target class} of listener to invoke.
      * @param invertPriority if {@code true}, listeners are processed in order of inverse priority; otherwise,
-     *                       they are processed in normal order
+     *                       they are processed in normal order.
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
      * {@code false} otherwise.
+     * @since 4.0.0
      */
-    boolean dispatch(Object event, Class<?> type, boolean invertPriority);
+    boolean dispatch(Object event, Target target, boolean invertPriority);
 
     /**
      * Shuts down this event bus, preventing future events from being dispatched.

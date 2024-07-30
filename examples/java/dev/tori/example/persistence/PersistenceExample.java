@@ -23,6 +23,7 @@ package dev.tori.example.persistence;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.bus.IEventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
 
@@ -40,7 +41,7 @@ class PersistenceExample {
     private static final Subscriber SUBSCRIBER = new Subscriber() {{
         // Register a listener that prints a single
         // String event & is then removed from the event bus
-        registerListener(new LambdaEventListener<>(String.class, null, IEventBus.DEFAULT_PRIORITY, 1, System.out::println));
+        registerListener(new LambdaEventListener<String>(Target.fine(String.class), IEventBus.DEFAULT_PRIORITY, 1, System.out::println));
     }};
 
     public static void main(String[] args) {

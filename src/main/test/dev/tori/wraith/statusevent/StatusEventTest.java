@@ -22,6 +22,7 @@
 package dev.tori.wraith.statusevent;
 
 import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
@@ -40,11 +41,11 @@ public class StatusEventTest {
 
         MySubscriber subscriber = new MySubscriber() {{
             registerListeners(
-                    new LambdaEventListener<>(StatusEvent.class, 1, event -> {
+                    new LambdaEventListener<StatusEvent>(Target.fine(StatusEvent.class), 1, event -> {
                         this.counter = 1;
                         event.suppress();
                     }),
-                    new LambdaEventListener<>(StatusEvent.class, 0, event -> {
+                    new LambdaEventListener<StatusEvent>(Target.fine(StatusEvent.class), 0, event -> {
                         this.counter++;
                     })
             );
@@ -61,11 +62,11 @@ public class StatusEventTest {
 
         MySubscriber subscriber = new MySubscriber() {{
             registerListeners(
-                    new LambdaEventListener<>(StatusEvent.class, 1, event -> {
+                    new LambdaEventListener<StatusEvent>(Target.fine(StatusEvent.class), 1, event -> {
                         this.counter = 1;
                         event.terminate();
                     }),
-                    new LambdaEventListener<>(StatusEvent.class, 0, event -> {
+                    new LambdaEventListener<StatusEvent>(Target.fine(StatusEvent.class), 0, event -> {
                         this.counter = 1_000;
                     })
             );

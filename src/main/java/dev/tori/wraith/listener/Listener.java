@@ -22,19 +22,20 @@
 package dev.tori.wraith.listener;
 
 import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.event.Target;
+import dev.tori.wraith.util.IndexedHashSet;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
  * An interface representing an event listener with priority, type, and target class information.
  *
  * @param <T> The type of event this listener is designed to handle.
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see EventListener
  * @see Invokable
- * @since <b>1.0.0</b>
+ * @since 1.0.0
  */
 public interface Listener<T> extends Invokable<T> {
 
@@ -48,24 +49,19 @@ public interface Listener<T> extends Invokable<T> {
     int getPriority();
 
     /**
-     * Gets the type of events that this listener can handle.
+     * Gets the {@linkplain Target target class} of this listener.
      *
-     * @return The type of events that this listener can handle, or {@code null} if no type is specified.
+     * @return the {@linkplain Target target class} of this listener.
+     * @since 4.0.0
      */
-    Class<?> getType();
-
-    /**
-     * Gets the target class that this listener is designed to handle events for.
-     *
-     * @return The target class that this listener is designed to handle events for.
-     */
-    Class<? super T> getTarget();
+    @NotNull
+    Target getTarget();
 
     /**
      * Determines whether this listener should persist after being invoked.
      *
      * @return {@code true} if the listener should persist, {@code false} otherwise.
-     * @see EventBus#forEachListener(List, Predicate, Consumer, boolean)
+     * @see EventBus#dispatchToEachListener(Object, IndexedHashSet, Predicate, boolean)
      * @since 3.2.0
      */
     @SuppressWarnings("JavadocReference")
@@ -81,24 +77,5 @@ public interface Listener<T> extends Invokable<T> {
      */
     default boolean hasIndefinitePersistence() {
         return true;
-    }
-
-    /**
-     * Checks if the provided type is acceptable for this listener.
-     * <p>
-     * This default method evaluates whether the given type is acceptable by comparing it with
-     * the type associated with this listener. It returns {@code true} if any of the following conditions are met:
-     * <ul>
-     *   <li>The provided type is {@code null}.</li>
-     *   <li>The listener's type is {@code null}.</li>
-     *   <li>The provided type is equal to the listener's type.</li>
-     * </ul>
-     *
-     * @param type the class type to check for acceptability
-     * @return {@code true} if the type is acceptable, {@code false} otherwise.
-     * @since 3.3.0
-     */
-    default boolean isAcceptableType(Class<?> type) {
-        return (type == null) || (getType() == null) || (getType() == type);
     }
 }

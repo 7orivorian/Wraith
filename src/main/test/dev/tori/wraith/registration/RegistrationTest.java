@@ -22,6 +22,7 @@
 package dev.tori.wraith.registration;
 
 import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.IStatusEvent;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
@@ -38,8 +39,8 @@ public class RegistrationTest {
     @Test
     public void testResistration() {
         final EventBus bus = new EventBus();
-        final LambdaEventListener<StatusEvent> listener = new LambdaEventListener<>(
-                StatusEvent.class,
+        final LambdaEventListener<StatusEvent> listener = new LambdaEventListener<StatusEvent>(
+                Target.fine(StatusEvent.class),
                 IStatusEvent::terminate
         );
 
@@ -54,7 +55,7 @@ public class RegistrationTest {
     public void testSubscription() {
         final EventBus bus = new EventBus();
         final Subscriber subscriber = new Subscriber() {{
-            registerListener(new LambdaEventListener<>(StatusEvent.class, IStatusEvent::terminate));
+            registerListener(new LambdaEventListener<StatusEvent>(Target.fine(StatusEvent.class), IStatusEvent::terminate));
         }};
 
         bus.subscribe(subscriber);
@@ -73,7 +74,7 @@ public class RegistrationTest {
 
         bus.subscribe(subscriber);
 
-        subscriber.registerListener(new LambdaEventListener<>(MyEvent.class, event -> event.setMessage(expectedMessage)));
+        subscriber.registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), event -> event.setMessage(expectedMessage)));
 
         MyEvent event = new MyEvent(null);
         bus.dispatch(event);
@@ -82,6 +83,7 @@ public class RegistrationTest {
     }
 
     static final class MyEvent {
+
         private String message;
 
         MyEvent(String message) {

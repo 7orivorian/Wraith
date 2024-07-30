@@ -21,9 +21,8 @@
 
 package dev.tori.wraith;
 
-import dev.tori.wraith.event.targeted.IClassTargetingEvent;
-import dev.tori.wraith.listener.Listener;
-import org.jetbrains.annotations.Nullable;
+import dev.tori.wraith.event.Target;
+import dev.tori.wraith.listener.EventListener;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
@@ -32,39 +31,105 @@ import org.jetbrains.annotations.Nullable;
 public class Main {
 
     public static void main(String[] args) {
+        /*Target target = Target.reverseCascade(null);
 
+        System.out.println(target.targets(ParentListenerOne.class));
+        System.out.println(target.targets(ParentListenerOne.NestedListenerOne.class));
+        System.out.println(target.targets(ParentListenerOne.NestedListenerOther.class));
+        System.out.println(target.targets(ParentListenerOne.NestedListenerOne.DoubleNestedListenerOne.class));
+
+        System.out.println(target.targets(ParentListenerTwo.class));
+        System.out.println(target.targets(ParentListenerTwo.NestedListenerTwo.class));*/
+
+        Target target = Target.cascade(Object.class);
+        System.out.println(target.targets(Event.class));
+
+/*        final EventBus bus = new EventBus();
+        bus.subscribe(new Subscriber() {{
+            registerListeners(
+                    new ParentListenerOne(),
+                    new ParentListenerOne.NestedListenerOne(),
+                    new ParentListenerOne.NestedListenerOne.DoubleNestedListenerOne(),
+                    new ParentListenerOne.NestedListenerOther(),
+                    new ParentListenerTwo(),
+                    new ParentListenerTwo.NestedListenerTwo()
+            );
+        }});
+
+        Event event = new Event();
+        bus.dispatch(event);
+        System.out.println(event);
+
+        Event.NestedEvent nestedEvent = new Event.NestedEvent();
+        bus.dispatch(nestedEvent);
+        System.out.println(nestedEvent);*/
     }
 
-    public class Event implements IClassTargetingEvent {
+    static class ParentListenerOne extends EventListener<Event> {
 
-        @Nullable
-        private final Class<? extends Listener<?>> target;
-
-        public Event(@Nullable Class<? extends Listener<?>> target) {
-            this.target = target;
+        public ParentListenerOne() {
+            super(Target.cascade(Event.class));
         }
 
-        @Nullable
         @Override
-        public Class<? extends Listener<?>> getTargetClass() {
-            return target;
+        public void invoke(Event event) {
+            event.mod();
+        }
+
+        static class NestedListenerOne extends ParentListenerOne {
+
+            static class DoubleNestedListenerOne extends NestedListenerOne {
+
+            }
+        }
+
+        static class NestedListenerOther extends EventListener<Event> {
+
+            public NestedListenerOther() {
+                super(Target.fine(Event.class));
+            }
+
+            @Override
+            public void invoke(Event event) {
+                event.mod();
+            }
         }
     }
 
-    static final class MessageEvent {
+    static class ParentListenerTwo extends EventListener<Event> {
 
-        private String message;
-
-        public MessageEvent() {
-            this.message = "nothing to say";
+        public ParentListenerTwo() {
+            super(Target.fine(Event.class));
         }
 
-        public String getMessage() {
-            return message;
+        @Override
+        public void invoke(Event event) {
+            event.mod();
         }
 
-        public void setMessage(String message) {
-            this.message = message;
+        static class NestedListenerTwo extends ParentListenerTwo {
+
+        }
+    }
+
+    static class Event {
+
+        private int mods = 0;
+
+        public void mod() {
+            this.mods++;
+        }
+
+        @Override
+        public String toString() {
+            return "mods=" + mods;
+        }
+
+        static class NestedEvent extends Event {
+
+            static class DoubleNestedEvent extends NestedEvent {
+
+            }
         }
     }
 }

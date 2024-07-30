@@ -21,6 +21,7 @@
 
 package dev.tori.example.expanded;
 
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.staged.EventStage;
 import dev.tori.wraith.listener.EventListener;
 
@@ -33,7 +34,7 @@ import dev.tori.wraith.listener.EventListener;
 class ExampleListener extends EventListener<ExampleEvent> {
 
     public ExampleListener() {
-        super(ExampleEvent.class);
+        super(Target.fine(ExampleEvent.class));
     }
 
     @Override

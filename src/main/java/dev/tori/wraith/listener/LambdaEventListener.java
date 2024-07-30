@@ -21,8 +21,9 @@
 
 package dev.tori.wraith.listener;
 
+import dev.tori.wraith.event.Target;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -31,82 +32,53 @@ import java.util.Objects;
  * This provides a convenient way to create event listeners using lambda expressions.
  *
  * @param <E> The type of event handled by this listener.
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @since <b>1.3.0</b>
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 1.3.0
  */
 public class LambdaEventListener<E> extends EventListener<E> {
 
-    protected final @NotNull Invokable<E> invokable;
+    @NotNull
+    protected final Invokable<E> invokable;
 
     /**
-     * Constructs a new `LambdaEventListener` with the given target class and invokable action.
+     * Constructs a new {@link LambdaEventListener} with the given target and invokable action.
      *
-     * @param target    The target class of the event.
+     * @param target    This listener's {@link Target}.
      * @param invokable The invokable action to be executed when the event is dispatched.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public LambdaEventListener(@NotNull Class<? super E> target, @NotNull Invokable<E> invokable) {
+    public LambdaEventListener(@NotNull Target target, @NotNull Invokable<E> invokable) {
         super(target);
         Objects.requireNonNull(invokable);
         this.invokable = invokable;
     }
 
     /**
-     * Constructs a new `LambdaEventListener` with the given target class, priority, and invokable action.
+     * Constructs a new {@link LambdaEventListener} with the given target, priority, and invokable action.
      *
-     * @param target    The target class of the event.
+     * @param target    This listener's {@link Target}.
      * @param priority  The priority of this listener.
      * @param invokable The invokable action to be executed when the event is dispatched.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public LambdaEventListener(@NotNull Class<? super E> target, int priority, @NotNull Invokable<E> invokable) {
+    public LambdaEventListener(@NotNull Target target, int priority, @NotNull Invokable<E> invokable) {
         super(target, priority);
         Objects.requireNonNull(invokable);
         this.invokable = invokable;
     }
 
     /**
-     * Constructs a new `LambdaEventListener` with the given target class, type, and invokable action.
+     * Constructs a new {@link LambdaEventListener} with the given target, priority, and invokable action.
      *
-     * @param target    The target class of the event.
-     * @param type      The type of the event.
-     * @param invokable The invokable action to be executed when the event is dispatched.
-     * @throws NullPointerException if {@code target} is {@code null}.
-     */
-    public LambdaEventListener(@NotNull Class<? super E> target, @Nullable Class<?> type, @NotNull Invokable<E> invokable) {
-        super(target, type);
-        Objects.requireNonNull(invokable);
-        this.invokable = invokable;
-    }
-
-    /**
-     * Constructs a new `LambdaEventListener` with the given target class, priority, type, and invokable action.
-     *
-     * @param target    The target class of the event.
-     * @param priority  The priority of this listener.
-     * @param type      The type of the event.
-     * @param invokable The invokable action to be executed when the event is dispatched.
-     * @throws NullPointerException if {@code target} is {@code null}.
-     */
-    public LambdaEventListener(@NotNull Class<? super E> target, @Nullable Class<?> type, int priority, @NotNull Invokable<E> invokable) {
-        super(target, type, priority);
-        Objects.requireNonNull(invokable);
-        this.invokable = invokable;
-    }
-
-    /**
-     * Constructs a new {@code LambdaEventListener} with the given target class, priority, type, and invokable action.
-     *
-     * @param target    The target class of the event.
-     * @param type      The type of the event.
+     * @param target    This listener's {@link Target}.
      * @param priority  The priority of this listener.
      * @param persists  How many events this listener should handle before being killed.
-     *                  A value {@code <= 0} will flag this listener to {@linkplain #indefinitePersistence persist indefinitely}.
+     *                  A value of {@code <= 0} will flag this listener to {@linkplain #indefinitePersistence persist indefinitely}.
      * @param invokable The invokable action to be executed when the event is dispatched.
      * @throws NullPointerException if {@code target} is {@code null}.
      */
-    public LambdaEventListener(@NotNull Class<? super E> target, @Nullable Class<?> type, int priority, int persists, @NotNull Invokable<E> invokable) {
-        super(target, type, priority, persists);
+    public LambdaEventListener(@NotNull Target target, int priority, int persists, @NotNull Invokable<E> invokable) {
+        super(target, priority, persists);
         Objects.requireNonNull(invokable);
         this.invokable = invokable;
     }
@@ -122,18 +94,19 @@ public class LambdaEventListener<E> extends EventListener<E> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if ((o == null) || (getClass() != o.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(obj)) {
             return false;
         }
 
-        LambdaEventListener<?> that = (LambdaEventListener<?>) o;
+        LambdaEventListener<?> that = (LambdaEventListener<?>) obj;
         return invokable.equals(that.invokable);
     }
 
@@ -148,7 +121,6 @@ public class LambdaEventListener<E> extends EventListener<E> {
     public String toString() {
         return "LambdaEventListener{" +
                 "target=" + target +
-                ", type=" + type +
                 ", priority=" + priority +
                 ", indefinitePersistence=" + indefinitePersistence +
                 ", persists=" + persists +

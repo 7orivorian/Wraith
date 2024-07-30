@@ -23,6 +23,7 @@ package dev.tori.example.statusevents;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.bus.IEventBus;
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
@@ -36,11 +37,11 @@ public class TerminationExample {
     private static final IEventBus EVENT_BUS = new EventBus();
     private static final Subscriber SUBSCRIBER = new Subscriber() {{
         registerListeners(
-                new LambdaEventListener<>(StringEvent.class, 1, event -> {
+                new LambdaEventListener<StringEvent>(Target.fine(StringEvent.class), 1, event -> {
                     event.message = "Hello world!";
                     event.terminate();
                 }),
-                new LambdaEventListener<>(StringEvent.class, 0, event -> {
+                new LambdaEventListener<StringEvent>(Target.fine(StringEvent.class), 0, event -> {
                     event.message = "I do not greet";
                 })
         );

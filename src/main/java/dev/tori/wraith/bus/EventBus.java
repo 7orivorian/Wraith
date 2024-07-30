@@ -21,13 +21,14 @@
 
 package dev.tori.wraith.bus;
 
+import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.IStatusEvent;
-import dev.tori.wraith.event.targeted.IClassTargetingEvent;
 import dev.tori.wraith.listener.Listener;
 import dev.tori.wraith.subscriber.ISubscriber;
 import dev.tori.wraith.task.ScheduledTask;
 import dev.tori.wraith.task.TaskExecutor;
 import dev.tori.wraith.util.IndexedHashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -158,7 +159,7 @@ public class EventBus implements IEventBus {
     public void register(Listener<?> listener) {
         Objects.requireNonNull(listener, "Cannot register null listener to event bus " + id + "!");
 
-        IndexedHashSet<Listener> listeners = this.listeners.computeIfAbsent(listener.getTarget(), target -> new IndexedHashSet<>());
+        IndexedHashSet<Listener> listeners = this.listeners.computeIfAbsent(listener.getTarget().clazz(), target -> new IndexedHashSet<>());
         final int size = listeners.size();
         int index = 0;
         for (; index < size; index++) {
@@ -178,43 +179,43 @@ public class EventBus implements IEventBus {
     @Override
     public void unregister(Listener<?> listener) {
         Objects.requireNonNull(listener, "Cannot unregister null listener from event bus " + id + "!");
-        listeners.get(listener.getTarget()).removeIf(l -> l.equals(listener));
+        listeners.get(listener.getTarget().clazz()).removeIf(l -> l.equals(listener));
     }
 
     /**
-     * Convenience method to dispatch an event with no {@linkplain Listener#getType() listener type} restriction, and
+     * Convenience method to dispatch an event with no {@linkplain Target target listener}, and
      * normal processing priority.
      *
-     * @see #dispatch(Object, Class, boolean)
+     * @see #dispatch(Object, Target, boolean)
      * @since 3.3.0
      */
     @Override
     public boolean dispatch(Object event) {
-        return dispatch(event, null, false);
+        return dispatch(event, Target.none(), false);
     }
 
     /**
-     * Convenience method to dispatch an event with an optional {@linkplain Listener#getType() listener type} restriction, and
+     * Convenience method to dispatch an event with an optional {@linkplain Target target listener} and
      * normal processing priority.
      *
-     * @see #dispatch(Object, Class, boolean)
-     * @since 3.3.0
+     * @see #dispatch(Object, Target, boolean)
+     * @since 4.0.0
      */
     @Override
-    public boolean dispatch(Object event, Class<?> type) {
-        return dispatch(event, type, false);
+    public boolean dispatch(Object event, Target target) {
+        return dispatch(event, target, false);
     }
 
     /**
-     * Convenience method to dispatch an event with no {@linkplain Listener#getType() listener type} restriction, and
+     * Convenience method to dispatch an event with no {@linkplain Target target listener}, and
      * optional inverted processing priority.
      *
-     * @see #dispatch(Object, Class, boolean)
-     * @since 3.3.0
+     * @see #dispatch(Object, Target, boolean)
+     * @since 4.0.0
      */
     @Override
     public boolean dispatch(Object event, boolean invertPriority) {
-        return dispatch(event, null, invertPriority);
+        return dispatch(event, Target.none(), invertPriority);
     }
 
     /**
@@ -223,27 +224,28 @@ public class EventBus implements IEventBus {
      * The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
      * listeners based on their type, allowing for more targeted event handling.
      *
-     * @param event          the event to be dispatched
-     * @param type           the type of listener to invoke (can be {@code null})
-     * @param invertPriority flag to dispatch the event in inverse listener priority
+     * @param event          the event to be dispatched.
+     * @param target         the {@linkplain Target target listener} to invoke.
+     * @param invertPriority flag to dispatch the event in inverse listener priority.
      * @return {@code true} if the given event is {@linkplain IStatusEvent suppressed or terminated} by any listener,
-     * {@code false} otherwise
+     * {@code false} otherwise.
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
-     * @since 3.3.0
+     * @since 4.0.0
      */
     @Override
-    public boolean dispatch(Object event, Class<?> type, boolean invertPriority) {
+    public boolean dispatch(Object event, Target target, boolean invertPriority) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
+        Objects.requireNonNull(target, "Cannot dispatch an event with a null target to event bus " + id + "!");
         if (isShutdown()) {
-            throw new UnsupportedOperationException("Dispatcher " + id + " is shutdown!");
+            throw new UnsupportedOperationException("Event bus " + id + " is shutdown!");
         } else {
             taskExecutor.onEvent(event);
 
             dispatchToEachListener(
                     event,
-                    this.listeners.get(event.getClass()),
-                    listener -> listener.isAcceptableType(type) && IClassTargetingEvent.isListenerTargetedByEvent(listener, event),
+                    listeners.get(event.getClass()),
+                    listener -> target.targets(listener.getClass()) && listener.getTarget().targets(event.getClass()),
                     invertPriority
             );
 
