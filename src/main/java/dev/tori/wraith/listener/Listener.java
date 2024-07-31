@@ -37,7 +37,7 @@ import java.util.function.Predicate;
  * @see Invokable
  * @since 1.0.0
  */
-public interface Listener<T> extends Invokable<T> {
+public interface Listener<T> extends Invokable<T>, Comparable<Listener<T>> {
 
     int DEFAULT_PERSISTENCE = 0;
 
@@ -77,5 +77,15 @@ public interface Listener<T> extends Invokable<T> {
      */
     default boolean hasIndefinitePersistence() {
         return true;
+    }
+
+    /**
+     * @param listener the listener to be compared.
+     * @apiNote This class has a natural ordering that is inconsistent with equals.
+     * @since 4.0.0
+     */
+    @Override
+    default int compareTo(@NotNull Listener<T> listener) {
+        return listener.getPriority() - getPriority();
     }
 }

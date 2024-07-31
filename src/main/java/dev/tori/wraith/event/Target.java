@@ -23,7 +23,6 @@ package dev.tori.wraith.event;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -36,7 +35,7 @@ import java.util.Objects;
  */
 public class Target {
 
-    @Nullable
+    @NotNull
     private final Class<?> clazz;
     @NotNull
     private final TargetingRule rule;
@@ -48,52 +47,52 @@ public class Target {
      * @param rule  the targeting rule.
      */
     @Contract(pure = true)
-    private Target(@Nullable Class<?> clazz, @NotNull TargetingRule rule) {
+    private Target(@NotNull Class<?> clazz, @NotNull TargetingRule rule) {
         this.clazz = clazz;
         this.rule = rule;
     }
 
     /**
-     * Returns a {@code ClassTarget} with no specific target.
+     * Returns a {@link Target} that matches any class.
      *
-     * @return a {@code ClassTarget} with no specific target.
+     * @return a {@link Target} that matches any class.
      */
     @NotNull
-    public static Target none() {
-        return new Target(null, TargetingRule.FINE);
+    public static Target all() {
+        return new Target(Object.class, TargetingRule.CASCADE);
     }
 
     /**
-     * Returns a {@code ClassTarget} with the specified target and {@link TargetingRule#FINE FINE} targeting.
+     * Returns a {@link Target} with the specified target and {@link TargetingRule#FINE FINE} targeting.
      *
-     * @param target the target class.
-     * @return a {@code ClassTarget} with the specified target and {@link TargetingRule#FINE FINE} targeting.
+     * @param clazz the target class.
+     * @return a {@link Target} with the specified target and {@link TargetingRule#FINE FINE} targeting.
      */
     @NotNull
-    public static Target fine(@Nullable Class<?> target) {
-        return new Target(target, TargetingRule.FINE);
+    public static Target fine(@NotNull Class<?> clazz) {
+        return new Target(clazz, TargetingRule.FINE);
     }
 
     /**
-     * Returns a {@code ClassTarget} with the specified target and {@link TargetingRule#CASCADE CASCADE} targeting.
+     * Returns a {@link Target} with the specified target and {@link TargetingRule#CASCADE CASCADE} targeting.
      *
-     * @param target the target class.
-     * @return a {@code ClassTarget} with the specified target and {@link TargetingRule#CASCADE CASCADE} targeting.
+     * @param clazz the target class.
+     * @return a {@link Target} with the specified target and {@link TargetingRule#CASCADE CASCADE} targeting.
      */
     @NotNull
-    public static Target cascade(@Nullable Class<?> target) {
-        return new Target(target, TargetingRule.CASCADE);
+    public static Target cascade(@NotNull Class<?> clazz) {
+        return new Target(clazz, TargetingRule.CASCADE);
     }
 
     /**
-     * Returns a {@code ClassTarget} with the specified target and {@link TargetingRule#REVERSE_CASCADE REVERSE_CASCADE} targeting.
+     * Returns a {@link Target} with the specified target and {@link TargetingRule#REVERSE_CASCADE REVERSE_CASCADE} targeting.
      *
-     * @param target the target class.
-     * @return a {@code ClassTarget} with the specified target and {@link TargetingRule#REVERSE_CASCADE REVERSE_CASCADE} targeting.
+     * @param clazz the target class.
+     * @return a {@link Target} with the specified target and {@link TargetingRule#REVERSE_CASCADE REVERSE_CASCADE} targeting.
      */
     @NotNull
-    public static Target reverseCascade(@Nullable Class<?> target) {
-        return new Target(target, TargetingRule.REVERSE_CASCADE);
+    public static Target reverseCascade(@NotNull Class<?> clazz) {
+        return new Target(clazz, TargetingRule.REVERSE_CASCADE);
     }
 
     /**
@@ -103,26 +102,28 @@ public class Target {
      * @return {@code true} if the class matches the target, {@code false} otherwise.
      */
     public boolean targets(@NotNull Class<?> clazz) {
-        if (this.clazz == null) {
-            return true; // Null target class will target anything
+        if (this.clazz == Object.class) {
+            //System.out.println(clazz);
+            return true;
         }
-        return rule.isMatch(clazz, this.clazz);
+        //System.out.println(clazz);
+        return rule.classesMatch(clazz, this.clazz);
     }
 
     /**
-     * Returns the target class.
+     * Returns the {@linkplain #clazz target class}.
      *
-     * @return the target class, {@code null} if no target is set.
+     * @return the {@linkplain #clazz target class}.
      */
-    @Nullable
+    @NotNull
     public Class<?> clazz() {
         return clazz;
     }
 
     /**
-     * Returns the targeting rule.
+     * Returns the {@linkplain #rule targeting rule}.
      *
-     * @return the targeting rule.
+     * @return the {@linkplain #rule targeting rule}.
      */
     @NotNull
     public TargetingRule rule() {
@@ -130,10 +131,31 @@ public class Target {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
+
+        Target target = (Target) obj;
+        return clazz.equals(target.clazz)
+                && (rule == target.rule);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = clazz.hashCode();
+        result = (31 * result) + rule.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "ClassTarget{" +
-                "target=" + clazz +
-                ", matching=" + rule +
+        return "Target{" +
+                "clazz=" + clazz +
+                ", rule=" + rule +
                 '}';
     }
 
@@ -146,7 +168,7 @@ public class Target {
          */
         FINE {
             @Override
-            public boolean isMatch(Class<?> clazz, Class<?> target) {
+            public boolean classesMatch(Class<?> clazz, Class<?> target) {
                 return Objects.equals(clazz, target);
             }
         },
@@ -155,7 +177,7 @@ public class Target {
          */
         CASCADE {
             @Override
-            public boolean isMatch(Class<?> clazz, Class<?> target) {
+            public boolean classesMatch(Class<?> clazz, Class<?> target) {
                 return target.isAssignableFrom(clazz);
             }
         },
@@ -164,11 +186,11 @@ public class Target {
          */
         REVERSE_CASCADE {
             @Override
-            public boolean isMatch(Class<?> clazz, Class<?> target) {
+            public boolean classesMatch(Class<?> clazz, Class<?> target) {
                 return clazz.isAssignableFrom(target);
             }
         };
 
-        public abstract boolean isMatch(Class<?> clazz, Class<?> target);
+        public abstract boolean classesMatch(Class<?> clazz, Class<?> target);
     }
 }
