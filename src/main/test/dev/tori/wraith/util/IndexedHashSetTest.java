@@ -21,7 +21,6 @@
 
 package dev.tori.wraith.util;
 
-import dev.tori.wraith.util.IndexedHashSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
