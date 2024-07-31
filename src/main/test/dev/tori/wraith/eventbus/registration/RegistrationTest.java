@@ -19,7 +19,7 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.registration;
+package dev.tori.wraith.eventbus.registration;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;

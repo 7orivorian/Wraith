@@ -19,9 +19,9 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.priority;
+package dev.tori.wraith.openeventbus.priority;
 
-import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.bus.OpenEventBus;
 import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
@@ -37,7 +37,7 @@ public class PriorityTest {
 
     @Test
     public void testPriority() {
-        final EventBus bus = new EventBus();
+        final OpenEventBus bus = new OpenEventBus();
         bus.subscribe(new Subscriber() {{
             registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 5, event -> event.setFlag(true)));
             registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 4, event -> {

@@ -19,7 +19,7 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.statusevent;
+package dev.tori.wraith.eventbus.statusevent;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;

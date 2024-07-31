@@ -19,9 +19,9 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.persistency;
+package dev.tori.wraith.openeventbus.persistency;
 
-import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.bus.OpenEventBus;
 import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.EventListener;
@@ -39,7 +39,7 @@ public class PersistenceTest {
 
     @Test
     public void testRandomPersistence() {
-        final EventBus bus = new EventBus();
+        final OpenEventBus bus = new OpenEventBus();
 
         final int persists = ThreadLocalRandom.current().nextInt(1, 101);
 
@@ -56,7 +56,7 @@ public class PersistenceTest {
 
     @Test
     public void testIndefinitePersistence() {
-        final EventBus bus = new EventBus();
+        final OpenEventBus bus = new OpenEventBus();
 
         bus.subscribe(new Subscriber() {{
             registerListener(new MyListener(0)); // <= 0 means persist indefinitely
