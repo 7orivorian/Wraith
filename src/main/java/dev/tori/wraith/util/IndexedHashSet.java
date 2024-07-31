@@ -21,10 +21,10 @@
 
 package dev.tori.wraith.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -91,6 +91,7 @@ public class IndexedHashSet<E> extends ArrayList<E> {
     }
 
     @Override
+    @Contract(pure = true)
     @SuppressWarnings("SuspiciousMethodCalls")
     public boolean contains(Object element) {
         return map.containsKey(element);
@@ -102,8 +103,8 @@ public class IndexedHashSet<E> extends ArrayList<E> {
         map.clear();
     }
 
-    public ArrayList<E> asList() {
-        return new ArrayList<>(this);
+    public List<E> immutableList() {
+        return Collections.unmodifiableList(this);
     }
 
     private void rangeCheckForAdd(int index) {
@@ -112,6 +113,8 @@ public class IndexedHashSet<E> extends ArrayList<E> {
         }
     }
 
+    @NotNull
+    @Contract(pure = true)
     private String outOfBoundsMsg(int index) {
         return "Index: " + index + ", Size: " + size();
     }
