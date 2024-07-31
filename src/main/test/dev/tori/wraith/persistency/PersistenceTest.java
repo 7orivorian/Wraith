@@ -29,29 +29,33 @@ import dev.tori.wraith.subscriber.Subscriber;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @since 3.2.0
  */
-public class PersistencyTest {
+public class PersistenceTest {
 
     @Test
-    public void testEventPersistency() {
+    public void testRandomPersistence() {
         final EventBus bus = new EventBus();
 
+        final int persists = ThreadLocalRandom.current().nextInt(1, 101);
+
         bus.subscribe(new Subscriber() {{
-            registerListener(new MyListener(3));
+            registerListener(new MyListener(persists));
         }});
 
-        Assertions.assertTrue(bus.dispatch(new MyEvent()));
-        Assertions.assertTrue(bus.dispatch(new MyEvent()));
-        Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        for (int i = 0; i < persists; i++) {
+            Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        }
 
         Assertions.assertFalse(bus.dispatch(new MyEvent()));
     }
 
     @Test
-    public void testIndefiniteEvent() {
+    public void testIndefinitePersistence() {
         final EventBus bus = new EventBus();
 
         bus.subscribe(new Subscriber() {{
