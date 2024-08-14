@@ -25,7 +25,7 @@ hs_err_pid*
 replay_pid*
 
 ### Maven template
-./target/
+target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -667,4 +667,4 @@ bh_unicode_properties.cache
 GitHub.sublime-settings
 
 ### Project Specific ###
-./developer-docs
+developer-docs/
