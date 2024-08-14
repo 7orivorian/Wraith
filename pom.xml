@@ -7,7 +7,7 @@
     <description>Java event library</description>
     <url>https://github.com/7orivorian/Wraith</url>
 
-    <groupId>dev.tori</groupId>
+    <groupId>dev.7ori.wraith</groupId>
     <artifactId>Wraith</artifactId>
     <packaging>jar</packaging>
     <version>4.0.0</version>

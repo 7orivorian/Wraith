@@ -16,12 +16,10 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 
 ```xml
 
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
 ```
 
 * Add Wraith as a dependency
@@ -29,7 +27,7 @@ Lightweight Java event library created and maintained by [7orivorian](https://gi
 ```xml
 
 <dependency>
-    <groupId>com.github.7orivorian</groupId>
+    <groupId>dev.7ori</groupId>
     <artifactId>Wraith</artifactId>
     <version>4.0.0</version>
 </dependency>
@@ -51,7 +49,7 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:4.0.0'
+    implementation 'dev.7ori:Wraith:4.0.0'
 }
 ```
 
@@ -97,6 +95,7 @@ Once you've defined your subscriber, you can subscribe it to an event bus direct
 
 ```java
 public class Consts {
+
     private static final IEventBus EVENT_BUS = new EventBus();
 }
 
@@ -112,6 +111,7 @@ Alternatively, you can subscribe a subscriber externally:
 
 ```java
 public class Example {
+
     private static final IEventBus EVENT_BUS = new EventBus();
 
     public static void main(String[] args) {
@@ -131,6 +131,7 @@ Any class can be used as an event. For instance:
 
 ```java
 public class ExampleEvent {
+
     private String message;
 
     public ExampleEvent(String message) {
