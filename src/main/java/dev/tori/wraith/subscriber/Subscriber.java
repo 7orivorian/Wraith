@@ -23,6 +23,7 @@ package dev.tori.wraith.subscriber;
 
 import dev.tori.wraith.bus.IEventBus;
 import dev.tori.wraith.listener.Listener;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -39,8 +40,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Subscriber implements ISubscriber {
 
+    /**
+     * The amount of {@linkplain Subscriber} instances that have been created.
+     */
+    private static int instances = 0;
+
+    private final int id;
     private final Set<@NotNull IEventBus> linkedBuses = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final List<@NotNull Listener<?>> listeners = new ArrayList<>();
+
+    public Subscriber() {
+        this.id = instances++;
+    }
 
     /**
      * Registers a single event listener with this subscriber.
@@ -65,6 +76,7 @@ public class Subscriber implements ISubscriber {
      * @param <T>       The type of the listeners.
      * @return An array containing the registered listeners.
      */
+    @Contract("_ -> param1")
     @SafeVarargs
     @Override
     public final <T extends Listener<?>> T[] registerListeners(@NotNull T... listeners) {
@@ -84,7 +96,10 @@ public class Subscriber implements ISubscriber {
      * @return {@code true} if this subscriber contained the specified listener, {@code false} otherwise.
      */
     @Override
-    public <T extends Listener<?>> boolean unregisterListener(T listener) {
+    public <T extends Listener<?>> boolean unregisterListener(@NotNull T listener) {
+        if (!linkedBuses.isEmpty()) {
+            linkedBuses.forEach(bus -> bus.unregister(listener));
+        }
         return listeners.remove(listener);
     }
 
@@ -98,6 +113,11 @@ public class Subscriber implements ISubscriber {
     @SafeVarargs
     @Override
     public final <T extends Listener<?>> boolean unregisterListeners(T... listeners) {
+        if (!linkedBuses.isEmpty()) {
+            for (T listener : listeners) {
+                linkedBuses.forEach(bus -> bus.unregister(listener));
+            }
+        }
         return this.listeners.removeAll(Arrays.asList(listeners));
     }
 
@@ -119,10 +139,11 @@ public class Subscriber implements ISubscriber {
      *
      * @param eventBus The event bus to link to this subscriber. Must not be {@code null}.
      * @throws NullPointerException If the {@code eventBus} is {@code null}.
+     * @implNote This method should not be called outside an {@link IEventBus} implementation
      */
     @Override
     public void linkToBus(IEventBus eventBus) {
-        Objects.requireNonNull(eventBus, "Cannot subscribe to a null event bus");
+        Objects.requireNonNull(eventBus, "Cannot link subscriber to a null event bus");
         linkedBuses.add(eventBus);
     }
 
@@ -134,17 +155,45 @@ public class Subscriber implements ISubscriber {
      *
      * @param eventBus The event bus to unlink from this subscriber. Must not be {@code null}.
      * @throws NullPointerException If the {@code eventBus} is {@code null}.
+     * @implNote This method should not be called outside an {@link IEventBus} implementation
      */
     @Override
     public void unlinkFromBus(IEventBus eventBus) {
-        Objects.requireNonNull(eventBus, "Cannot unsubscribe from a null event bus");
+        Objects.requireNonNull(eventBus, "Cannot unlink unsubscriber from a null event bus");
         linkedBuses.remove(eventBus);
+    }
+
+    /**
+     * Returns this {@linkplain Subscriber}'s {@linkplain #id}.
+     *
+     * @return this {@linkplain Subscriber}'s {@linkplain #id}.
+     */
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
+
+        Subscriber that = (Subscriber) obj;
+        return this.id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     @Override
     public String toString() {
         return "Subscriber{" +
-                "busRefs=" + linkedBuses +
+                "linkedBuses=" + linkedBuses +
                 ", listeners=" + listeners +
                 '}';
     }

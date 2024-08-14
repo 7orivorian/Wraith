@@ -49,22 +49,23 @@ import java.util.function.Predicate;
 public abstract class AbstractEventBus implements IEventBus {
 
     /**
-     * The amount of {@linkplain AbstractEventBus} instances that have been created
+     * The amount of {@linkplain AbstractEventBus} instances that have been created.
      */
     private static int instances = 0;
 
     /**
-     * This event bus's id
+     * This event bus's id.
      */
     protected final int id;
     /**
      * Indicates whether this event bus is shutdown.
-     * <p>Shut-down event dispatchers cannot dispatch events, and throw {@link UnsupportedOperationException} when
-     * attempting to do so
+     *
+     * @apiNote Shut-down event dispatchers cannot dispatch events, and throw {@link UnsupportedOperationException} when
+     * attempting to do so.
      */
     protected boolean shutdown;
     /**
-     * A {@link Set} of this event bus' {@link ISubscriber subscribers}
+     * A {@link Set} of this event bus' {@link ISubscriber subscribers}.
      */
     protected final Set<ISubscriber> subscribers;
     /**
@@ -77,7 +78,7 @@ public abstract class AbstractEventBus implements IEventBus {
     protected final TaskExecutor taskExecutor;
 
     /**
-     * Creates a new event bus instance
+     * Creates a new event bus instance.
      */
     public AbstractEventBus() {
         this.id = instances++;
@@ -104,7 +105,7 @@ public abstract class AbstractEventBus implements IEventBus {
      */
     @Override
     public void subscribe(ISubscriber subscriber) {
-        Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus " + id + "!");
+        Objects.requireNonNull(subscriber, "Cannot subscribe null to event bus " + id + ".");
 
         subscribers.add(subscriber);
         subscriber.linkToBus(this);
@@ -123,7 +124,7 @@ public abstract class AbstractEventBus implements IEventBus {
 
     /**
      * Unsubscribes a {@link ISubscriber subscriber} from this event bus and unregisters all the
-     * subscriber's {@link Listener listeners}
+     * subscriber's {@link Listener listeners}.
      *
      * @param subscriber the {@link ISubscriber} to be unsubscribed
      * @throws NullPointerException if the given {@link ISubscriber} is {@code null}
@@ -131,7 +132,7 @@ public abstract class AbstractEventBus implements IEventBus {
      */
     @Override
     public void unsubscribe(ISubscriber subscriber) {
-        Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus " + id + "!");
+        Objects.requireNonNull(subscriber, "Cannot unsubscribe null from event bus " + id + ".");
 
         subscribers.remove(subscriber);
         subscriber.unlinkFromBus(this);
@@ -146,6 +147,19 @@ public abstract class AbstractEventBus implements IEventBus {
                 }
             }
         }
+    }
+
+    /**
+     * Unsubscribes all {@link ISubscriber subscribers} and unregisters all their
+     * {@link Listener listeners} from this event bus.
+     *
+     * @apiNote Listeners registered directly to this event bus will not be unregistered.
+     */
+    public void unsubscribeAll() {
+        for (ISubscriber subscriber : subscribers) {
+            subscriber.unlinkFromBus(this);
+        }
+        subscribers.clear();
     }
 
     /**
@@ -317,18 +331,18 @@ public abstract class AbstractEventBus implements IEventBus {
      * <p>
      * If the given object is an event bus, it is only considered equal if {@code this.id == that.id}.
      *
-     * @param o the object to compare with
+     * @param obj the object to compare with
      * @return {@code true} if the object is equal to this event bus, {@code false} otherwise
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if ((o == null) || (getClass() != o.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
-        AbstractEventBus that = (AbstractEventBus) o;
+        AbstractEventBus that = (AbstractEventBus) obj;
         return id == that.id;
     }
 

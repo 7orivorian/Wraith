@@ -19,7 +19,7 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.benchmarking;
+package dev.tori.wraith;
 
 import org.openjdk.jmh.Main;
 

@@ -27,8 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Represents a class target with a specified targeting strategy.
- * This class is used to determine if a given class matches the target class according to the targeting strategy.
+ * Represents a class target with a specified {@linkplain TargetingRule targeting rule}.
+ * <p>
+ * This class is used to determine if a given class matches the target class according to the {@linkplain TargetingRule targeting rule}.
  *
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @since 4.0.0
@@ -58,6 +59,7 @@ public class Target {
      * @return a {@link Target} that matches any class.
      */
     @NotNull
+    @Contract(value = " -> new", pure = true)
     public static Target all() {
         return new Target(Object.class, TargetingRule.CASCADE);
     }
@@ -69,6 +71,7 @@ public class Target {
      * @return a {@link Target} with the specified target and {@link TargetingRule#FINE FINE} targeting.
      */
     @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static Target fine(@NotNull Class<?> clazz) {
         return new Target(clazz, TargetingRule.FINE);
     }
@@ -80,6 +83,7 @@ public class Target {
      * @return a {@link Target} with the specified target and {@link TargetingRule#CASCADE CASCADE} targeting.
      */
     @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static Target cascade(@NotNull Class<?> clazz) {
         return new Target(clazz, TargetingRule.CASCADE);
     }
@@ -91,6 +95,7 @@ public class Target {
      * @return a {@link Target} with the specified target and {@link TargetingRule#REVERSE_CASCADE REVERSE_CASCADE} targeting.
      */
     @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static Target reverseCascade(@NotNull Class<?> clazz) {
         return new Target(clazz, TargetingRule.REVERSE_CASCADE);
     }
@@ -103,10 +108,8 @@ public class Target {
      */
     public boolean targets(@NotNull Class<?> clazz) {
         if (this.clazz == Object.class) {
-            //System.out.println(clazz);
             return true;
         }
-        //System.out.println(clazz);
         return rule.classesMatch(clazz, this.clazz);
     }
 

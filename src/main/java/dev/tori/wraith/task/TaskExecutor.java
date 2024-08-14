@@ -87,4 +87,11 @@ public class TaskExecutor {
     public void clear() {
         tasks.clear();
     }
+
+    @Override
+    public String toString() {
+        return "TaskExecutor{" +
+                "tasks=" + tasks +
+                '}';
+    }
 }

@@ -26,8 +26,8 @@ import dev.tori.wraith.event.status.IStatusEvent;
 import dev.tori.wraith.listener.Listener;
 import dev.tori.wraith.util.IndexedHashSet;
 
+import java.util.Comparator;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An implementation of {@link AbstractEventBus}.
@@ -35,22 +35,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * Manages listener registration, event dispatching, and task execution.
  *
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
- * @since 1.0.0
+ * @since 4.0.0
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class EventBus extends AbstractEventBus {
 
     /**
-     * A {@link ConcurrentHashMap} of {@link Listener listeners} registered to this event bus.
+     * An {@link IndexedHashSet} of {@link Listener listeners} registered to this event bus.
      */
-    private final ConcurrentHashMap<Class<?>, IndexedHashSet<Listener>> listeners;
+    private final IndexedHashSet<Listener> listeners;
+    private boolean sorted = false;
 
     /**
-     * Creates a new event bus instance
+     * Creates a new {@link EventBus} instance
      */
     public EventBus() {
         super();
-        this.listeners = new ConcurrentHashMap<>();
+        this.listeners = new IndexedHashSet<>();
     }
 
     /**
@@ -61,17 +62,10 @@ public class EventBus extends AbstractEventBus {
      */
     @Override
     public void register(Listener<?> listener) {
-        Objects.requireNonNull(listener, "Cannot register null listener to event bus " + id + "!");
+        Objects.requireNonNull(listener, "Cannot register null listener to event bus " + id + ".");
 
-        IndexedHashSet<Listener> listeners = this.listeners.computeIfAbsent(listener.getTarget().clazz(), target -> new IndexedHashSet<>());
-        final int size = listeners.size();
-        int index = 0;
-        for (; index < size; index++) {
-            if (listener.getPriority() > listeners.get(index).getPriority()) {
-                break;
-            }
-        }
-        listeners.add(index, listener);
+        listeners.add(listener);
+        sorted = false;
     }
 
     /**
@@ -82,8 +76,8 @@ public class EventBus extends AbstractEventBus {
      */
     @Override
     public void unregister(Listener<?> listener) {
-        Objects.requireNonNull(listener, "Cannot unregister null listener from event bus " + id + "!");
-        listeners.get(listener.getTarget().clazz()).removeIf(l -> l.equals(listener));
+        Objects.requireNonNull(listener, "Cannot unregister null listener from event bus " + id + ".");
+        listeners.removeIf(l -> l.equals(listener));
     }
 
     /**
@@ -99,20 +93,24 @@ public class EventBus extends AbstractEventBus {
      * {@code false} otherwise.
      * @throws NullPointerException          if the given event is {@code null}
      * @throws UnsupportedOperationException if this event bus is {@link #shutdown}
-     * @since 4.0.0
      */
     @Override
     public boolean dispatch(Object event, Target target, boolean invertPriority) {
-        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + "!");
-        Objects.requireNonNull(target, "Cannot dispatch an event with a null target to event bus " + id + "!");
+        Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + ".");
+        Objects.requireNonNull(target, "Cannot dispatch an event with a null target to event bus " + id + ".");
         if (isShutdown()) {
             throw new UnsupportedOperationException("Event bus " + id + " is shutdown!");
         } else {
             taskExecutor.onEvent(event);
 
+            if (!sorted) {
+                listeners.sort(Comparator.naturalOrder());
+                sorted = true;
+            }
+
             dispatchToEachListener(
                     event,
-                    listeners.get(event.getClass()),
+                    listeners,
                     listener -> target.targets(listener.getClass()) && listener.getTarget().targets(event.getClass()),
                     invertPriority
             );
@@ -124,13 +122,19 @@ public class EventBus extends AbstractEventBus {
         return false;
     }
 
+    public IndexedHashSet<Listener> getListeners() {
+        return listeners;
+    }
+
     @Override
     public String toString() {
         return "EventBus{" +
                 "id=" + id +
                 ", shutdown=" + shutdown +
-                ", subscribers=" + subscribers +
                 ", listeners=" + listeners +
+                ", sorted=" + sorted +
+                ", subscribers=" + subscribers +
+                ", taskExecutor=" + taskExecutor +
                 '}';
     }
 }

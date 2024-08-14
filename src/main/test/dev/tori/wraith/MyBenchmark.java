@@ -19,7 +19,7 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.benchmarking;
+package dev.tori.wraith;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;
