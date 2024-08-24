@@ -300,7 +300,9 @@ public abstract class AbstractEventBus implements IEventBus {
                     if (!predicate.test(listener)) {
                         continue;
                     }
+
                     listener.invoke(event);
+
                     if ((event instanceof IStatusEvent e) && e.isTerminated()) {
                         break;
                     }
@@ -314,7 +316,9 @@ public abstract class AbstractEventBus implements IEventBus {
                     if (!predicate.test(listener)) {
                         continue;
                     }
+
                     listener.invoke(event);
+
                     if ((event instanceof IStatusEvent e) && e.isTerminated()) {
                         break;
                     }

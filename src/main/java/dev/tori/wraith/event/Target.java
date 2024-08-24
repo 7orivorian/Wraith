@@ -37,19 +37,19 @@ import java.util.Objects;
 public class Target {
 
     @NotNull
-    private final Class<?> clazz;
+    private final Class<?> targetClazz;
     @NotNull
     private final TargetingRule rule;
 
     /**
      * Constructs a new {@link Target}.
      *
-     * @param clazz the target class.
+     * @param targetClazz the target class.
      * @param rule  the targeting rule.
      */
     @Contract(pure = true)
-    private Target(@NotNull Class<?> clazz, @NotNull TargetingRule rule) {
-        this.clazz = clazz;
+    private Target(@NotNull Class<?> targetClazz, @NotNull TargetingRule rule) {
+        this.targetClazz = targetClazz;
         this.rule = rule;
     }
 
@@ -107,20 +107,20 @@ public class Target {
      * @return {@code true} if the class matches the target, {@code false} otherwise.
      */
     public boolean targets(@NotNull Class<?> clazz) {
-        if (this.clazz == Object.class) {
+        if (this.targetClazz == Object.class) {
             return true;
         }
-        return rule.classesMatch(clazz, this.clazz);
+        return rule.classesMatch(clazz, this.targetClazz);
     }
 
     /**
-     * Returns the {@linkplain #clazz target class}.
+     * Returns the {@linkplain #targetClazz target class}.
      *
-     * @return the {@linkplain #clazz target class}.
+     * @return the {@linkplain #targetClazz target class}.
      */
     @NotNull
     public Class<?> clazz() {
-        return clazz;
+        return targetClazz;
     }
 
     /**
@@ -143,13 +143,13 @@ public class Target {
         }
 
         Target target = (Target) obj;
-        return clazz.equals(target.clazz)
+        return targetClazz.equals(target.targetClazz)
                 && (rule == target.rule);
     }
 
     @Override
     public int hashCode() {
-        int result = clazz.hashCode();
+        int result = targetClazz.hashCode();
         result = (31 * result) + rule.hashCode();
         return result;
     }
@@ -157,7 +157,7 @@ public class Target {
     @Override
     public String toString() {
         return "Target{" +
-                "clazz=" + clazz +
+                "clazz=" + targetClazz +
                 ", rule=" + rule +
                 '}';
     }
