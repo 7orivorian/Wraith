@@ -21,6 +21,7 @@
 
 package dev.tori.wraith.event.staged;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,7 +35,8 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("ClassCanBeRecord")
 public class StagedEvent implements IStagedEvent {
 
-    private final @NotNull EventStage stage;
+    @NotNull
+    private final EventStage stage;
 
     /**
      * Constructs a {@code StagedEvent} with the specified stage.
@@ -42,6 +44,7 @@ public class StagedEvent implements IStagedEvent {
      * @param stage The {@link EventStage} representing the stage of the event.
      * @throws NullPointerException If the provided {@code stage} is {@code null}.
      */
+    @Contract(pure = true)
     public StagedEvent(@NotNull EventStage stage) {
         this.stage = stage;
     }

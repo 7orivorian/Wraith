@@ -23,6 +23,7 @@ package dev.tori.wraith.subscriber;
 
 import dev.tori.wraith.bus.IEventBus;
 import dev.tori.wraith.listener.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -80,6 +81,7 @@ public interface ISubscriber {
      *
      * @return A collection of registered event listeners.
      */
+    @NotNull
     Collection<Listener<?>> getListeners();
 
     /**

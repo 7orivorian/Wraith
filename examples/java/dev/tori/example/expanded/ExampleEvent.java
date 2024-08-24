@@ -24,6 +24,7 @@ package dev.tori.example.expanded;
 import dev.tori.wraith.event.staged.EventStage;
 import dev.tori.wraith.event.staged.IStagedEvent;
 import dev.tori.wraith.event.status.StatusEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Example event.
@@ -49,6 +50,7 @@ class ExampleEvent extends StatusEvent implements IStagedEvent {
         this.message = message;
     }
 
+    @NotNull
     @Override
     public EventStage getStage() {
         return stage;

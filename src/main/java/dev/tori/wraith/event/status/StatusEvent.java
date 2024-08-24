@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatusEvent implements IStatusEvent {
 
+    @NotNull
     protected EventStatus status = EventStatus.ALIVE;
 
     /**

@@ -126,6 +126,7 @@ public class Subscriber implements ISubscriber {
      *
      * @return A collection of registered event listeners.
      */
+    @NotNull
     @Override
     public Collection<Listener<?>> getListeners() {
         return listeners;

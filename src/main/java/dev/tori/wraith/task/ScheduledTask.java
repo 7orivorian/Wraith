@@ -21,6 +21,7 @@
 
 package dev.tori.wraith.task;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,7 +38,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ScheduledTask implements Runnable {
 
-    private final @NotNull Class<?> target;
+    @NotNull
+    private final Class<?> target;
     private int delay;
 
     /**
@@ -45,6 +47,7 @@ public abstract class ScheduledTask implements Runnable {
      *
      * @param target The target class representing the event that triggers the task's execution.
      */
+    @Contract(pure = true)
     public ScheduledTask(@NotNull Class<?> target) {
         this(target, 0);
     }
@@ -55,6 +58,7 @@ public abstract class ScheduledTask implements Runnable {
      * @param target The target class representing the event that triggers the task's execution.
      * @param delay  The delay value, determining the number of event dispatches before execution.
      */
+    @Contract(pure = true)
     public ScheduledTask(@NotNull Class<?> target, int delay) {
         this.target = target;
         this.delay = delay;

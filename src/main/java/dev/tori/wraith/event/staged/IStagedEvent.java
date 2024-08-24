@@ -21,6 +21,8 @@
 
 package dev.tori.wraith.event.staged;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An interface representing a staged event, indicating the stage at which the event is occurring.
  *
@@ -39,5 +41,6 @@ public interface IStagedEvent {
      *
      * @return The {@link EventStage} representing the stage of this event.
      */
+    @NotNull
     EventStage getStage();
 }

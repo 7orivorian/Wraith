@@ -21,6 +21,9 @@
 
 package dev.tori.wraith.task;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,6 +46,7 @@ public class TaskExecutor {
     /**
      * Constructs a new TaskExecutor with an empty task mapping.
      */
+    @Contract(pure = true)
     public TaskExecutor() {
         this.tasks = new ConcurrentHashMap<>();
     }
@@ -53,7 +57,7 @@ public class TaskExecutor {
      * @param event The event for which associated tasks should be executed.
      * @return {@code true} if any tasks were executed, {@code false} otherwise.
      */
-    public boolean onEvent(Object event) {
+    public boolean onEvent(@NotNull Object event) {
         ArrayList<ScheduledTask> queue = tasks.get(event.getClass());
         if ((queue != null) && !queue.isEmpty()) {
             boolean executed = false;
@@ -77,7 +81,7 @@ public class TaskExecutor {
      * @param task The task to be executed.
      * @see ScheduledTask
      */
-    public void schedule(ScheduledTask task) {
+    public void schedule(@NotNull ScheduledTask task) {
         tasks.computeIfAbsent(task.getTarget(), clazz -> new ArrayList<>()).add(task);
     }
 
