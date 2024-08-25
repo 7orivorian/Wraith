@@ -43,7 +43,7 @@ Add the dependency.
 ```xml
 
 <dependency>
-    <groupId>com.github.7orivorian</groupId>
+    <groupId>dev.7ori</groupId>
     <artifactId>Wraith</artifactId>
     <version>4.0.0</version>
 </dependency>
@@ -67,7 +67,7 @@ Add the dependency.
 
 ```groovy
 dependencies {
-    implementation 'com.github.7orivorian:Wraith:4.0.0'
+    implementation 'dev.7ori:Wraith:4.0.0'
 }
 ```
 
@@ -89,7 +89,7 @@ Add the dependency.
 
 ```groovy
 dependencies {
-    implementation("com.github.7orivorian:Wraith:4.0.0")
+    implementation("dev.7ori:Wraith:4.0.0")
 }
 ```
 
