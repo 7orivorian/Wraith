@@ -76,6 +76,17 @@ public class StatusEvent implements IStatusEvent {
         return status == EventStatus.TERMINATED;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code true} if this event is alive, {@code false} otherwise.
+     * @since 4.1.0
+     */
+    @Override
+    public boolean isAlive() {
+        return status == EventStatus.ALIVE;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
