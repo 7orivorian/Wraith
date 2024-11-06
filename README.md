@@ -10,6 +10,9 @@
 
 Capable, versatile, and easy to use Java event library.
 
+> [!CATION]
+> Wraith 4.1.0 is an unstable pre-release!
+
 ## Key Features
 
 - Easily define your own events, listeners, & event buses.
@@ -45,7 +48,7 @@ Add the dependency.
 <dependency>
     <groupId>dev.7ori</groupId>
     <artifactId>Wraith</artifactId>
-    <version>4.0.0</version>
+    <version>4.1.0</version>
 </dependency>
 ```
 
@@ -67,7 +70,7 @@ Add the dependency.
 
 ```groovy
 dependencies {
-    implementation 'dev.7ori:Wraith:4.0.0'
+    implementation 'dev.7ori:Wraith:4.1.0'
 }
 ```
 
@@ -89,7 +92,7 @@ Add the dependency.
 
 ```groovy
 dependencies {
-    implementation("dev.7ori:Wraith:4.0.0")
+    implementation("dev.7ori:Wraith:4.1.0")
 }
 ```
 
