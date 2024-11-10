@@ -48,6 +48,7 @@ public class PriorityTest {
             registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 2, event -> event.setFlag(true)));
             registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 1, event -> event.setFlag(true)));
             registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 0, event -> event.setFlag(true)));
+            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), -10, event -> event.setFlag(true)));
         }});
 
         MyEvent event = new MyEvent();

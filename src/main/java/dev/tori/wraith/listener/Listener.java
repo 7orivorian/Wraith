@@ -86,6 +86,6 @@ public interface Listener<T> extends Invokable<T>, Comparable<Listener<T>> {
      */
     @Override
     default int compareTo(@NotNull Listener<T> listener) {
-        return listener.getPriority() - getPriority();
+        return Integer.compare(listener.getPriority(), getPriority());
     }
 }
