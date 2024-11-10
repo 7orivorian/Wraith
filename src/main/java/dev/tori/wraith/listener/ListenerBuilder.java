@@ -132,6 +132,7 @@ public class ListenerBuilder<T> {
     public EventListener<T> build() {
         Objects.requireNonNull(target, "target must not be null");
         Objects.requireNonNull(invokable, "invokable must not be null");
+
         if ((persistent && (persists > 0)) || (!persistent && (persists <= 0))) {
             throw new IllegalArgumentException(
                     "Persistency missmatch. persistent=" + persistent + " and persists=" + persists + " is not allowed."

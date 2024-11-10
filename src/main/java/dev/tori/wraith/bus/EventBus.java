@@ -77,6 +77,7 @@ public class EventBus extends AbstractEventBus {
     @Override
     public void unregister(Listener<?> listener) {
         Objects.requireNonNull(listener, "Cannot unregister null listener from event bus " + id + ".");
+
         listeners.removeIf(l -> l.equals(listener));
     }
 
@@ -98,6 +99,7 @@ public class EventBus extends AbstractEventBus {
     public boolean dispatch(Object event, Target target, boolean invertPriority) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + ".");
         Objects.requireNonNull(target, "Cannot dispatch an event with a null target to event bus " + id + ".");
+
         if (isShutdown()) {
             throw new UnsupportedOperationException("Event bus " + id + " is shutdown!");
         } else {
