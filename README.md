@@ -10,7 +10,7 @@
 
 Capable, versatile, and easy to use Java event library.
 
-> [!CATION]
+> [!CAUTION]
 > Wraith 4.1.0 is an unstable pre-release!
 
 ## Key Features
