@@ -27,10 +27,7 @@ import dev.tori.wraith.listener.ListenerBuilder;
 import dev.tori.wraith.listener.annotation.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.Objects;
 
 /**
@@ -42,13 +39,12 @@ import java.util.Objects;
  *     <li>Cannot have more than 1 parameter.</li>
  *     <li>Methods cannot be abstract.</li>
  * </ul>
-
+ *
+ * @author <b><a href=https://github.com/CadenCCC>Caden</a></b>
  * @see Subscriber
  * @see Listener
  * @see TargetingRule
  * @see Target
- *
- * @author <b><a href=https://github.com/CadenCCC>Caden</a></b>
  * @since 4.1.0
  */
 public class AnnotatedSubscriber extends Subscriber {
@@ -100,7 +96,7 @@ public class AnnotatedSubscriber extends Subscriber {
                     .persists(annotation.persists())
                     .invokable((obj) -> {
                         if (requiresAccessible) {
-                            declaredMethod.setAccessible(true);
+                            setAccessible(declaredMethod);
                         }
 
                         try {
@@ -121,6 +117,13 @@ public class AnnotatedSubscriber extends Subscriber {
             }
 
             registerListener(builder.build());
+        }
+    }
+
+    private void setAccessible(Method method) {
+        try {
+            method.setAccessible(true);
+        } catch (SecurityException | InaccessibleObjectException ignored) {
         }
     }
 
