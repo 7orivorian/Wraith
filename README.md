@@ -10,9 +10,6 @@
 
 Capable, versatile, and easy to use Java event library.
 
-> [!CAUTION]
-> Wraith 4.1.0 is an unstable pre-release!
-
 ## Key Features
 
 - Easily define your own events, listeners, & event buses.
@@ -22,8 +19,9 @@ Capable, versatile, and easy to use Java event library.
 
 ## Usage
 
-Click [here](https://docs.7ori.dev/wraith/importing) to learn how to import Wraith into your own project.
-For more information, please see the Wraith [documentation](https://docs.7ori.dev/wraith/).
+- [Full documentation](https://docs.7ori.dev/wraith/).
+- [Importing Wraith](https://docs.7ori.dev/wraith/importing).
+- [Example project](https://github.com/7orivorian/WraithExamples).
 
 ## Import with Build Automation
 
@@ -33,12 +31,10 @@ Include JitPack in your maven build file.
 
 ```xml
 
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
 ```
 
 Add the dependency.
