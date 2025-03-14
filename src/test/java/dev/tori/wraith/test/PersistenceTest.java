@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 7orivorian.
+ * Copyright (c) 2021-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,57 +19,67 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.eventbus.priority;
+package dev.tori.wraith.test;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
-import dev.tori.wraith.listener.LambdaEventListener;
+import dev.tori.wraith.listener.EventListener;
 import dev.tori.wraith.subscriber.Subscriber;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
- * @since 4.0.0
+ * @since 3.2.0
  */
-public class PriorityTest {
+public class PersistenceTest {
 
     @Test
-    public void testPriority() {
+    public void testRandomPersistence() {
         final EventBus bus = new EventBus();
+
+        final int persists = ThreadLocalRandom.current().nextInt(1, 101);
+
         bus.subscribe(new Subscriber() {{
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 5, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 4, event -> {
-                event.setFlag(false);
-                event.terminate();
-            }));
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 3, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 2, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 1, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), 0, event -> event.setFlag(true)));
-            registerListener(new LambdaEventListener<MyEvent>(Target.fine(MyEvent.class), -10, event -> event.setFlag(true)));
+            registerListener(new MyListener(persists));
         }});
 
-        MyEvent event = new MyEvent();
-        Assertions.assertTrue(bus.dispatch(event));
-        Assertions.assertFalse(event.flag());
+        for (int i = 0; i < persists; i++) {
+            Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        }
+
+        Assertions.assertFalse(bus.dispatch(new MyEvent()));
+    }
+
+    @Test
+    public void testIndefinitePersistence() {
+        final EventBus bus = new EventBus();
+
+        bus.subscribe(new Subscriber() {{
+            registerListener(new MyListener(0)); // <= 0 means persist indefinitely
+        }});
+
+        for (int i = 0; i < 1_000; i++) {
+            Assertions.assertTrue(bus.dispatch(new MyEvent()));
+        }
+    }
+
+    static class MyListener extends EventListener<MyEvent> {
+
+        public MyListener(int persists) {
+            super(Target.fine(MyEvent.class), 0, persists);
+        }
+
+        @Override
+        public void invoke(MyEvent event) {
+            event.suppress();
+        }
     }
 
     static class MyEvent extends StatusEvent {
 
-        private boolean flag;
-
-        MyEvent() {
-            this.flag = true;
-        }
-
-        public boolean flag() {
-            return flag;
-        }
-
-        public void setFlag(boolean flag) {
-            this.flag = flag;
-        }
     }
 }

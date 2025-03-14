@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2024-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,46 +19,19 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith;
+package dev.tori.wraith.test;
 
-import dev.tori.wraith.bus.EventBus;
-import dev.tori.wraith.event.Target;
-import dev.tori.wraith.listener.EventListener;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.Main;
 
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 
 /**
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
- * @since 3.2.0
+ * @since 4.0.0
  */
-@State(Scope.Thread)
-public class MyBenchmark {
+public class BenchmarkMain {
 
-    @State(Scope.Thread)
-    public static class BenchmarkState {
-        EventListener<Object> myListener;
-        EventBus bus;
-
-        @Setup(Level.Trial)
-        public void setup() {
-            bus = new EventBus();
-            myListener = new EventListener<>(Target.fine(Object.class)) {
-                @Override
-                public void invoke(Object event) {
-
-                }
-            };
-        }
-    }
-
-    @Benchmark
-    @BenchmarkMode(Mode.SingleShotTime)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    @Warmup(iterations = 10)
-    @Measurement(iterations = 100)
-    @Fork(5)
-    public void testMethod(BenchmarkState state) {
-        state.bus.register(state.myListener);
+    public static void main(String[] args) throws IOException {
+        Main.main(args);
     }
 }

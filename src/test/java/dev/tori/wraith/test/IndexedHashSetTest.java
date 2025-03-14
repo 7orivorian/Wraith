@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 7orivorian.
+ * Copyright (c) 2024-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,8 +19,9 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.util;
+package dev.tori.wraith.test;
 
+import dev.tori.wraith.util.IndexedHashSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
