@@ -3,7 +3,8 @@
  * @since 4.1.0
  */
 module dev.tori.wraith {
-    requires org.jetbrains.annotations;
+    requires transitive org.jetbrains.annotations;
+
     exports dev.tori.wraith.bus;
     exports dev.tori.wraith.event;
     exports dev.tori.wraith.event.status;
