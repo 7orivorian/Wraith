@@ -137,6 +137,15 @@ public class EventBus extends AbstractEventBus {
         return listeners;
     }
 
+    /**
+     * Checks if the listeners in the event bus are sorted.
+     *
+     * @return {@code true} if the listeners are sorted, {@code false} otherwise.
+     */
+    public boolean isSorted() {
+        return sorted;
+    }
+
     @Override
     public String toString() {
         return "EventBus{" +
