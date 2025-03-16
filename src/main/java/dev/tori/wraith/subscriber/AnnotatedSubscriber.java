@@ -110,10 +110,13 @@ public class AnnotatedSubscriber extends Subscriber {
                         }
                     });
 
-            switch (rule) {
-                case CASCADE -> builder.target(Target.cascade(parameterType));
-                case FINE -> builder.target(Target.fine(parameterType));
-                case REVERSE_CASCADE -> builder.target(Target.reverseCascade(parameterType));
+            TargetingRule targetingRule = annotation.rule();
+            Class<?> target = annotation.target();
+            switch (targetingRule) {
+                case CASCADE -> builder.target(Target.cascade(target == Object.class ? parameterType : target));
+                case FINE -> builder.target(Target.fine(target == Object.class ? parameterType : target));
+                case REVERSE_CASCADE ->
+                        builder.target(Target.reverseCascade(target == Object.class ? parameterType : target));
             }
 
             registerListener(builder.build());
