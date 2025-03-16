@@ -23,6 +23,7 @@ package dev.tori.wraith.listener.annotation;
 
 import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.Target.TargetingRule;
+import dev.tori.wraith.subscriber.AnnotatedSubscriber;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,10 +44,9 @@ import static dev.tori.wraith.bus.IEventBus.DEFAULT_PRIORITY;
  * }
  * </code></pre>
  *
+ * @author <b><a href=https://github.com/CadenCCC>Caden</a></b>
  * @see dev.tori.wraith.listener.Listener
  * @see TargetingRule
- *
- * @author <b><a href=https://github.com/CadenCCC>Caden</a></b>
  * @since 4.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -70,5 +70,15 @@ public @interface Listener {
      * @return This listener's {@link Target}.
      */
     TargetingRule rule() default TargetingRule.FINE;
+
+    /**
+     * Acts as an override for the normal target targeted by the {@linkplain AnnotatedSubscriber}.
+     * <p>
+     * This is typically used if you have a {@linkplain TargetingRule#REVERSE_CASCADE}.
+     * </p>
+     *
+     * @return Class you want to target.
+     */
+    Class<?> target() default Object.class;
 
 }
