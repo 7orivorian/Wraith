@@ -25,26 +25,27 @@ import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.Target.TargetingRule;
 import dev.tori.wraith.listener.ListenerBuilder;
 import dev.tori.wraith.listener.annotation.Listener;
+import dev.tori.wraith.util.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InaccessibleObjectException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.Objects;
+
+import static dev.tori.wraith.util.ReflectionUtil.canAccessMethod;
+import static dev.tori.wraith.util.ReflectionUtil.createInvokable;
 
 /**
  * An implementation of {@link Subscriber} that registers methods as listeners if they meet certain requirements.
- * <p>
- * Accepted methods have to meet a specific requirements, which are:
- * <ul>
- *     <li>Has to have the {@link Listener} annotation.</li>
- *     <li>Cannot have more than 1 parameter.</li>
- *     <li>Methods cannot be abstract.</li>
- * </ul>
  *
  * @author <b><a href=https://github.com/CadenCCC>Caden</a></b>
  * @see Subscriber
  * @see Listener
  * @see TargetingRule
  * @see Target
+ * @see ReflectionUtil
  * @since 4.1.0
  */
 public class AnnotatedSubscriber extends Subscriber {
@@ -61,54 +62,49 @@ public class AnnotatedSubscriber extends Subscriber {
     }
 
     /**
-     * Finds and processes methods in the specified class that are annotated with {@link Listener}.
-     * The identified methods are registered as event listeners using a {@link ListenerBuilder}.
+     * Identifies and registers methods within the specified class that are annotated with {@linkplain Listener}.
+     * <p>
+     * Methods must meet the following criteria to be registered:
+     * <ui>
+     * <li>Must be annotated with {@linkplain Listener}</li>
+     * <li>Must have at most one parameter. (if none it will result in an Object)</li>
+     * <li>Cannot be abstract.</li>
+     * <li>Must be accessible. (or made accessible via reflection)</li>
+     * </ui>
+     * </p>
      *
-     * @param called object called by the constructor
-     * @param clazz  class that is going to be searched for methods with annotation {@link Listener}
+     * @param called The instance containing the methods to be scanned.
+     * @param clazz  The class to be inspected for annotated methods.
      */
     private void findPossibleMethods(Object called, Class<?> clazz) {
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
-            Parameter[] parameters = declaredMethod.getParameters();
             int modifiers = declaredMethod.getModifiers();
 
-            if (parameters.length > 1) {
+            if (declaredMethod.getParameterCount() > 1 || Modifier.isAbstract(modifiers)) {
                 continue;
             }
 
-            if (Modifier.isAbstract(modifiers)) {
-                continue;
-            }
-
+            Listener annotation = declaredMethod.getAnnotation(Listener.class);
             if (!declaredMethod.isAnnotationPresent(Listener.class)) {
                 continue;
             }
 
-            Class<?> parameterType = getParameterType(parameters);
-            boolean requiresAccessible = !Modifier.isPublic(modifiers);
-            boolean hasParameter = parameters.length == 1;
+            if (!canAccessMethod(clazz, declaredMethod)) {
+                continue;
+            }
 
-            Listener annotation = declaredMethod.getAnnotation(Listener.class);
-            TargetingRule rule = annotation.rule();
+            Parameter[] parameters = declaredMethod.getParameters();
+            Class<?> parameterType = getParameterType(parameters);
+
+            if (!Modifier.isPublic(modifiers)) {
+                setAccessible(declaredMethod);
+            }
 
             ListenerBuilder<Object> builder = new ListenerBuilder<>()
                     .priority(annotation.priority())
                     .persists(annotation.persists())
-                    .invokable((obj) -> {
-                        if (requiresAccessible) {
-                            setAccessible(declaredMethod);
-                        }
+                    .invokable(createInvokable(declaredMethod, called, parameters.length == 1));
 
-                        try {
-                            if (hasParameter) {
-                                declaredMethod.invoke(called, obj);
-                            } else {
-                                declaredMethod.invoke(called);
-                            }
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException("Error invoking method: " + declaredMethod.getName(), e);
-                        }
-                    });
 
             TargetingRule targetingRule = annotation.rule();
             Class<?> target = annotation.target();
@@ -126,7 +122,8 @@ public class AnnotatedSubscriber extends Subscriber {
     private void setAccessible(Method method) {
         try {
             method.setAccessible(true);
-        } catch (SecurityException | InaccessibleObjectException ignored) {
+        } catch (SecurityException | InaccessibleObjectException exception) {
+            throw new RuntimeException("Cannot access method: " + method + " of class " + method.getDeclaringClass(), exception);
         }
     }
 
