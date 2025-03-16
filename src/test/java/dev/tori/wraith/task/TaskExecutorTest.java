@@ -19,10 +19,8 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.test;
+package dev.tori.wraith.task;
 
-import dev.tori.wraith.task.ScheduledTask;
-import dev.tori.wraith.task.TaskExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public class TaskExecutorTest {
 
     @Test
-    public void testTaskTarget() {
+    void testTaskTarget() {
         TaskExecutor executor = new TaskExecutor();
         executor.schedule(new ScheduledTask(TargetEvent.class) {
             @Override
@@ -47,7 +45,7 @@ public class TaskExecutorTest {
     }
 
     @Test
-    public void testSingleExecution() {
+    void testSingleExecution() {
         TaskExecutor executor = new TaskExecutor();
         executor.schedule(new ScheduledTask(TargetEvent.class) {
             @Override
@@ -61,7 +59,7 @@ public class TaskExecutorTest {
     }
 
     @Test
-    public void testDelayedSingleExecution() {
+    void testDelayedSingleExecution() {
         TaskExecutor executor = new TaskExecutor();
 
         // Schedule a task to execute after skipping 1 event

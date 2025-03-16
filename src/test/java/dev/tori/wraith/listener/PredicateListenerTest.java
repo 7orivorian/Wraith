@@ -19,11 +19,10 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.test;
+package dev.tori.wraith.listener;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;
-import dev.tori.wraith.listener.PredicateEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
 import org.jetbrains.annotations.Contract;
 import org.junit.jupiter.api.Assertions;
@@ -36,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class PredicateListenerTest {
 
     @Test
-    public void test() {
+    void test() {
         final EventBus bus = new EventBus();
         bus.subscribe(new Subscriber() {{
             registerListeners(

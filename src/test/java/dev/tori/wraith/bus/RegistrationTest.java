@@ -19,9 +19,8 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.test;
+package dev.tori.wraith.bus;
 
-import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.IStatusEvent;
 import dev.tori.wraith.event.status.StatusEvent;
@@ -37,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public class RegistrationTest {
 
     @Test
-    public void testResistration() {
+    void testResistration() {
         final EventBus bus = new EventBus();
         final LambdaEventListener<StatusEvent> listener = new LambdaEventListener<StatusEvent>(
                 Target.fine(StatusEvent.class),
@@ -52,7 +51,7 @@ public class RegistrationTest {
     }
 
     @Test
-    public void testSubscription() {
+    void testSubscription() {
         final EventBus bus = new EventBus();
         final Subscriber subscriber = new Subscriber() {{
             registerListener(new LambdaEventListener<StatusEvent>(Target.fine(StatusEvent.class), IStatusEvent::terminate));
@@ -66,7 +65,7 @@ public class RegistrationTest {
     }
 
     @Test
-    public void testLateSubscription() {
+    void testLateSubscription() {
         final String expectedMessage = "Hello world!";
 
         final EventBus bus = new EventBus();

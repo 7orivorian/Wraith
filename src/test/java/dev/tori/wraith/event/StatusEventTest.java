@@ -19,10 +19,9 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.test;
+package dev.tori.wraith.event;
 
 import dev.tori.wraith.bus.EventBus;
-import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.status.StatusEvent;
 import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
@@ -36,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class StatusEventTest {
 
     @Test
-    public void testSupression() {
+    void testSupression() {
         final EventBus bus = new EventBus();
 
         MySubscriber subscriber = new MySubscriber() {{
@@ -57,7 +56,7 @@ public class StatusEventTest {
     }
 
     @Test
-    public void testTermination() {
+    void testTermination() {
         final EventBus bus = new EventBus();
 
         MySubscriber subscriber = new MySubscriber() {{

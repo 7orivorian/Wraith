@@ -19,11 +19,10 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.test;
+package dev.tori.wraith.listener;
 
 import dev.tori.wraith.bus.EventBus;
 import dev.tori.wraith.event.Target;
-import dev.tori.wraith.listener.LambdaEventListener;
 import dev.tori.wraith.subscriber.Subscriber;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ import org.junit.jupiter.api.Test;
 public class ListenerTargetingTest {
 
     @Test
-    public void testGlobalTargeting() {
+    void testGlobalTargeting() {
         final EventBus bus = new EventBus();
         bus.subscribe(new Subscriber() {{
             registerListeners(
@@ -67,7 +66,7 @@ public class ListenerTargetingTest {
     }
 
     @Test
-    public void testFineTargeting() {
+    void testFineTargeting() {
         final EventBus bus = new EventBus();
         bus.subscribe(new Subscriber() {{
             registerListeners(
@@ -84,7 +83,7 @@ public class ListenerTargetingTest {
     }
 
     @Test
-    public void testCascadeTargeting() {
+    void testCascadeTargeting() {
         final EventBus bus = new EventBus();
         bus.subscribe(new Subscriber() {{
             registerListeners(
@@ -102,7 +101,7 @@ public class ListenerTargetingTest {
     }
 
     @Test
-    public void testReverseCascadeTargeting() {
+    void testReverseCascadeTargeting() {
         final EventBus bus = new EventBus();
         bus.subscribe(new Subscriber() {{
             registerListeners(
