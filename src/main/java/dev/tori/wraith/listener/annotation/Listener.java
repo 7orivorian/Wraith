@@ -27,6 +27,8 @@ import dev.tori.wraith.event.Target.TargetingRule;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import static dev.tori.wraith.bus.IEventBus.DEFAULT_PRIORITY;
+
 /**
  * An annotation representation of {@link dev.tori.wraith.listener.Listener}.
  * <p>
@@ -55,7 +57,7 @@ public @interface Listener {
      *
      * @return The priority level of this listener.
      */
-    int priority() default 0;
+    int priority() default DEFAULT_PRIORITY;
 
     /**
      * @return The number of events this listener should handle before being removed
