@@ -41,13 +41,16 @@ import java.util.Objects;
 public class EventBus extends AbstractEventBus {
 
     /**
-     * An {@link IndexedHashSet} of {@link Listener listeners} registered to this event bus.
+     * An {@link IndexedHashSet} of {@link Listener listeners} registered to the event bus.
      */
     private final IndexedHashSet<Listener> listeners;
+    /**
+     * Indicates whether the listeners in the event bus are sorted.
+     */
     private boolean sorted = false;
 
     /**
-     * Creates a new {@link EventBus} instance
+     * Creates a new {@link EventBus} instance.
      */
     public EventBus() {
         super();
@@ -55,7 +58,7 @@ public class EventBus extends AbstractEventBus {
     }
 
     /**
-     * Registers a {@link Listener listener} to this event bus
+     * Registers a {@link Listener listener} to the event bus.
      *
      * @param listener the {@link Listener} to be registered
      * @throws NullPointerException if the given {@link Listener} is {@code null}
@@ -69,7 +72,8 @@ public class EventBus extends AbstractEventBus {
     }
 
     /**
-     * Unregisters a {@link Listener listener} from this event bus. A listener will no longer be invoked by events dispatched by this event bus
+     * Unregisters a {@link Listener listener} from the event bus. The unregistered listener will no longer be invoked
+     * by events dispatched to the event bus.
      *
      * @param listener the {@link Listener} to be unregistered
      * @throws NullPointerException if the given {@link Listener} is {@code null}
@@ -84,8 +88,8 @@ public class EventBus extends AbstractEventBus {
     /**
      * Dispatches the given event to all valid registered listeners.
      * <p>
-     * The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
-     * listeners based on their type, allowing for more targeted event handling.
+     * The {@code type} parameter serves as a filtering mechanism for listeners, allowing listeners to be selectively
+     * invoked based on their type for more targeted event handling.
      *
      * @param event          the event to be dispatched.
      * @param target         the {@linkplain Target target listener} to invoke.
@@ -124,6 +128,11 @@ public class EventBus extends AbstractEventBus {
         return false;
     }
 
+    /**
+     * Retrieves the set of listeners currently registered to the event bus.
+     *
+     * @return an {@link IndexedHashSet} containing all registered {@link Listener listeners}.
+     */
     public IndexedHashSet<Listener> getListeners() {
         return listeners;
     }
