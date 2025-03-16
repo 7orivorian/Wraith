@@ -306,9 +306,10 @@ public abstract class AbstractEventBus implements IEventBus {
                     if ((event instanceof IStatusEvent e) && e.isTerminated()) {
                         break;
                     }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
+                    if (listener.shouldPersist()) {
+                        continue;
                     }
+                    listeners.remove(listener);
                 }
             } else {
                 for (int i = 0; i < listeners.size(); i++) {
@@ -322,9 +323,10 @@ public abstract class AbstractEventBus implements IEventBus {
                     if ((event instanceof IStatusEvent e) && e.isTerminated()) {
                         break;
                     }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
+                    if (listener.shouldPersist()) {
+                        continue;
                     }
+                    listeners.remove(listener);
                 }
             }
         }
