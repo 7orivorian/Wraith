@@ -52,7 +52,6 @@ public class AnnotatedSubscriber extends Subscriber {
 
     public AnnotatedSubscriber(@NotNull Object calledObject) {
         super();
-        Objects.requireNonNull(calledObject);
 
         if (calledObject instanceof Class<?>) {
             return;
