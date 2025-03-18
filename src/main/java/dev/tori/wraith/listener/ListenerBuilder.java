@@ -105,7 +105,7 @@ public class ListenerBuilder<T> {
     public ListenerBuilder<T> persistent(boolean persistent) {
         this.persistent = persistent;
         if (persistent) {
-            return persists(0);
+            this.persists = 0;
         }
         return this;
     }
