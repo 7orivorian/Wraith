@@ -70,6 +70,17 @@ public class ListenerBuilder<T> {
     }
 
     /**
+     * Sets the target class and targeting rule for this listener.
+     *
+     * @param clazz the target class to be used.
+     * @param rule  the targeting rule to determine how the target class should be matched.
+     * @return this {@code ListenerBuilder} instance.
+     */
+    public ListenerBuilder<T> target(@NotNull Class<?> clazz, @NotNull Target.TargetingRule rule) {
+        return target(Target.of(clazz, rule));
+    }
+
+    /**
      * Sets the priority for this listener.
      *
      * @param priority the priority of the listener.
