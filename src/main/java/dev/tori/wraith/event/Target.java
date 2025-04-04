@@ -54,6 +54,19 @@ public class Target {
     }
 
     /**
+     * Creates a new {@code Target} instance with the specified target class and targeting rule.
+     *
+     * @param targetClazz the target class
+     * @param rule        the targeting rule
+     * @return a new {@code Target} instance with the specified target class and targeting rule
+     */
+    @Contract(value = "_, _ -> new", pure = true)
+    @NotNull
+    public static Target of(@NotNull Class<?> targetClazz, @NotNull TargetingRule rule) {
+        return new Target(targetClazz, rule);
+    }
+
+    /**
      * Returns a {@link Target} that matches any class.
      *
      * @return a {@link Target} that matches any class.
