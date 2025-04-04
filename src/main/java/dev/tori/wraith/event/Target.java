@@ -21,6 +21,7 @@
 
 package dev.tori.wraith.event;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +46,7 @@ public class Target {
      * Constructs a new {@link Target}.
      *
      * @param targetClazz the target class.
-     * @param rule  the targeting rule.
+     * @param rule        the targeting rule.
      */
     @Contract(pure = true)
     private Target(@NotNull Class<?> targetClazz, @NotNull TargetingRule rule) {
@@ -199,7 +200,11 @@ public class Target {
         },
         /**
          * The target class must be a subclass or implementation of the given class.
+         *
+         * @deprecated in {@code 4.1.0} for removal in {@code 5.0.0}.
          */
+        @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+        @Deprecated(forRemoval = true, since = "4.1.0")
         REVERSE_CASCADE {
             @Override
             public boolean classesMatch(Class<?> clazz, Class<?> target) {
