@@ -22,12 +22,21 @@
 package dev.tori.wraith.subscriber;
 
 import dev.tori.wraith.bus.IEventBus;
+import dev.tori.wraith.listener.Listen;
 import dev.tori.wraith.listener.Listener;
+import dev.tori.wraith.listener.ListenerBuilder;
+import dev.tori.wraith.util.ReflectionUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+import static dev.tori.wraith.util.ReflectionUtil.canAccessMethod;
+import static dev.tori.wraith.util.ReflectionUtil.createInvokable;
 
 /**
  * The default implementation of {@link ISubscriber} that manages event listeners and their registration.
@@ -45,12 +54,89 @@ public class Subscriber implements ISubscriber {
      */
     private static int instances = 0;
 
+    /**
+     * A unique identifier for this {@link Subscriber}.
+     */
     private final int id;
+    /**
+     * A set containing the {@link IEventBus} instances that this subscriber is linked to.
+     * <p>
+     * This field tracks all event buses to which this subscriber is actively linked.
+     * These event buses can register or unregister the event listeners managed by this subscriber.
+     * The set is thread-safe, as it is backed by a {@link ConcurrentHashMap}.
+     *
+     * @implNote This field is intended for internal use and should only be accessed or modified
+     * by methods within the {@link Subscriber} class or an implementation of {@link IEventBus}.
+     */
     private final Set<@NotNull IEventBus> linkedBuses = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    /**
+     * A list of event listeners associated with the {@link Subscriber}.
+     */
     private final List<@NotNull Listener<?>> listeners = new ArrayList<>();
 
+    /**
+     * Constructs a {@link Subscriber} and automatically registers annotated listeners.
+     */
     public Subscriber() {
+        this(true);
+    }
+
+    /**
+     * Constructs a {@link Subscriber} and optionally registers annotated listeners.
+     *
+     * @param registerAnnotated If {@code true}, methods annotated with {@code @Listen}
+     *                          will be identified and registered as event listeners.
+     */
+    public Subscriber(boolean registerAnnotated) {
         this.id = instances++;
+        if (registerAnnotated) {
+            registerAnnotatedListeners(this);
+        }
+    }
+
+    /**
+     * Identifies and registers methods within the specified {@linkplain ISubscriber subscriber} that are
+     * annotated with {@link Listen}.
+     * <p>
+     * Methods must meet the following criteria to be registered:
+     * <ui>
+     * <li>Must not have a parent class that is {@code package-private} or {@code private}.</li>
+     * <li>Must be annotated with {@link Listen}.</li>
+     * <li>Must have at most one parameter.</li>
+     * <li>Cannot be abstract.</li>
+     * <li>Must either be accessible or able to be made accessible (via {@linkplain ReflectionUtil#setAccessible(Method) reflection}).</li>
+     * </ui>
+     * </p>
+     *
+     * @param subscriber the {@linkplain ISubscriber subscriber} to scan for annotated listeners. Must not be {@code null}.
+     */
+    private static void registerAnnotatedListeners(@NotNull ISubscriber subscriber) {
+        Arrays.stream(subscriber.getClass().getDeclaredMethods())
+                .filter((Method method) -> method.isAnnotationPresent(Listen.class))
+                .filter((Method method) -> method.getParameterCount() <= 1)
+                .filter((Method method) -> !Modifier.isAbstract(method.getModifiers()))
+                .filter((Method method) -> canAccessMethod(subscriber.getClass()))
+                .peek((Method method) -> {
+                    if (!Modifier.isPublic(method.getModifiers())) {
+                        ReflectionUtil.setAccessible(method);
+                    }
+                })
+                .map((Function<Method, Listener<?>>) (Method method) -> {
+                    Listen annotation = method.getAnnotation(Listen.class);
+                    Class<?> targetClazz;
+                    if (annotation.targetClass() == Object.class) {
+                        targetClazz = ReflectionUtil.getParameterType(method);
+                    } else {
+                        targetClazz = annotation.targetClass();
+                    }
+                    ListenerBuilder<Object> builder = new ListenerBuilder<>()
+                            .priority(annotation.priority())
+                            .persists(annotation.persists())
+                            .target(targetClazz, annotation.rule())
+                            .invokable(createInvokable(method, subscriber, (method.getParameterCount() == 1)));
+                    return builder.build();
+                })
+                .forEach(subscriber::registerListener);
     }
 
     /**
@@ -194,7 +280,8 @@ public class Subscriber implements ISubscriber {
     @Override
     public String toString() {
         return "Subscriber{" +
-                "linkedBuses=" + linkedBuses +
+                "id=" + id +
+                ", linkedBuses=" + linkedBuses +
                 ", listeners=" + listeners +
                 '}';
     }

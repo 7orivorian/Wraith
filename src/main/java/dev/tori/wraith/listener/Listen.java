@@ -19,11 +19,9 @@
  * THE SOFTWARE.
  */
 
-package dev.tori.wraith.listener.annotation;
+package dev.tori.wraith.listener;
 
-import dev.tori.wraith.event.Target;
 import dev.tori.wraith.event.Target.TargetingRule;
-import dev.tori.wraith.subscriber.AnnotatedSubscriber;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,31 +29,33 @@ import java.lang.annotation.RetentionPolicy;
 import static dev.tori.wraith.bus.IEventBus.DEFAULT_PRIORITY;
 
 /**
- * An annotation representation of {@link dev.tori.wraith.listener.Listener}.
+ * An annotation representation of {@link Listener}.
  * <p>
- * Usage of this interface is only supposed to be on methods with only one/zero parameters.
+ * This annotation must only be present on methods with <b>0</b> or <b>1</b> parameter(s).
  *
- * <h4>Usage:</h4>
+ * <p><b>Usage Example:</b>
  *
- * <pre><code>
- * {@code @Listener}
+ * <pre>
+ * {@code
+ * @Listen
  * public void method(Object event) {
  *     System.out.println(event);
  * }
- * </code></pre>
+ * }</pre>
  *
- * @author <b><a href=https://github.com/CadenCCC>Caden</a></b>
- * @see dev.tori.wraith.listener.Listener
- * @see TargetingRule
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @author <a href=https://github.com/CadenCCC>Caden</a>
+ * @see Listener
+ * @see TargetingRule TargetingRule
  * @since 4.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Listener {
+public @interface Listen {
 
     /**
-     * The priority level of this listener for event handling.
+     * Gets the priority level of the listener.
      *
-     * @return The priority level of this listener.
+     * @return The priority level of the listener.
      */
     int priority() default DEFAULT_PRIORITY;
 
@@ -65,20 +65,18 @@ public @interface Listener {
     int persists() default 0;
 
     /**
-     * Sets the {@link Target} for this listener.
+     * Specifies the {@link TargetingRule TargetingRule} for this listener.
      *
-     * @return This listener's {@link Target}.
+     * @return This listener's {@link TargetingRule TargetingRule}.
      */
     TargetingRule rule() default TargetingRule.FINE;
 
     /**
-     * Acts as an override for the normal target targeted by the {@linkplain AnnotatedSubscriber}.
-     * <p>
-     * This is typically used if you have a {@linkplain TargetingRule#REVERSE_CASCADE}.
-     * </p>
+     * Specifies the event class type that this listener should explicitly listen to.
+     * The default value is {@code Object.class}, which means the listener will attempt to infer
+     * the event type based on parameter type.
      *
-     * @return Class you want to target.
+     * @return The class type that this listener targets. Defaults to {@code Object.class}.
      */
-    Class<?> target() default Object.class;
-
+    Class<?> targetClass() default Object.class;
 }
