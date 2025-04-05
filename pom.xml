@@ -126,7 +126,7 @@
                         <version>0.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <deploymentName>MCPT</deploymentName>
+                            <deploymentName>Wraith</deploymentName>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
                             <checksums>all</checksums>
