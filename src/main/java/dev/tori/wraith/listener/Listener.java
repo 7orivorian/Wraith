@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2021-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 /**
- * An interface representing an event listener with priority, type, and target class information.
+ * An interface representing an event listener.
  *
- * @param <T> The type of event this listener is designed to handle.
+ * @param <T> The event type of this listener.
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @see EventListener
  * @see Invokable
@@ -42,23 +42,23 @@ public interface Listener<T> extends Invokable<T>, Comparable<Listener<T>> {
     int DEFAULT_PERSISTENCE = 0;
 
     /**
-     * Gets the priority level of this listener for event handling.
+     * Gets the priority level of the listener.
      *
-     * @return The priority level of this listener.
+     * @return The priority level of the listener.
      */
     int getPriority();
 
     /**
-     * Gets the {@linkplain Target target class} of this listener.
+     * Gets the listener's {@link Target}.
      *
-     * @return the {@linkplain Target target class} of this listener.
+     * @return the listener's {@link Target}.
      * @since 4.0.0
      */
     @NotNull
     Target getTarget();
 
     /**
-     * Determines whether this listener should persist after being invoked.
+     * Determines whether the listener should persist after being invoked.
      *
      * @return {@code true} if the listener should persist, {@code false} otherwise.
      * @see EventBus#dispatchToEachListener(Object, IndexedHashSet, Predicate, boolean)
@@ -70,7 +70,7 @@ public interface Listener<T> extends Invokable<T>, Comparable<Listener<T>> {
     }
 
     /**
-     * Indicates whether this listener is inherently persistent.
+     * Indicates whether the listener is inherently persistent.
      *
      * @return {@code true} if the listener is inherently persistent, {@code false} otherwise.
      * @since 3.2.0
@@ -86,6 +86,6 @@ public interface Listener<T> extends Invokable<T>, Comparable<Listener<T>> {
      */
     @Override
     default int compareTo(@NotNull Listener<T> listener) {
-        return listener.getPriority() - getPriority();
+        return Integer.compare(listener.getPriority(), getPriority());
     }
 }

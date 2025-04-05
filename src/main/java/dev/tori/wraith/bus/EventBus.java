@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2021-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,13 +41,16 @@ import java.util.Objects;
 public class EventBus extends AbstractEventBus {
 
     /**
-     * An {@link IndexedHashSet} of {@link Listener listeners} registered to this event bus.
+     * An {@link IndexedHashSet} of {@link Listener listeners} registered to the event bus.
      */
     private final IndexedHashSet<Listener> listeners;
+    /**
+     * Indicates whether the listeners in the event bus are sorted.
+     */
     private boolean sorted = false;
 
     /**
-     * Creates a new {@link EventBus} instance
+     * Creates a new {@link EventBus} instance.
      */
     public EventBus() {
         super();
@@ -55,7 +58,7 @@ public class EventBus extends AbstractEventBus {
     }
 
     /**
-     * Registers a {@link Listener listener} to this event bus
+     * Registers a {@link Listener listener} to the event bus.
      *
      * @param listener the {@link Listener} to be registered
      * @throws NullPointerException if the given {@link Listener} is {@code null}
@@ -69,7 +72,8 @@ public class EventBus extends AbstractEventBus {
     }
 
     /**
-     * Unregisters a {@link Listener listener} from this event bus. A listener will no longer be invoked by events dispatched by this event bus
+     * Unregisters a {@link Listener listener} from the event bus. The unregistered listener will no longer be invoked
+     * by events dispatched to the event bus.
      *
      * @param listener the {@link Listener} to be unregistered
      * @throws NullPointerException if the given {@link Listener} is {@code null}
@@ -77,14 +81,15 @@ public class EventBus extends AbstractEventBus {
     @Override
     public void unregister(Listener<?> listener) {
         Objects.requireNonNull(listener, "Cannot unregister null listener from event bus " + id + ".");
+
         listeners.removeIf(l -> l.equals(listener));
     }
 
     /**
      * Dispatches the given event to all valid registered listeners.
      * <p>
-     * The {@code type} parameter serves as a filtering mechanism for listeners, enabling you to selectively invoke
-     * listeners based on their type, allowing for more targeted event handling.
+     * The {@code type} parameter serves as a filtering mechanism for listeners, allowing listeners to be selectively
+     * invoked based on their type for more targeted event handling.
      *
      * @param event          the event to be dispatched.
      * @param target         the {@linkplain Target target listener} to invoke.
@@ -98,6 +103,7 @@ public class EventBus extends AbstractEventBus {
     public boolean dispatch(Object event, Target target, boolean invertPriority) {
         Objects.requireNonNull(event, "Cannot dispatch a null event to event bus " + id + ".");
         Objects.requireNonNull(target, "Cannot dispatch an event with a null target to event bus " + id + ".");
+
         if (isShutdown()) {
             throw new UnsupportedOperationException("Event bus " + id + " is shutdown!");
         } else {
@@ -122,8 +128,22 @@ public class EventBus extends AbstractEventBus {
         return false;
     }
 
+    /**
+     * Retrieves the set of listeners currently registered to the event bus.
+     *
+     * @return an {@link IndexedHashSet} containing all registered {@link Listener listeners}.
+     */
     public IndexedHashSet<Listener> getListeners() {
         return listeners;
+    }
+
+    /**
+     * Checks if the listeners in the event bus are sorted.
+     *
+     * @return {@code true} if the listeners are sorted, {@code false} otherwise.
+     */
+    public boolean isSorted() {
+        return sorted;
     }
 
     @Override

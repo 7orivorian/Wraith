@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 7orivorian.
+ * Copyright (c) 2024-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -112,6 +112,16 @@ public interface IStatusEvent {
     default void terminate() {
         setEventStatus(EventStatus.TERMINATED);
     }
+
+    /**
+     * Checks whether this event is alive.
+     * <p>
+     * An event is only considered alive if {@code getEventStatus() == EventStatus.ALIVE}.
+     *
+     * @return {@code true} if this event is alive, {@code false} otherwise.
+     * @since 4.1.0
+     */
+    boolean isAlive();
 
     /**
      * Enum representing the possible statuses of a {@link IStatusEvent}.

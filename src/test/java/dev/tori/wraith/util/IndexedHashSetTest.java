@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 7orivorian.
+ * Copyright (c) 2024-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import java.util.Objects;
 public class IndexedHashSetTest {
 
     @Test
-    public void testNoDuplicatesAllowed() {
+    void testNoDuplicatesAllowed() {
         IndexedHashSet<String> set = new IndexedHashSet<>();
         set.add("A");
         set.add("A");
@@ -43,7 +43,7 @@ public class IndexedHashSetTest {
     }
 
     @Test
-    public void testInsert() {
+    void testInsert() {
         IndexedHashSet<String> set = new IndexedHashSet<>() {{
             add("A");
             add("B");
@@ -55,11 +55,11 @@ public class IndexedHashSetTest {
         Assertions.assertEquals("A", set.get(1));
         Assertions.assertEquals("B", set.get(2));
         Assertions.assertEquals("C", set.get(3));
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> set.get(4));
     }
 
     @Test
-    public void testIndexBounds() {
+    void testIndexBounds() {
+        //noinspection MismatchedQueryAndUpdateOfCollection
         IndexedHashSet<String> set = new IndexedHashSet<>() {{
             add("A");
             add("B");
@@ -71,7 +71,7 @@ public class IndexedHashSetTest {
     }
 
     @Test
-    public void testRemoveIf() {
+    void testRemoveIf() {
         IndexedHashSet<String> set = new IndexedHashSet<>() {{
             add("A");
             add("B");

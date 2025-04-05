@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 7orivorian.
+ * Copyright (c) 2024-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
 
 package dev.tori.wraith.event;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,12 +46,25 @@ public class Target {
      * Constructs a new {@link Target}.
      *
      * @param targetClazz the target class.
-     * @param rule  the targeting rule.
+     * @param rule        the targeting rule.
      */
     @Contract(pure = true)
     private Target(@NotNull Class<?> targetClazz, @NotNull TargetingRule rule) {
         this.targetClazz = targetClazz;
         this.rule = rule;
+    }
+
+    /**
+     * Creates a new {@code Target} instance with the specified target class and targeting rule.
+     *
+     * @param targetClazz the target class
+     * @param rule        the targeting rule
+     * @return a new {@code Target} instance with the specified target class and targeting rule
+     */
+    @Contract(value = "_, _ -> new", pure = true)
+    @NotNull
+    public static Target of(@NotNull Class<?> targetClazz, @NotNull TargetingRule rule) {
+        return new Target(targetClazz, rule);
     }
 
     /**
@@ -186,7 +200,11 @@ public class Target {
         },
         /**
          * The target class must be a subclass or implementation of the given class.
+         *
+         * @deprecated in {@code 4.1.0} for removal in {@code 5.0.0}.
          */
+        @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+        @Deprecated(forRemoval = true, since = "4.1.0")
         REVERSE_CASCADE {
             @Override
             public boolean classesMatch(Class<?> clazz, Class<?> target) {

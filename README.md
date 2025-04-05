@@ -19,8 +19,9 @@ Capable, versatile, and easy to use Java event library.
 
 ## Usage
 
-Click [here](https://docs.7ori.dev/wraith/importing) to learn how to import Wraith into your own project.
-For more information, please see the Wraith [documentation](https://docs.7ori.dev/wraith/).
+- [Full documentation](https://docs.7ori.dev/wraith/).
+- [Importing Wraith](https://docs.7ori.dev/wraith/importing).
+- [Example project](https://github.com/7orivorian/WraithExamples).
 
 ## Import with Build Automation
 
@@ -30,12 +31,10 @@ Include JitPack in your maven build file.
 
 ```xml
 
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
 ```
 
 Add the dependency.
@@ -45,7 +44,7 @@ Add the dependency.
 <dependency>
     <groupId>dev.7ori</groupId>
     <artifactId>Wraith</artifactId>
-    <version>4.0.0</version>
+    <version>4.1.0</version>
 </dependency>
 ```
 
@@ -67,7 +66,7 @@ Add the dependency.
 
 ```groovy
 dependencies {
-    implementation 'dev.7ori:Wraith:4.0.0'
+    implementation 'dev.7ori:Wraith:4.1.0'
 }
 ```
 
@@ -89,7 +88,7 @@ Add the dependency.
 
 ```groovy
 dependencies {
-    implementation("dev.7ori:Wraith:4.0.0")
+    implementation("dev.7ori:Wraith:4.1.0")
 }
 ```
 

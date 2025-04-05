@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 7orivorian.
+ * Copyright (c) 2024-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,6 +74,17 @@ public class StatusEvent implements IStatusEvent {
     @Override
     public boolean isTerminated() {
         return status == EventStatus.TERMINATED;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code true} if this event is alive, {@code false} otherwise.
+     * @since 4.1.0
+     */
+    @Override
+    public boolean isAlive() {
+        return status == EventStatus.ALIVE;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2021-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ import java.util.function.Predicate;
 public abstract class AbstractEventBus implements IEventBus {
 
     /**
-     * The amount of {@linkplain AbstractEventBus} instances that have been created.
+     * The amount of {@link AbstractEventBus} instances that have been created.
      */
     private static int instances = 0;
 
@@ -306,9 +306,10 @@ public abstract class AbstractEventBus implements IEventBus {
                     if ((event instanceof IStatusEvent e) && e.isTerminated()) {
                         break;
                     }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
+                    if (listener.shouldPersist()) {
+                        continue;
                     }
+                    listeners.remove(listener);
                 }
             } else {
                 for (int i = 0; i < listeners.size(); i++) {
@@ -322,9 +323,10 @@ public abstract class AbstractEventBus implements IEventBus {
                     if ((event instanceof IStatusEvent e) && e.isTerminated()) {
                         break;
                     }
-                    if (!listener.shouldPersist()) {
-                        listeners.remove(listener);
+                    if (listener.shouldPersist()) {
+                        continue;
                     }
+                    listeners.remove(listener);
                 }
             }
         }

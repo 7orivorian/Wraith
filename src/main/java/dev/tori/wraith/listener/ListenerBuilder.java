@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 7orivorian.
+ * Copyright (c) 2021-2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -70,6 +70,17 @@ public class ListenerBuilder<T> {
     }
 
     /**
+     * Sets the target class and targeting rule for this listener.
+     *
+     * @param clazz the target class to be used.
+     * @param rule  the targeting rule to determine how the target class should be matched.
+     * @return this {@code ListenerBuilder} instance.
+     */
+    public ListenerBuilder<T> target(@NotNull Class<?> clazz, @NotNull Target.TargetingRule rule) {
+        return target(Target.of(clazz, rule));
+    }
+
+    /**
      * Sets the priority for this listener.
      *
      * @param priority the priority of the listener.
@@ -105,7 +116,7 @@ public class ListenerBuilder<T> {
     public ListenerBuilder<T> persistent(boolean persistent) {
         this.persistent = persistent;
         if (persistent) {
-            return persists(0);
+            this.persists = 0;
         }
         return this;
     }
@@ -132,6 +143,7 @@ public class ListenerBuilder<T> {
     public EventListener<T> build() {
         Objects.requireNonNull(target, "target must not be null");
         Objects.requireNonNull(invokable, "invokable must not be null");
+
         if ((persistent && (persists > 0)) || (!persistent && (persists <= 0))) {
             throw new IllegalArgumentException(
                     "Persistency missmatch. persistent=" + persistent + " and persists=" + persists + " is not allowed."

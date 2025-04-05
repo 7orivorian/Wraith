@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 7orivorian.
+ * Copyright (c) 2025 7orivorian.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,40 @@
 
 package dev.tori.wraith.listener;
 
-/**
- * A functional interface representing a callable object that can handle or process an event.
- *
- * @param <T> The type of event to be handled or processed.
- * @author <b><a href="https://github.com/7orivorian">7orivorian</a></b>
- * @see Listener
- * @see EventListener
- * @see LambdaEventListener
- * @since <b>1.0.0</b>
- */
-@FunctionalInterface
-public interface Invokable<T> {
+import dev.tori.wraith.bus.EventBus;
+import dev.tori.wraith.subscriber.Subscriber;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Invokes the handling or processing logic for the specified event.
-     *
-     * @param event The event to be handled or processed.
-     */
-    void invoke(T event);
+/**
+ * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @since 4.1.0
+ */
+public class AnnotationDiscoveryTest {
+
+    private EventBus bus;
+
+    @BeforeEach
+    void setUp() {
+        bus = new EventBus();
+    }
+
+    @Test
+    void testDiscovery() {
+        TestSubscriber subscriber = new TestSubscriber();
+        bus.subscribe(subscriber);
+        bus.dispatch(new Object());
+        Assertions.assertTrue(subscriber.discovered, "The listener should have been discovered.");
+    }
+
+    public static class TestSubscriber extends Subscriber {
+
+        private boolean discovered = false;
+
+        @Listen
+        public void listener() {
+            discovered = true;
+        }
+    }
 }
