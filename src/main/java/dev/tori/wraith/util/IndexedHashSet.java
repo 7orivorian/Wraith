@@ -28,6 +28,11 @@ import java.util.*;
 import java.util.function.Predicate;
 
 /**
+ * A collection class that extends {@link ArrayList} and maintains element uniqueness while preserving
+ * insertion order. This implementation combines the characteristics of a list and a set by ensuring that
+ * duplicate elements are not allowed but elements can be accessed by their index.
+ *
+ * @param <E> the type of elements maintained by this collection
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
  * @since 4.0.0
  */

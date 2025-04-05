@@ -27,7 +27,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 /**
+ * A specialized implementation of {@link EventListener} that incorporates a {@link Predicate}
+ * to determine whether the event should be processed. The event is only handled if it satisfies
+ * the specified predicate.
+ *
+ * @param <E> The type of event this listener is designed to handle.
  * @author <a href="https://github.com/7orivorian">7orivorian</a>
+ * @see EventListener
+ * @see Predicate
+ * @see Invokable
  * @since 4.1.0
  */
 public class PredicateEventListener<E> extends EventListener<E> {

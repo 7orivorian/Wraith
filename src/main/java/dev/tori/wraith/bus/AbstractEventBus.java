@@ -49,7 +49,7 @@ import java.util.function.Predicate;
 public abstract class AbstractEventBus implements IEventBus {
 
     /**
-     * The amount of {@linkplain AbstractEventBus} instances that have been created.
+     * The amount of {@link AbstractEventBus} instances that have been created.
      */
     private static int instances = 0;
 
