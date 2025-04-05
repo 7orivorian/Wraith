@@ -2,10 +2,8 @@
 
 # Wraith
 
-![GitHub all releases](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=flat)
-![GitHub Release](https://img.shields.io/github/v/release/7orivorian/Wraith?sort=semver&style=flat&link=https%3A%2F%2Fgithub.com%2F7orivorian%2FWraith%2Freleases%2Flatest)
-![JitPack Release](https://jitpack.io/v/dev.7ori/Wraith.svg?style=flat)
-[![JitCI](https://jitci.com/gh/7orivorian/Wraith/svg)](https://jitci.com/gh/7orivorian/Wraith)
+![GitHub Download Count](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=flat)
+![GitHub Latest Release Version](https://img.shields.io/github/v/release/7orivorian/Wraith?sort=semver&style=flat&link=https%3A%2F%2Fgithub.com%2F7orivorian%2FWraith%2Freleases%2Flatest)
 ![GitHub License](https://img.shields.io/github/license/7orivorian/Wraith?color=blue)
 
 Capable, versatile, and easy to use Java event library.
@@ -26,24 +24,12 @@ Capable, versatile, and easy to use Java event library.
 ## Import with Build Automation
 
 <details>
-<summary>Maven</summary>    
-Include JitPack in your maven build file.
+<summary>Maven</summary>
 
 ```xml
-
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-```
-
-Add the dependency.
-
-```xml
-
 <dependency>
     <groupId>dev.7ori</groupId>
-    <artifactId>Wraith</artifactId>
+    <artifactId>wraith</artifactId>
     <version>4.1.0</version>
 </dependency>
 ```
@@ -51,44 +37,20 @@ Add the dependency.
 </details>
 <details>
 <summary>Gradle</summary>
-Add JitPack to your root `build.gradle` at the end of repositories.
-
-```groovy
-repositories {
-    //...
-    maven {
-        url 'https://jitpack.io'
-    }
-}
-```
-
-Add the dependency.
 
 ```groovy
 dependencies {
-    implementation 'dev.7ori:Wraith:4.1.0'
+    implementation 'dev.7ori:wraith:4.1.0'
 }
 ```
 
 </details>
 <details>
 <summary>Gradle (Kotlin)</summary>
-Add JitPack to your root `build.gradle.kts` at the end of repositories.
-
-```groovy
-repositories {
-    //...
-    maven {
-        url = uri("https://jitpack.io")
-    }
-}
-```
-
-Add the dependency.
 
 ```groovy
 dependencies {
-    implementation("dev.7ori:Wraith:4.1.0")
+    implementation("dev.7ori:wraith:4.1.0")
 }
 ```
 
