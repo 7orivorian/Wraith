@@ -30,7 +30,7 @@
     <scm>
         <url>https://github.com/7orivorian/Wraith</url>
         <connection>scm:git:git://github.com/7orivorian/Wraith.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/example/Wraith.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/7orivorian/Wraith.git</developerConnection>
     </scm>
 
     <properties>
