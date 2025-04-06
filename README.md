@@ -2,9 +2,10 @@
 
 # Wraith
 
-![GitHub Download Count](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=flat)
-![GitHub Latest Release Version](https://img.shields.io/github/v/release/7orivorian/Wraith?sort=semver&style=flat&link=https%3A%2F%2Fgithub.com%2F7orivorian%2FWraith%2Freleases%2Flatest)
-![GitHub License](https://img.shields.io/github/license/7orivorian/Wraith?color=blue)
+![GitHub Release](https://img.shields.io/github/v/release/7orivorian/Wraith?display_name=tag&style=for-the-badge)
+![GitHub License](https://img.shields.io/github/license/7orivorian/Wraith?style=for-the-badge)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/7orivorian/Wraith/maven-publish.yml?style=for-the-badge)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=for-the-badge)
 
 Capable, versatile, and easy to use Java event library.
 
