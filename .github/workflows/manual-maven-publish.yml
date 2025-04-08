@@ -7,10 +7,10 @@ on:
         description: Version number for this release. Must be SemVer compliant.
         required: true
       dry_run:
+        type: boolean
         description: 'Run build without deploying'
         required: false
-        default: 'false'
-        type: choice
+        default: false
 jobs:
     publish:
         runs-on: ubuntu-latest
