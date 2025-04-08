@@ -4,7 +4,7 @@ on:
     inputs:
       version:
         type: string
-        description: Version number for this release. Must be SemVer compliant.
+        description: 'Version number for this release. Must be SemVer compliant.'
         required: true
       dry_run:
         type: boolean
