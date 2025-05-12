@@ -1,15 +1,13 @@
-![logo](wraith_logo.png)
-
 # Wraith
 
 ![GitHub Release](https://img.shields.io/github/v/release/7orivorian/Wraith?display_name=tag&style=for-the-badge)
+![Maven Central Version](https://img.shields.io/maven-central/v/dev.7ori/wraith?style=for-the-badge)
 ![GitHub License](https://img.shields.io/github/license/7orivorian/Wraith?style=for-the-badge)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/7orivorian/Wraith/maven-publish.yml?style=for-the-badge)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/7orivorian/Wraith/total?style=for-the-badge)
 
 Capable, versatile, and easy to use Java event library.
 
-## Key Features
+## Features
 
 - Easily define your own events, listeners, & event buses.
 - Out-of-the-box support for any scenario.
@@ -18,9 +16,9 @@ Capable, versatile, and easy to use Java event library.
 
 ## Usage
 
-- [Full documentation](https://docs.7ori.dev/wraith/).
-- [Importing Wraith](https://docs.7ori.dev/wraith/importing).
+- [Importing](https://docs.7ori.dev/wraith/importing).
 - [Example project](https://github.com/7orivorian/WraithExamples).
+- [Documentation](https://docs.7ori.dev/wraith).
 
 ## Import with Build Automation
 
